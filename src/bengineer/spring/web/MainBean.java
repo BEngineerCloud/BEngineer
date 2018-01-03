@@ -13,6 +13,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class MainBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
-	@RequestMapping("BEmain.do")
-	public String main() {return "BEmain";}
+	@RequestMapping("beMain.do")
+	public String main() {return "beMain";}
 }
