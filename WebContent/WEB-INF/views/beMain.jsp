@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
+<script language="javascript">
+</script>
 <div id="logo" style="height:10%; width:15%; background-color:#ff9999; float:left;">
 	logo
 </div>
@@ -15,6 +17,7 @@
 	address
 </div>
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
+	<input type="button" id="myfile" value="내 파일" />
 	button2
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">

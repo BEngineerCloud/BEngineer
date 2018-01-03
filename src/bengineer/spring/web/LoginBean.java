@@ -10,5 +10,5 @@ public class LoginBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beLogin.do")
-	public String main() {return "beLogin";}
+	public String main() {return "beInit/beLogin";}
 }

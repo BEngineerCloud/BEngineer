@@ -2,4 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="bengineer">
+	<select id="selectIf" resultType="fileDTO" parameterType="fileDTO">
+		select * from BEfilelist where id=#{id}
+		<if test="fileaddress != null and fileaddress != ''">
+			and fileaddress like #{fileaddress}
+		</if>
+	</select>
 </mapper>

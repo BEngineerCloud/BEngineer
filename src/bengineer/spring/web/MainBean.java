@@ -2,6 +2,8 @@ package bengineer.spring.web;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,5 +16,9 @@ public class MainBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beMain.do")
-	public String main() {return "beMain";}
+	public String main(HttpSession session) {
+		session.setAttribute("nickname", "test");
+		return "beMain";
+	}
+
 }
