@@ -19,7 +19,7 @@ public class MainBean {
 	public String main(HttpSession session) {
 		session.setAttribute("nickname", "test");
 		if(loginCheck(session)) {
-			return "redirect:/beInit/beLogin";
+			return "redirect:/beMember/beLogin";
 		}else {
 			return "beMain";
 		}

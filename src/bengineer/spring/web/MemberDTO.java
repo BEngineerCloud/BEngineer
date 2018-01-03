@@ -1,42 +1,26 @@
 package bengineer.spring.web;
 
-import java.sql.Timestamp;
-
 public class MemberDTO {
-	private String id;
-	private String pw;
-	private int age;
-	private String name;
-	private Timestamp reg_date;
+	private String mailId;
+	private int chmod;
+	private String nickname;
 	
-	public String getId() {
-		return id;
+	public String getMailId() {
+		return mailId;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setMailId(String mailId) {
+		this.mailId = mailId;
 	}
-	public String getPw() {
-		return pw;
+	public int getChmod() {
+		return chmod;
 	}
-	public void setPw(String pw) {
-		this.pw = pw;
+	public void setChmod(int chmod) {
+		this.chmod = chmod;
 	}
-	public int getAge() {
-		return age;
+	public String getNickname() {
+		return nickname;
 	}
-	public void setAge(int age) {
-		this.age = age;
-	}
-	public String getName() {
-		return name;
-	}
-	public void setName(String anme) {
-		this.name = anme;
-	}
-	public Timestamp getReg_date() {
-		return reg_date;
-	}
-	public void setReg_date(Timestamp reg_date) {
-		this.reg_date = reg_date;
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 }

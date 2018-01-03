@@ -1,6 +1,9 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-<div id="logo" style="height:10%; width:15%; background-color:#ff9999; float:left;">
-	logo
+<script language="javascript">
+</script>
+<body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
+<div id="logo" style="height:10%; width:15%; float:left;">
+	<img src="image\beCloudLogo.png" style="width: 100%; height:100%"/>
 </div>
 <div id="search" style="height:10%; width:70%; background-color:#99ff99; float:left;">
 	search
@@ -15,7 +18,7 @@
 	address
 </div>
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
-	<input type="button" value="내 파일보기" onClick="javascript:window.location='beFiles/beList.do'"/>
+	<input type="button" id="myfile" value="내 파일" />
 	button2
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
@@ -24,3 +27,4 @@
 <div id="etc" style="height:10%; width:100%; background-color:#000000; float:left;">
 	etc
 </div>
+</body>
