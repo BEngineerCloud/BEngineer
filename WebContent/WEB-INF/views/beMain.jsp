@@ -1,5 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-<script language="javascript">
+<script type="text/javascript">
+	$(function(){
+		$("form").submit(function(){
+			if(confirm(이동) == false){
+				return false;
+			}
+		});
+	});
 </script>
 <div id="logo" style="height:10%; width:15%; background-color:#ff9999; float:left;">
 	logo
@@ -17,7 +24,9 @@
 	address
 </div>
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
-	<input type="button" id="myfile" value="내 파일" />
+	<form action="beMyFile.do" method="post">
+		<input type="submit" value="내 파일보기" />
+	</form>
 	button2
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
