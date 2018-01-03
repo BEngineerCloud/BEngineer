@@ -11,4 +11,52 @@ public class FileDTO {
 	private Timestamp updatedate;
 	private int hitcount;
 	private String owner;
+	public String getFileaddress() {
+		return fileaddress;
+	}
+	public void setFileaddress(String fileaddress) {
+		this.fileaddress = fileaddress;
+	}
+	public String getFilename() {
+		return filename;
+	}
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	public String getFiletype() {
+		return filetype;
+	}
+	public void setFiletype(String filetype) {
+		this.filetype = filetype;
+	}
+	public double getFilesize() {
+		return filesize;
+	}
+	public void setFilesize(double filesize) {
+		this.filesize = filesize;
+	}
+	public Timestamp getUploaddate() {
+		return uploaddate;
+	}
+	public void setUploaddate(Timestamp uploaddate) {
+		this.uploaddate = uploaddate;
+	}
+	public Timestamp getUpdatedate() {
+		return updatedate;
+	}
+	public void setUpdatedate(Timestamp updatedate) {
+		this.updatedate = updatedate;
+	}
+	public int getHitcount() {
+		return hitcount;
+	}
+	public void setHitcount(int hitcount) {
+		this.hitcount = hitcount;
+	}
+	public String getOwner() {
+		return owner;
+	}
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 }

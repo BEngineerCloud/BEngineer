@@ -18,7 +18,14 @@ public class MainBean {
 	@RequestMapping("beMain.do")
 	public String main(HttpSession session) {
 		session.setAttribute("nickname", "test");
-		return "beMain";
+		if(loginCheck(session)) {
+			return "redirect:/beInit/beLogin";
+		}else {
+			return "beMain";
+		}
 	}
-
+	public static boolean loginCheck(HttpSession session) {
+		String id = (String)session.getAttribute("nickname");
+		return id == null || id.equals("null") || id.equals("");
+	}
 }
