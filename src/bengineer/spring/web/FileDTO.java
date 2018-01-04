@@ -10,8 +10,15 @@ public class FileDTO {
 	private Timestamp uploaddate;
 	private Timestamp updatedate;
 	private int hitcount;
+	private int important;
 	private String owner;
 	private String otheraddress;
+	public int getImportant() {
+		return important;
+	}
+	public void setImportant(int important) {
+		this.important = important;
+	}
 	public String getOtheraddress() {
 		return otheraddress;
 	}

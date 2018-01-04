@@ -8,4 +8,7 @@
 	<insert id="makedir" parameterType="fileDTO">
 		insert into BEfilelist(fileaddress,filename,filetype,uploaddate,updatedate,owner) values(#{fileaddress}, #{filename}, 'dir', sysdate, sysdate, #{owner})
 	</insert>
+	<insert id="upload" parameterType="fileDTO">
+		insert into BEfilelist(fileaddress,filename,filetype,filesize,uploaddate,updatedate,owner) values(#{fileaddress}, #{filename}, #{filetype}, #{filesize}, sysdate, sysdate, #{owner})
+	</insert>
 </mapper>

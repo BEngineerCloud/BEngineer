@@ -6,10 +6,15 @@
 			window.location = "/BEngineer/beFiles/beMyList.do";
 		});
 	});
+	$(function(){
+		$("#beLogo").click(function(){
+			window.location = "/BEngineer/beMain.do";
+		});
+	});
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;">
-	<img src="image\beCloudLogo.png" style="width: 100%; height:100%"/>
+	<img id="beLogo" src="/BEngineer/image/beCloudLogo.png" style="width: 100%; height:100%; cursor:pointer"/>
 </div>
 <div id="search" style="height:10%; width:70%; background-color:#99ff99; float:left;">
 	search
@@ -30,7 +35,7 @@
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
 	files
 </div>
-<div id="etc" style="height:10%; width:100%; background-color:#000000; float:left;">
+<div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
 	etc
 </div>
 </body>
