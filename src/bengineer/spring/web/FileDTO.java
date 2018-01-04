@@ -11,11 +11,16 @@ public class FileDTO {
 	private Timestamp updatedate;
 	private int hitcount;
 	private String owner;
+	private String otheraddress;
+	public String getOtheraddress() {
+		return otheraddress;
+	}
 	public String getFileaddress() {
 		return fileaddress;
 	}
 	public void setFileaddress(String fileaddress) {
 		this.fileaddress = fileaddress;
+		this.otheraddress = fileaddress + "/%";
 	}
 	public String getFilename() {
 		return filename;

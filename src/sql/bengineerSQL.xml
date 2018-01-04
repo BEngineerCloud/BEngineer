@@ -3,10 +3,9 @@
   
 <mapper namespace="bengineer">
 	<select id="myfile" resultType="fileDTO" parameterType="fileDTO">
-		<bind name="otheraddress" value="_parameter.getFileaddress() + '/%'" />
 		select * from BEfilelist where owner=#{owner} and fileaddress like #{fileaddress} and fileaddress not like #{otheraddress}
 	</select>
 	<insert id="makedir" parameterType="fileDTO">
-		insert into BEfilelist(fileaddress,filename,filetype,uploaddate,updatedate,owner) values(#{fileaddress},#{filename},'dir',sysdate,sysdate,#{owner})
+		insert into BEfilelist(fileaddress,filename,filetype,uploaddate,updatedate,owner) values(#{fileaddress}, #{filename}, 'dir', sysdate, sysdate, #{owner})
 	</insert>
 </mapper>

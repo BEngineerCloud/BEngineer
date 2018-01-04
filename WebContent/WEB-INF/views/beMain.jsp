@@ -1,5 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-<script language="javascript">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript">
+	$(function(){
+		$("#myfile").click(function(){
+			window.location = "/BEngineer/beFiles/beMyList.do";
+		});
+	});
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;">
@@ -18,7 +24,7 @@
 	address
 </div>
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
-	<input type="button" id="myfile" value="내 파일" />
+	<input type="button" id="myfile" value="내 파일보기"/>
 	button2
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
