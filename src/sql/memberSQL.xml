@@ -2,13 +2,5 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="bengineer">
-	<select id="myfile" resultType="fileDTO" parameterType="fileDTO">
-		select * from BEfilelist where owner=#{owner} and fileaddress like #{fileaddress} and fileaddress not like #{otheraddress}
-	</select>
-	<insert id="makedir" parameterType="fileDTO">
-		insert into BEfilelist(fileaddress,filename,filetype,uploaddate,updatedate,owner) values(#{fileaddress}, #{filename}, 'dir', sysdate, sysdate, #{owner})
-	</insert>
-	<insert id="upload" parameterType="fileDTO">
-		insert into BEfilelist(fileaddress,filename,filetype,filesize,uploaddate,updatedate,owner) values(#{fileaddress}, #{filename}, #{filetype}, #{filesize}, sysdate, sysdate, #{owner})
-	</insert>
+
 </mapper>
