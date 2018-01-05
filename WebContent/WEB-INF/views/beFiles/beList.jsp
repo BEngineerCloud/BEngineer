@@ -1,9 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script type="text/javascript">
 	$(function(){
 		$("#files > div").click(function(){
+			hinder();
 			$("#files > div").css("background-color","#ff6666");
 			$(this).css("background-color","#6666dd");
 			var filename = $(this).text();
@@ -29,6 +30,7 @@
 		$("#uploadform").submit(function(){
 			var form = document.getElementById("uploadform");
 			if(form.save.type == "hidden"){
+				hinder();
 				form.save.type = "file";
 				form.filename.type = "text";
 				return false;
@@ -40,8 +42,30 @@
 		});
 	});
 	$(function(){
+		$("#folderform").submit(function(){
+			var form = document.getElementById("folderform");
+			if(form.foldername.type == "hidden"){
+				hinder();
+				form.foldername.type = "text";
+				return false;
+			}
+			if(!form.foldername.value.trim() || form.foldername.value == "폴더 이름"){
+				alert('생성할 폴더의 이름을 입력해주세요');
+				return false;
+			}
+			form.foldername.value = form.foldername.value.trim();
+		});
+	});
+	$(function(){
 		$("input[name='filename']").focus(function(){
-			if($(this).val() == '파일이름'){
+			if($(this).val() == '파일 이름'){
+				$(this).val("")
+			}
+		});
+	});
+	$(function(){
+		$("input[name='foldername']").focus(function(){
+			if($(this).val() == '폴더 이름'){
 				$(this).val("")
 			}
 		});
@@ -51,6 +75,11 @@
 			window.location = "/BEngineer/beMain.do";
 		});
 	});
+	function hinder(){
+		var form = document.getElementById("uploadform");
+		form.save.type = "hidden";
+		form.filename.type = "hidden";
+	}
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; background-color:#ff9999; float:left;">
@@ -68,16 +97,30 @@
 			<form action="/BEngineer/beFiles/fileupload.do" id="uploadform" method="post" enctype="multipart/form-data">
 				<input type="hidden" name="fileaddress" value="${fileaddress }" />
 				<input type="hidden" name="save" />
-				<input type="hidden" name="filename" value="파일이름"/>
+				<input type="hidden" name="filename" value="파일 이름"/>
 				<input type="submit" value="업로드" />
+			</form>
+		</div>
+		<div style="height:5%; width:relative; margin:0; float:left;">
+			<form action="/BEngineer/beFiles/createFolder.do" id="folderform" method="post">
+				<input type="hidden" name="folderaddress" value="${fileaddress }" />
+				<input type="hidden" name="foldername" value="폴더 이름"/>
+				<input type="submit" value="폴더 생성" />
 			</form>
 		</div>
 	</c:if>
 	button1
 </div>
 <div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">
-	<c:forEach var="num" begin="0" end="4" step="1">
-		<a href="/BEngineer/beFiles/beMyList.do?folder=${orgaddress[num] }">${folderaddress[num] }</a> / 
+	<c:set var="num" value="0" />
+	<c:forEach var="addr" items="${folderaddress }">
+		<c:if test="${orgaddress[num] != null }">
+			<a href="/BEngineer/beFiles/beMyList.do?folder=${orgaddress[num] }">${addr }</a> /
+		</c:if>
+		<c:if test="${orgaddress[num] == null }">
+			${folderaddress[num] } /
+		</c:if>
+		<c:set var="num" value="${num + 1 }" />
 	</c:forEach>
 	<font id="filename"></font>
 </div>
@@ -87,7 +130,7 @@
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
 	<c:forEach var="file" items="${list }">
-		<div class="file" name="${file.fileaddress }" style="height:10%; width:10%; margin:1%; background-color:#ff6666; float:left;">${file.filename }<input type="text" id="${file.filename }" value="${file.fileaddress.substring(file.fileaddress.lastIndexOf("/") + 1) }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" name="${file.fileaddress }" style="height:10%; width:10%; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.fileaddress.substring(file.fileaddress.lastIndexOf("/") + 1) }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.filename }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>

@@ -43,7 +43,7 @@ public class FileBean {
 			if(!makeDir("etc", owner)) {mkdirch = false;}
 			filelist = sqlSession.selectList("bengineer.myfile", dto);
 			if(!mkdirch) {
-				model.addAttribute("alert", "Æú´õ¸¦ »ı¼ºÇÏ´Â µµÁß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.");
+				model.addAttribute("alert", "í´ë”ë¥¼ ìƒì„±í•˜ëŠ” ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.");
 				model.addAttribute("location", "history.go(-1)");
 				return "beFiles/alert";
 			}
@@ -68,18 +68,21 @@ public class FileBean {
 			folderaddress.add("...");
 			orgaddress.add(null);
 			int num = address.length;
-			folderaddress.add(address[num - 2]);
+			folderaddress.add(address[num - 3]);
 			for(int i = 0; i < num - 3; i++) {
 				orgaddr += address[i] + "/";
 			}
-			orgaddr += address[num - 2];
+			orgaddr += address[num - 3];
+			orgaddress.add(orgaddr);
+			folderaddress.add(address[num - 2]);
+			orgaddr += "/" + address[num - 2];
 			orgaddress.add(orgaddr);
 			folderaddress.add(address[num - 1]);
 			orgaddr += "/" + address[num - 1];
 			orgaddress.add(orgaddr);
-			folderaddress.add(address[num]);
 		}
 		model.addAttribute("folderaddress", folderaddress);
+		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("write", true);
 		return "beFiles/beList";
 	}
@@ -93,9 +96,32 @@ public class FileBean {
 			String orgName = mf.getOriginalFilename();
 			String owner = (String)session.getAttribute("nickname");
 			String filetype = orgName.substring(orgName.lastIndexOf("."));
+			String contentType = checkFile(filetype);
+			if(contentType.equals("none")) {
+				model.addAttribute("alert", "ì—…ë¡œë“œ í•  ìˆ˜ ì—†ëŠ” ì¢…ë¥˜ì˜ íŒŒì¼ì…ë‹ˆë‹¤.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			boolean typech = true;
+			if(fileaddress.startsWith(owner + "/image/") && !contentType.equals("image")) {
+				typech = false;
+			}else if(fileaddress.startsWith(owner + "/music/") && !contentType.equals("music")) {
+				typech = false;
+			}else if(fileaddress.startsWith(owner + "/video/") && !contentType.equals("video")) {
+				typech = false;
+			}else if(fileaddress.startsWith(owner + "/document/") && !contentType.equals("document")) {
+				typech = false;
+			}else if(fileaddress.startsWith(owner + "/etc/") && !contentType.equals("etc")) {
+				typech = false;
+			}
+			if(!typech) {
+				model.addAttribute("alert", "í•´ë‹¹ í´ë”ì— ì—…ë¡œë“œ í•  ìˆ˜ ì—†ëŠ” ì¢…ë¥˜ì˜ íŒŒì¼ì…ë‹ˆë‹¤.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
 			File copy = new File("d:/PM/BEngineer/" + fileaddress + orgName);
 			if(copy.exists()) {
-				model.addAttribute("alert", "ÇØ´ç °æ·Î¿¡ µ¿ÀÏÇÑ ÀÌ¸§ÀÇ ÆÄÀÏÀÌ Á¸ÀçÇÕ´Ï´Ù.");
+				model.addAttribute("alert", "í•´ë‹¹ ê²½ë¡œì— ê°™ì€ ì´ë¦„ì˜ íŒŒì¼ì´ ì¡´ì¬í•©ë‹ˆë‹¤.");
 				model.addAttribute("location", "history.go(-1)");
 				return "beFiles/alert";
 			}
@@ -111,37 +137,43 @@ public class FileBean {
 			dto.setOwner(owner);
 			dto.setFilesize(filesize);
 			dto.setFiletype(filetype);
-			String contentType = checkFile(filetype);
-			boolean typech = true;
-			if(fileaddress.startsWith(owner + "/image/") && !contentType.equals("image")) {
-				typech = false;
-			}else if(fileaddress.startsWith(owner + "/music/") && !contentType.equals("music")) {
-				typech = false;
-			}else if(fileaddress.startsWith(owner + "/video/") && !contentType.equals("video")) {
-				typech = false;
-			}else if(fileaddress.startsWith(owner + "/document/") && !contentType.equals("document")) {
-				typech = false;
-			}else if(fileaddress.startsWith(owner + "/etc/") && !contentType.equals("etc")) {
-				typech = false;
-			}
-			if(!typech) {
-				model.addAttribute("alert", "ÇØ´ç Æú´õ¿¡ ¾÷·Îµå ÇÒ ¼ö ¾ø´Â Á¾·ùÀÇ ÆÄÀÏÀÔ´Ï´Ù.");
-				model.addAttribute("location", "history.go(-1)");
-				return "beFiles/alert";
-			}
-			if(contentType.equals("none")) {
-				model.addAttribute("alert", "¾÷·Îµå ÇÒ ¼ö ¾ø´Â Á¾·ùÀÇ ÆÄÀÏÀÔ´Ï´Ù.");
-				model.addAttribute("location", "history.go(-1)");
-				return "beFiles/alert";
-			}
 			sqlSession.insert("bengineer.upload", dto);
-			model.addAttribute("alert", "¾÷·Îµå°¡ ¿Ï·áµÇ¾ú½À´Ï´Ù.");
-			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do\"");
+			model.addAttribute("alert", "íŒŒì¼ ì—…ë¡œë“œ ì™„ë£Œ");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + fileaddress.substring(0, fileaddress.lastIndexOf("/")) + "\"");
 			return "beFiles/alert";
 		}catch(Exception e) {
 			e.printStackTrace();
-			model.addAttribute("alert", "¾÷·Îµå µµÁß ¿À·ù°¡ ¹ß»ıÇß½À´Ï´Ù.");
+			model.addAttribute("alert", "ì—…ë¡œë“œ ë„ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.");
 			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+	}
+	@RequestMapping("createFolder.do")
+	public String folder(HttpSession session, Model model, String foldername, String folderaddress) {
+		if(MainBean.loginCheck(session)) {return "redirect:/BEngineer/beMember/beLogin.do";}
+		int check = 0;
+		check += foldername.indexOf("\\");
+		check += foldername.indexOf("/");
+		check += foldername.indexOf(":");
+		check += foldername.indexOf("*");
+		check += foldername.indexOf("?");
+		check += foldername.indexOf("\"");
+		check += foldername.indexOf("<");
+		check += foldername.indexOf(">");
+		check += foldername.indexOf("|");
+		if(check > -9) {
+			model.addAttribute("alert", "\\\\, /, :, *, ?, \", <, >, | ì˜ ë¬¸ìë“¤ì€ í´ë” ëª…ì— ì‚¬ìš©í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		String owner = (String)session.getAttribute("nickname");
+		if(!makeDir(foldername, folderaddress, owner)) {
+			model.addAttribute("alert", "í´ë”ë¥¼ ìƒì„±í•˜ëŠ” ë„ì¶© ì˜¤ë¥˜ê°€ ë°œìƒí–ˆìŠµë‹ˆë‹¤.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}else {
+			model.addAttribute("alert", "í´ë” ìƒì„± ì™„ë£Œ");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folderaddress.substring(0, folderaddress.lastIndexOf("/")) + "\"");
 			return "beFiles/alert";
 		}
 	}
@@ -153,6 +185,15 @@ public class FileBean {
 		sqlSession.insert("bengineer.makedir", dto);
 		File file = new File("d:/PM/BEngineer/" + dto.getFileaddress());
 		return file.mkdirs();
+	}
+	private boolean makeDir(String name,String address, String owner) {
+		FileDTO dto = new FileDTO();
+		dto.setOwner(owner);
+		dto.setFileaddress(address + name);
+		dto.setFilename(name);
+		sqlSession.insert("bengineer.makedir", dto);
+		File file = new File("d:/PM/BEngineer/" + dto.getFileaddress());
+		return file.mkdir();
 	}
 	private static List image = new ArrayList();
 	private static List video = new ArrayList();
