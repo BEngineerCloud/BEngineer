@@ -6,15 +6,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller()
-public class LoginBean {
+@RequestMapping("/beMember/*")
+public class MemberBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beLogin.do")
-	public String beLogin() {return "beMember/beLogin";}
+	public String beLogin() {return "/BEngineer/beMember/beLogin";}
 	
 	@RequestMapping("beCollback.do")
-	public String beCollback() {return "beMember/beLogin";}
+	public String beCollback() {return "/BEngineer/beMember/beLogin";}
 	
 	@RequestMapping("beAddinfo.do")
-	public String beAddinfo() {return "beMember/beAddinfo";}
+	public String beAddinfo() {return "/BEngineer/beMember/beAddinfo";}
+	
+	@RequestMapping("beChecknickname.do")
+	public String beChecknickname() {return "/BEngineer/beMember/beChecknickname";}
 }

@@ -5,8 +5,10 @@
 <configuration>
 	<typeAliases >
 		<typeAlias type="bengineer.spring.web.FileDTO"  alias="fileDTO"    />
+		<typeAlias type="bengineer.spring.web.memberDTO"  alias="memberDTO"    />
 	</typeAliases>
 	<mappers>
 		<mapper resource="/sql/fileSQL.xml"/>
+		<mapper resource="/sql/memberSQL.xml"/>
 	</mappers>
 </configuration>

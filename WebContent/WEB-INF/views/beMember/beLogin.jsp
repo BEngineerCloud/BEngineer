@@ -11,7 +11,7 @@
  <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="Logo1" style="height:41%; width:100%; float:left; text-align:center">
 	<div id="Logo2" style="width:100%; float:left; text-align:center; margin-top: 11%;">
-		<img src="image\beCloudLogo.png" style="width: 31%;"/>
+		<img src="\BEngineer\image\beCloudLogo.png" style="width: 31%;"/>
 	</div>
 </div>
 <div id="Login-input" style="height:20%;width:100%; float:left; ">
@@ -42,7 +42,7 @@
     apiURL += "&state=" + state;
     session.setAttribute("state", state);
  %>
- <a href="<%=apiURL%>"><img src="image\naverLogin.PNG" style="width: 16%; height:27%"/>
+ <a href="<%=apiURL%>"><img src="\BEngineer\image\naverLogin.PNG" style="width: 16%; height:27%"/></a>
 </div>
 <div align="center" id="Addsubmit" style="height:15%; width:100%; float:left; background-color:#5f7f89;">
 </div>

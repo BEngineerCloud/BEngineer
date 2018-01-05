@@ -22,7 +22,7 @@ public class FileBean {
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beMyList.do")
 	public String myFile(HttpSession session, Model model, String folder) {
-		if(MainBean.loginCheck(session)) {return "redirect:/beLogin.do";}
+		if(MainBean.loginCheck(session)) {return "redirect:/BEngineer/beMember/beLogin.do";}
 		String owner = (String)session.getAttribute("nickname");
 		FileDTO dto = new FileDTO();
 		dto.setOwner(owner);
@@ -86,7 +86,7 @@ public class FileBean {
 	@RequestMapping(value="fileupload.do", method=RequestMethod.POST)
 	public String upload(MultipartHttpServletRequest multi, String fileaddress, String filename, HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {
-			return "redirect:/beLogin.do";
+			return "redirect:/BEngineer/beMember/beLogin.do";
 		}
 		try {
 			MultipartFile mf = multi.getFile("save");
