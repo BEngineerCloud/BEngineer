@@ -20,10 +20,9 @@ public class MemberBean {
 	@RequestMapping("beAddinfo.do")
 	public String beAddinfo() {return "beMember/beAddinfo";}
 
-	@RequestMapping("beChecknickname.do")
+	@RequestMapping(value="beChecknickname.do")
 	public String beChecknickname(Model model, String nickname ) {
 		Integer check = (Integer)sqlSession.selectOne("bengineer.beChecknickname",nickname);
-		System.out.println(check);
 		model.addAttribute("check",check);
 		model.addAttribute("nickname",nickname);
 		return "beMember/beChecknickname";

@@ -2,10 +2,10 @@
     
 <html>
 <head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>beAddInfo</title>
 </head>
-<script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js"></script>
 <script type="text/javascript">
 $(function(){
 	$("#confirmNickname").click(function(){
@@ -14,6 +14,7 @@ $(function(){
 				alert("닉네임을 입력해주세요.");
 				return;
 			}
+			
 			url = "/BEngineer/beMember/beChecknickname.do?nickname="+$("#nickname").val();
 			open(url, "confirm",  "toolbar=no, location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=300, height=200");
 			
