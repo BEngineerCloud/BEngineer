@@ -24,6 +24,12 @@ public class DownloadView extends AbstractView{
 		response.setContentLength((int)file.length());
 		
 		String fileName = java.net.URLEncoder.encode(file.getName(),"UTF-8");
+		
+		while(fileName.indexOf("+") > 0) { // URL형식상 띄어쓰기가 +로 바뀐 것 원상복구 
+			int num = fileName.indexOf("+");
+			fileName = fileName.substring(0, num) + " " + fileName.substring(num + 1);
+		}
+		
 		response.setHeader("Content-Disposition", "attachment;filename=\""+fileName+"\";");
 		response.setHeader("Content-Transfer-Encoding", "binary");
 		
@@ -41,5 +47,4 @@ public class DownloadView extends AbstractView{
 		out.flush();
 		
 	}
-
 }

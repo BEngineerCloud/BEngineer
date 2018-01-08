@@ -12,7 +12,7 @@ public class FileDTO {
 	private int hitcount;
 	private int important;
 	private String owner;
-	private String otheraddress;
+	private String otheraddress; // 하위 폴더에 포함된 파일을 검색에서 제거하기 위한 파라미터
 	public int getImportant() {
 		return important;
 	}
