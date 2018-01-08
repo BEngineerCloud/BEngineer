@@ -32,8 +32,8 @@
 </div>
 <div id="NaverLogin" style="height:24%; width:100%; float:left;text-align:center">
   <%
-    String clientId = "bpa9S2vfjTvjLm8zimTe";//애플리케이션 클라이언트 아이디값";
-    String redirectURI = URLEncoder.encode("beCollback.do", "UTF-8");
+    String clientId = "y_lBHf8AUAN_aZPACmtg";//애플리케이션 클라이언트 아이디값";
+    String redirectURI = URLEncoder.encode("/BEngineer/beMember/beCollback.do", "UTF-8");
     SecureRandom random = new SecureRandom();
     String state = new BigInteger(130, random).toString();
     String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
