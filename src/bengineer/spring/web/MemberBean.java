@@ -14,8 +14,8 @@ public class MemberBean {
 	@RequestMapping("beLogin.do")
 	public String beLogin() {return "beMember/beLogin";}
 	
-	@RequestMapping("beCollback.do")
-	public String beCollback() {return "beMember/beLogin";}
+	@RequestMapping("beCallback.do")
+	public String beCollback() {return "beMember/beCallback";}
 	
 	@RequestMapping("beAddinfo.do")
 	public String beAddinfo() {return "beMember/beAddinfo";}

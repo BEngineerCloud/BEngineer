@@ -6,6 +6,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.0.js" charset="utf-8"></script>
 <title>NaverLogin</title>
 </head>
  <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
@@ -31,9 +32,9 @@
 	</div>
 </div>
 <div id="NaverLogin" style="height:24%; width:100%; float:left;text-align:center">
-  <%
+ <%
     String clientId = "y_lBHf8AUAN_aZPACmtg";//애플리케이션 클라이언트 아이디값";
-    String redirectURI = URLEncoder.encode("/BEngineer/beMember/beCollback.do", "UTF-8");
+    String redirectURI = URLEncoder.encode("http://192.168.0.143/BEngineer/beMember/beCallback.do", "UTF-8");
     SecureRandom random = new SecureRandom();
     String state = new BigInteger(130, random).toString();
     String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
@@ -43,8 +44,9 @@
     session.setAttribute("state", state);
  %>
  <a href="<%=apiURL%>"><img src="\BEngineer\image\naverLogin.PNG" style="width: 16%; height:27%"/></a>
-</div>
-<div align="center" id="Addsubmit" style="height:15%; width:100%; float:left; background-color:#5f7f89;">
+</div> 
+
+<div align="center" id="Bottom" style="height:15%; width:100%; float:left; background-color:#5f7f89;">
 </div>
   </body>
 </html>
