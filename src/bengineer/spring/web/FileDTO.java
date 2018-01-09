@@ -3,8 +3,10 @@ package bengineer.spring.web;
 import java.sql.Timestamp;
 
 public class FileDTO {
-	private String fileaddress;
+	private int num;
+	private int folder_ref;
 	private String filename;
+	private String orgname;
 	private String filetype;
 	private double filesize;
 	private Timestamp uploaddate;
@@ -12,28 +14,29 @@ public class FileDTO {
 	private int hitcount;
 	private int important;
 	private String owner;
-	private String otheraddress; // 하위 폴더에 포함된 파일을 검색에서 제거하기 위한 파라미터
-	public int getImportant() {
-		return important;
+	public int getNum() {
+		return num;
 	}
-	public void setImportant(int important) {
-		this.important = important;
+	public void setNum(int num) {
+		this.num = num;
 	}
-	public String getOtheraddress() {
-		return otheraddress;
+	public int getFolder_ref() {
+		return folder_ref;
 	}
-	public String getFileaddress() {
-		return fileaddress;
-	}
-	public void setFileaddress(String fileaddress) {
-		this.fileaddress = fileaddress;
-		this.otheraddress = fileaddress + "/%";
+	public void setFolder_ref(int folder_ref) {
+		this.folder_ref = folder_ref;
 	}
 	public String getFilename() {
 		return filename;
 	}
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+	public String getOrgname() {
+		return orgname;
+	}
+	public void setOrgname(String orgname) {
+		this.orgname = orgname;
 	}
 	public String getFiletype() {
 		return filetype;
@@ -64,6 +67,12 @@ public class FileDTO {
 	}
 	public void setHitcount(int hitcount) {
 		this.hitcount = hitcount;
+	}
+	public int getImportant() {
+		return important;
+	}
+	public void setImportant(int important) {
+		this.important = important;
 	}
 	public String getOwner() {
 		return owner;

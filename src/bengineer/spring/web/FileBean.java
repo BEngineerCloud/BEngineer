@@ -1,6 +1,11 @@
 package bengineer.spring.web;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,86 +27,98 @@ public class FileBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beMyList.do") // 내 파일 보기
-	public String myFile(HttpSession session, Model model, String folder) {
-		if(MainBean.loginCheck(session)) {return "redirect:/BEngineer/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
+	public String myFile(HttpSession session, Model model, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		String owner = (String)session.getAttribute("nickname");
+		File file = new File("d:/PM/BEngineer/" + owner);
 		FileDTO dto = new FileDTO();
 		dto.setOwner(owner);
-		String fileaddress = "";
-		if(folder == null) {
-			fileaddress = owner; // 폴더값이 안 들어왔을 경우 닉네임과 같은 이름의 기본폴더로 이동
-		}else {
-			fileaddress = folder;
-		}
-		dto.setFileaddress(fileaddress + "/%"); // 지정된 폴더 내의 파일을 모두 검색
-		List filelist = sqlSession.selectList("bengineer.myfile", dto);
-		boolean mkdirch = true;
-		if(folder == null && filelist.size() == 0) { // 기본 폴더에 아무런 파일 / 폴더가 없을 시 자동으로 폴더 생성
-			if(!makeDir("image", owner)) {mkdirch = false;}
-			if(!makeDir("video", owner)) {mkdirch = false;}
-			if(!makeDir("music", owner)) {mkdirch = false;}
-			if(!makeDir("document", owner)) {mkdirch = false;}
-			if(!makeDir("etc", owner)) {mkdirch = false;}
-			filelist = sqlSession.selectList("bengineer.myfile", dto);
+		int folder_ref = 0;
+		List address_ref = null;
+		if(file.exists()) {
+			if(folder == 0) {
+				dto.setFilename(owner);
+				dto.setFolder_ref(0);
+				folder_ref = (int)sqlSession.selectOne("bengineer.getref", dto); // 폴더값이 안 들어왔을 경우 닉네임과 같은 이름의 기본폴더로 이동
+				address_ref = getAddr(folder_ref);
+			}else {
+				folder_ref = folder;
+				address_ref = getAddr(folder_ref);
+			}
+		}else { // 닉네임 폴더가 없을 때 닉네임 폴더 밑 기본폴더 생성 
+			dto.setFilename(owner);
+			dto.setFolder_ref(0);
+			sqlSession.insert("bengineer.makedir", dto);
+			folder_ref = (int)sqlSession.selectOne("bengineer.getref", dto);
+			address_ref = getAddr(folder_ref);
+			boolean mkdirch = true;
+			if(!makeDir("image", address_ref)) {mkdirch = false;}
+			if(!makeDir("video", address_ref)) {mkdirch = false;}
+			if(!makeDir("music", address_ref)) {mkdirch = false;}
+			if(!makeDir("document", address_ref)) {mkdirch = false;}
+			if(!makeDir("etc", address_ref)) {mkdirch = false;}
 			if(!mkdirch) { // 하나라도 오류 발생시
 				model.addAttribute("alert", "폴더를 생성하는 도중 오류가 발생했습니다.");
 				model.addAttribute("location", "history.go(-1)");
 				return "beFiles/alert";
 			}
 		}
+		dto.setFolder_ref(folder_ref); // 지정된 폴더 내의 파일을 모두 검색
+		List filelist = sqlSession.selectList("bengineer.myfile", dto);
 		model.addAttribute("list", filelist);
-		model.addAttribute("fileaddress", fileaddress + "/");
 		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
-		String [] address = fileaddress.split("/");
 		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 전체 경로를 하나씩 저장하기 위한 리스트
-		if(address.length < 5) {
-			String orgaddr = "";
-			for(int i = 0; i < address.length; i++) {
-				folderaddress.add(address[i]);
-				orgaddr += address[i];
-				orgaddress.add(orgaddr);
-				orgaddr += "/";
+		if(address_ref.size() < 5) {
+			for(int i = address_ref.size() - 1; i >= 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				folderaddress.add(dto.getFilename());
+				orgaddress.add(dto.getNum());
 			}
 		}else {
-			String orgaddr = "";
 			folderaddress.add(owner);
-			orgaddress.add(owner);
+			orgaddress.add(0);
 			folderaddress.add("..."); // 폴더 경로가 5개를 넘어길 시 기본폴더와 가장 위의 3개를 제외하고 생략
 			orgaddress.add(null);
-			int num = address.length;
-			folderaddress.add(address[num - 3]);
-			for(int i = 0; i < num - 3; i++) {
-				orgaddr += address[i] + "/";
+			for(int i = 2; i >= 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				folderaddress.add(dto.getFilename());
+				orgaddress.add(dto.getNum());
 			}
-			orgaddr += address[num - 3];
-			orgaddress.add(orgaddr);
-			folderaddress.add(address[num - 2]);
-			orgaddr += "/" + address[num - 2];
-			orgaddress.add(orgaddr);
-			folderaddress.add(address[num - 1]);
-			orgaddr += "/" + address[num - 1];
-			orgaddress.add(orgaddr);
 		}
 		model.addAttribute("folderaddress", folderaddress);
 		model.addAttribute("orgaddress", orgaddress);
+		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("write", true);
 		return "beFiles/beList";
 	}
 	@RequestMapping(value="fileupload.do", method=RequestMethod.POST) // 업로드 페이지
-	public String upload(MultipartHttpServletRequest multi, String fileaddress, String filename, HttpSession session, Model model) {
-		if(MainBean.loginCheck(session)) {return "redirect:/BEngineer/beMember/beLogin.do";} // 비 로그인 상태시 로그인 창으로 리디렉트
+	public String upload(MultipartHttpServletRequest multi, int folder, String filename, HttpSession session, Model model) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 비 로그인 상태시 로그인 창으로 리디렉트
 		try {
 			MultipartFile mf = multi.getFile("save");
-			String orgName = mf.getOriginalFilename();
+			String orgname = mf.getOriginalFilename();
 			String owner = (String)session.getAttribute("nickname");
-			String filetype = orgName.substring(orgName.lastIndexOf(".")); // 확장자
+			String filetype = orgname.substring(orgname.lastIndexOf(".")); // 확장자
 			String contentType = checkFile(filetype); // 확장자를 확인하여 파일타입 확인
 			if(contentType.equals("none")) { // 업로드 할 수 없는 종류의 파일일 때
 				model.addAttribute("alert", "업로드 할 수 없는 종류의 파일입니다.");
 				model.addAttribute("location", "history.go(-1)");
 				return "beFiles/alert";
 			}
+			// 파일명 길이 확인
+			if(filename.length() > 90) {
+				model.addAttribute("alert", "파일명은 한글로 30글자, 영어,숫자 또는 특수문자로 90글자까지 가능합니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
 			boolean typech = true;
+			List address_ref = getAddr(folder);
+			String fileaddress = "";
+			FileDTO dto = new FileDTO();
+			for(int i = address_ref.size() - 1; i >= 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				fileaddress += dto.getFilename() + "/";
+			}
 			// 기본폴더에 올릴 수 없는 파일일 때
 			if(fileaddress.startsWith(owner + "/image/") && !contentType.equals("image")) {
 				typech = false;
@@ -119,7 +136,7 @@ public class FileBean {
 				model.addAttribute("location", "history.go(-1)");
 				return "beFiles/alert";
 			}
-			File copy = new File("d:/PM/BEngineer/" + fileaddress + orgName);
+			File copy = new File("d:/PM/BEngineer/" + fileaddress + orgname);
 			if(copy.exists()) { // 같은 이름의 파일이 존재할 때
 				model.addAttribute("alert", "해당 경로에 같은 이름의 파일이 존재합니다.");
 				model.addAttribute("location", "history.go(-1)");
@@ -127,10 +144,10 @@ public class FileBean {
 			}
 			mf.transferTo(copy);
 			long filesize = copy.length();
-			FileDTO dto = new FileDTO();
-			dto.setFileaddress(fileaddress + orgName);
-			if(filename == null || filename.equals("")) {
-				dto.setFilename(orgName);
+			dto.setFolder_ref(folder);
+			dto.setOrgname(orgname);
+			if(filename == null || filename.equals("") || filename.equals("파일 이름")) {
+				dto.setFilename(orgname);
 			}else {
 				dto.setFilename(filename);
 			}
@@ -139,7 +156,7 @@ public class FileBean {
 			dto.setFiletype(filetype);
 			sqlSession.insert("bengineer.upload", dto);
 			model.addAttribute("alert", "파일 업로드 완료");
-			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + fileaddress.substring(0, fileaddress.lastIndexOf("/")) + "\"");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 			return "beFiles/alert";
 		}catch(Exception e) { // 오류 발생시
 			e.printStackTrace();
@@ -149,8 +166,8 @@ public class FileBean {
 		}
 	}
 	@RequestMapping("createFolder.do") // 폴더 만들기 페이지
-	public String folder(HttpSession session, Model model, String foldername, String folderaddress) {
-		if(MainBean.loginCheck(session)) {return "redirect:/BEngineer/beMember/beLogin.do";} // 로그인 체크
+	public String folder(HttpSession session, Model model, String foldername, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		// 폴더명에 포함될 수 없는 문자들 체크
 		int check = 0;
 		check += foldername.indexOf("\\");
@@ -167,10 +184,17 @@ public class FileBean {
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
+		// 폴더명 길이 확인
+		if(foldername.length() > 90) {
+			model.addAttribute("alert", "폴더명은 한글로 30글자, 영어,숫자 또는 특수문자로 90글자까지 가능합니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		List address_ref = getAddr(folder);
 		String owner = (String)session.getAttribute("nickname");
-		if(makeDir(foldername, folderaddress, owner)) { // 폴더 생성 완료시
+		if(makeDir(foldername, address_ref)) { // 폴더 생성 완료시
 			model.addAttribute("alert", "폴더 생성 완료");
-			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folderaddress.substring(0, folderaddress.lastIndexOf("/")) + "\"");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 			return "beFiles/alert";
 		}else { // 폴더생성 오류시
 			model.addAttribute("alert", "폴더를 생성하는 도충 오류가 발생했습니다.");
@@ -178,31 +202,189 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 	}
-	private boolean makeDir(String name, String owner) { // 기본폴더생성용 메서드 성공시 true
-		FileDTO dto = new FileDTO();
-		dto.setOwner(owner);
-		dto.setFileaddress(owner + "/" + name);
-		dto.setFilename(name);
-		sqlSession.insert("bengineer.makedir", dto);
-		File file = new File("d:/PM/BEngineer/" + dto.getFileaddress());
-		return file.mkdirs();
-	}
-	private boolean makeDir(String name, String address, String owner) { // 일반 폴더 생성용 메서드 성공시 true, address는 폴더경로에 /까지
-		FileDTO dto = new FileDTO();
-		dto.setOwner(owner);
-		dto.setFileaddress(address + name);
-		dto.setFilename(name);
-		sqlSession.insert("bengineer.makedir", dto);
-		File file = new File("d:/PM/BEngineer/" + dto.getFileaddress());
-		return file.mkdir();
-	}
 	@RequestMapping("beDownload.do") // 파일 다운로드
-	public ModelAndView download(String fileaddress) {
+	public ModelAndView download(int file_ref) {
+		List address_ref = getAddr(file_ref);
+		String fileaddress = "";
+		FileDTO dto = new FileDTO();
+		for(int i = address_ref.size() - 1; i >= 0; i--) {
+			dto = (FileDTO)address_ref.get(i);
+			fileaddress += dto.getOrgname();
+			if(i != 0) {
+				fileaddress += "/";
+			}
+		}
 		File file = new File("d:/PM/BEngineer/" + fileaddress);
 		ModelAndView mv = new ModelAndView("download","downloadFile",file);
 		return mv;
 	}
-	// 파일타입 확인용 리스트 들
+	@RequestMapping("changeFolderName.do") // 폴더명 변경 페이지
+	public String changefolder(HttpSession session, Model model, String name, int ref, int folder) { // orgaddress는 원 폴더 명까지 포함
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		// 폴더명에 포함될 수 없는 문자들 체크
+		int check = 0;
+		check += name.indexOf("\\");
+		check += name.indexOf("/");
+		check += name.indexOf(":");
+		check += name.indexOf("*");
+		check += name.indexOf("?");
+		check += name.indexOf("\"");
+		check += name.indexOf("<");
+		check += name.indexOf(">");
+		check += name.indexOf("|");
+		if(check > -9) {
+			model.addAttribute("alert", "\\\\, /, :, *, ?, \", <, >, | 의 문자들은 폴더 명에 사용할 수 없습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		// 폴더명 길이 확인
+		if(name.length() > 90) {
+			model.addAttribute("alert", "폴더명은 한글로 30글자, 영어,숫자 또는 특수문자로 90글자까지 가능합니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		List address_ref = getAddr(ref);
+		if(changeDirName(name, address_ref)) { // 폴더 생성 완료시
+			model.addAttribute("alert", "폴더명 변경 완료");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+			return "beFiles/alert";
+		}else { // 폴더생성 오류시
+			model.addAttribute("alert", "폴더의 이름을 변경하는 도충 오류가 발생했습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+	}
+	@RequestMapping("changeFileName.do")
+	public String changeFileName(HttpSession session, Model model, String name, int ref, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		// 파일명 길이 확인
+		if(name.length() > 90) {
+			model.addAttribute("alert", "파일명은 한글로 30글자, 영어,숫자 또는 특수문자로 90글자까지 가능합니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		FileDTO dto = sqlSession.selectOne("bengineer.getaddr", ref);
+		dto.setFilename(name);
+		sqlSession.update("bengineer.changename", dto);
+		model.addAttribute("alert", "파일명 변경 완료");
+		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+		return "beFiles/alert";
+	}
+	@RequestMapping("shareFile.do")
+	public String shareFile(HttpSession session, Model model, int ref, String term, int randw) throws Exception {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		String owner = (String)session.getAttribute("nickname");
+		FileDTO dto = sqlSession.selectOne("bengineer.getaddr", ref);
+		if(!owner.equals(dto.getOwner())) {
+			model.addAttribute("alert", "본인의 파일만 공유할 수 있습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		PowerDTO pdto = new PowerDTO();
+		pdto.setTerm(Date.valueOf(term));
+		pdto.setRandw(randw);
+		int chmodcheck = (int)sqlSession.selectOne("bengineer.chmodcheck", pdto);
+		if(chmodcheck == 0) {
+			sqlSession.insert("bengineer.setchmod", pdto);
+		}
+		chmodcheck = (int)sqlSession.selectOne("bengineer.getchmod", pdto);
+		KeyDTO kdto = new KeyDTO();
+		kdto.setChmod(pdto.getChmod());
+		kdto.setFilenum(ref);
+		String keycheck = (String)sqlSession.selectOne("bengineer.keycheck", kdto);
+		if(keycheck == null) {
+			kdto.setShare_key(makecode());
+			sqlSession.insert("bengineer.sharefile", kdto);
+			keycheck = kdto.getShare_key();
+		}
+		InetAddress local = InetAddress.getLocalHost();
+		model.addAttribute("alert", "공유 URL : " + local.getHostAddress() + "/BEngineer/beFiles/getSharedFile.do?share_key=" + keycheck);
+		model.addAttribute("location", "history.go(-1)");
+		return "beFiles/alert";
+	}
+	@RequestMapping("getSharedFile.do")
+	public String getSharedFile(HttpSession session, Model model, String share_key) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		String nickname = (String)session.getAttribute("nickname");
+		int chmod = (int)sqlSession.selectOne("bengineer.getchmod2", share_key);
+		ShareDTO sdto = new ShareDTO();
+		sdto.setChmod(chmod);
+		sdto.setNickname(nickname);
+		sdto.setShare_key(share_key);
+		sqlSession.insert("bengineer.getsharedfile", sdto);
+		model.addAttribute("alert", "공유되었습니다.");
+		model.addAttribute("location", "history.go(-1)");
+		return "beFiles/alert";
+	}
+	private String makecode() {
+		String code = "";
+		for(int i = 0; i < 20; i++) {
+			int k = (int)(Math.random() * 62);
+			char c = '0';
+			if(k < 10) {
+				c = (char)(k + 48);
+			}else if(k < 36) {
+				c = (char)(k + 55);
+			}else {
+				c = (char)(k + 61);
+			}
+			code += c;
+		}
+		int check = sqlSession.selectOne("bengineer.checksharekey", code);
+		if(check > 0) {code = makecode();}
+		return code;
+	}
+	private boolean makeDir(String name, List address_ref) { // 기본폴더생성용 메서드 성공시 true
+		FileDTO dto = new FileDTO();
+		FileDTO ref = (FileDTO)address_ref.get(0);
+		dto.setFolder_ref(ref.getNum());
+		dto.setOwner(ref.getOwner());
+		dto.setFilename(name);
+		sqlSession.insert("bengineer.makedir", dto);
+		String address = "";
+		for(int i = 0; i < address_ref.size(); i++) {
+			ref = (FileDTO)address_ref.get(i);
+			address = "/" + ref.getFilename() + address;
+		}
+		File file = new File("d:/PM/BEngineer" + address + "/" + name);
+		return file.mkdirs();
+	}
+	private List getAddr(int folder_ref) {
+		List address = new ArrayList();
+		return getAddr(address, folder_ref);
+	}
+	private List getAddr(List address, int folder_ref) { // 폴더 실 주소 확인을 위한 메서드
+		FileDTO folder = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder_ref);
+		address.add(folder);
+		folder_ref = folder.getFolder_ref();
+		if(folder_ref == 0) {
+			return address;
+		}else {
+			return getAddr(address, folder_ref);
+		}
+	}
+	private boolean changeDirName(String foldername, List address_ref) { // 폴더명 바꾸기 메서드 성공시 true, address는 폴더경로에 /까지
+		FileDTO dto = new FileDTO();
+		String folderaddress = "";
+		String newaddress = "";
+		for(int i = address_ref.size() - 1; i >= 0; i--) {
+			dto = (FileDTO)address_ref.get(i);
+			folderaddress += dto.getOrgname();
+			if(i != 0) {
+				newaddress += dto.getOrgname();
+				folderaddress += "/";
+			}
+			newaddress += "/";
+		}
+		newaddress += foldername;
+		dto.setFilename(foldername);
+		dto.setOrgname(foldername);
+		sqlSession.update("bengineer.changename", dto);
+		File orgfolder = new File("d:/PM/BEngineer/" + folderaddress);
+		File newfolder = new File("d:/PM/BEngineer/" + newaddress);
+		return orgfolder.renameTo(newfolder);
+	}
+	// 파일타입 확인용 리스트들
 	private static List image = new ArrayList();
 	private static List video = new ArrayList();
 	private static List music = new ArrayList();

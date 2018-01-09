@@ -19,7 +19,7 @@ public class MainBean {
 	public String main(HttpSession session) {
 		session.setAttribute("nickname", "test"); // 테스트용으로 임시 세션 등록
 		if(loginCheck(session)) {
-			return "redirect:/BEngineer/beMember/beLogin.do";
+			return "redirect:/beMember/beLogin.do";
 		}else {
 			return "beMain";
 		}

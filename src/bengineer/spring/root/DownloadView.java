@@ -25,7 +25,7 @@ public class DownloadView extends AbstractView{
 		
 		String fileName = java.net.URLEncoder.encode(file.getName(),"UTF-8");
 		
-		while(fileName.indexOf("+") > 0) { // URL형식상 띄어쓰기가 +로 바뀐 것 원상복구 
+		while(fileName.indexOf("+") >= 0) { // URL형식상 띄어쓰기가 +로 바뀐 것 원상복구 
 			int num = fileName.indexOf("+");
 			fileName = fileName.substring(0, num) + " " + fileName.substring(num + 1);
 		}

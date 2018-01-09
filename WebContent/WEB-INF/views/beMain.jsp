@@ -3,7 +3,7 @@
 <script type="text/javascript">
 $(function(){
 	$("#myfile").click(function(){
-		window.location = "/BEngineer/beFiles/beMyList.do";
+		window.location = "/BEngineer/beFiles/beMyList.do?folder=0";
 	});
 });
 $(function(){
