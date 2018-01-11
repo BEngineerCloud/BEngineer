@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+
 @Controller
 public class MainBean {
 	@Autowired
@@ -24,6 +25,14 @@ public class MainBean {
 			return "beMain";
 		}
 	}
+	
+	@RequestMapping("beMaintemp.do") // 메인페이지
+	public String beMaintemp(MemberDTO dto, HttpSession session) {
+		sqlSession.insert("bengineer.beChecknickname", dto);
+		session.setAttribute("id", dto.getId()); // 테스트용으로 임시 세션 등록
+		return "beMain";
+	}
+	
 	public static boolean loginCheck(HttpSession session) { // 로그인 체크용 메서드, 세션에 nickname 세션이 정상적으로 있지 않을 경우 true  
 		String id = (String)session.getAttribute("nickname");
 		return id == null || id.equals("null") || id.equals("");

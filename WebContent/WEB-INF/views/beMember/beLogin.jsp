@@ -31,22 +31,21 @@
 		</div>
 	</div>
 </div>
-<div id="NaverLogin" style="height:24%; width:100%; float:left;text-align:center">
- <%
-    String clientId = "y_lBHf8AUAN_aZPACmtg";//애플리케이션 클라이언트 아이디값";
-    String redirectURI = URLEncoder.encode("http://192.168.0.143/BEngineer/beMember/beCallback.do", "UTF-8");
-    SecureRandom random = new SecureRandom();
-    String state = new BigInteger(130, random).toString();
-    String apiURL = "https://nid.naver.com/oauth2.0/authorize?response_type=code";
-    apiURL += "&client_id=" + clientId;
-    apiURL += "&redirect_uri=" + redirectURI;
-    apiURL += "&state=" + state;
-    session.setAttribute("state", state);
- %>
- <a href="<%=apiURL%>"><img src="\BEngineer\image\naverLogin.PNG" style="width: 16%; height:27%"/></a>
-</div> 
-
-<div align="center" id="Bottom" style="height:15%; width:100%; float:left; background-color:#5f7f89;">
-</div>
-  </body>
+<div id="naverIdLogin" style="height:24%; width:100%; float:left;text-align:center"></div> 
+	<!-- 네이버아디디로로그인 초기화 Script -->
+	<script type="text/javascript">
+		var naverLogin = new naver.LoginWithNaverId(
+			{
+				clientId: "y_lBHf8AUAN_aZPACmtg",
+				callbackUrl: "http://192.168.0.143/BEngineer/beMember/beRequestprofile.do",
+				isPopup: false, /* 팝업을 통한 연동처리 여부 */
+				loginButton: {color: "green", type: 3, height: 60} /* 로그인 버튼의 타입을 지정 */
+			}
+		);
+	
+		/* 설정정보를 초기화하고 연동을 준비 */
+		naverLogin.init();
+	</script>
+<div align="center" id="Bottom" style="height:15%; width:100%; float:left; background-color:#5f7f89;"></div>
+</body>
 </html>
