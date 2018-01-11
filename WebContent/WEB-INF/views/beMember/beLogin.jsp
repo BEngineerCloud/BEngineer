@@ -36,8 +36,8 @@
 	<script type="text/javascript">
 		var naverLogin = new naver.LoginWithNaverId(
 			{
-				clientId: "y_lBHf8AUAN_aZPACmtg",
-				callbackUrl: "http://192.168.0.143/BEngineer/beMember/beRequestprofile.do",
+				clientId: "34hVzh3bD__JqK11Q4sG",
+				callbackUrl: "http://192.168.0.153/BEngineer/beMember/beRequestprofile.do",
 				isPopup: false, /* 팝업을 통한 연동처리 여부 */
 				loginButton: {color: "green", type: 3, height: 60} /* 로그인 버튼의 타입을 지정 */
 			}

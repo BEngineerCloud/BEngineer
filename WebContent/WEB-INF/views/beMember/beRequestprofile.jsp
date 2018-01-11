@@ -9,16 +9,16 @@
 	</head>
 	<body>	
 		<script type="text/javascript">
-			var naver_id_login = new naver_id_login("y_lBHf8AUAN_aZPACmtg", "http://192.168.0.11:7070/cop/bbs/naverOath.do");
+			var naver_id_login = new naver_id_login("34hVzh3bD__JqK11Q4sG", "http://192.168.0.11:7070/cop/bbs/naverOath.do");
   			
 			// 네이버 사용자 프로필 조회
   			naver_id_login.get_naver_userprofile("naverSignInCallback()");
 
   			// 네이버 사용자 프로필 조회 이후 프로필 정보를 처리할 callback function
 			function naverSignInCallback() {
-  				
 				var id = naver_id_login.getProfileData('id');
   				var email = naver_id_login.getProfileData('email');
+  				
   				var nickname = naver_id_login.getProfileData('nickname');
     			var birthday = naver_id_login.getProfileData('birthday');
     			var gender = naver_id_login.getProfileData('gender');  
