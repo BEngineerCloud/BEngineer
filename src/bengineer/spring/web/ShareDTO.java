@@ -3,7 +3,7 @@ package bengineer.spring.web;
 public class ShareDTO {
 	private int num;
 	private String share_key;
-	private String nickname;
+	private String id;
 	public int getNum() {
 		return num;
 	}
@@ -16,10 +16,10 @@ public class ShareDTO {
 	public void setShare_key(String share_key) {
 		this.share_key = share_key;
 	}
-	public String getNickname() {
-		return nickname;
+	public String getId() {
+		return id;
 	}
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setId(String id) {
+		this.id = id;
 	}
 }

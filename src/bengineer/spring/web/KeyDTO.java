@@ -1,11 +1,11 @@
 package bengineer.spring.web;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class KeyDTO {
 	private String share_key;
 	private int filenum;
-	private Date enddate;
+	private Timestamp enddate;
 	private int rw;
 	public String getShare_key() {
 		return share_key;
@@ -19,10 +19,10 @@ public class KeyDTO {
 	public void setFilenum(int filenum) {
 		this.filenum = filenum;
 	}
-	public Date getEnddate() {
+	public Timestamp getEnddate() {
 		return enddate;
 	}
-	public void setEnddate(Date enddate) {
+	public void setEnddate(Timestamp enddate) {
 		this.enddate = enddate;
 	}
 	public int getRw() {

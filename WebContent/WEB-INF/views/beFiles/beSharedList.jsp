@@ -270,7 +270,7 @@
 		<c:set var="num" value="${num + 1 }" />
 	</c:forEach>
 	<!-- 선택파일 보여주기용 -->
-	<font id="filename"></font><c:if test="${folder_ref != 0 }">${enddate }까지 <c:if test="${write }">쓰기</c:if><c:if test="${!write }">읽기</c:if> 가능</c:if>
+	<font id="filename"></font><c:if test="${folder_ref != 0 }">  (${enddate }까지 <c:if test="${write }">쓰기</c:if><c:if test="${!write }">읽기</c:if> 가능)</c:if>
 </div>
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>
