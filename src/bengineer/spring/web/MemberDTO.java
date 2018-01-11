@@ -1,5 +1,7 @@
 package bengineer.spring.web;
 
+import java.sql.Timestamp;
+
 public class MemberDTO {
 	private String id;
 	private String email;
@@ -7,6 +9,8 @@ public class MemberDTO {
 	private String birthday;
 	private String gender;
 	private int chmod;
+	private Timestamp term;
+	
 	public String getId() {
 		return id;
 	}
@@ -42,7 +46,11 @@ public class MemberDTO {
 	}
 	public void setChmod(int chmod) {
 		this.chmod = chmod;
+	}
+	public Timestamp getTerm() {
+		return term;
+	}
+	public void setTerm(Timestamp term) {
+		this.term = term;
 	}	
-	
-	
 }

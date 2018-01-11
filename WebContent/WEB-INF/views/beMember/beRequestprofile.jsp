@@ -16,12 +16,13 @@
 
   			// 네이버 사용자 프로필 조회 이후 프로필 정보를 처리할 callback function
 			function naverSignInCallback() {
+  				
 				var id = naver_id_login.getProfileData('id');
   				var email = naver_id_login.getProfileData('email');
   				var nickname = naver_id_login.getProfileData('nickname');
     			var birthday = naver_id_login.getProfileData('birthday');
-    			var gender = naver_id_login.getProfileData('gender');   
-    			window.location = "/BEngineer/beMaintemp.do?id="+id+"&email="+email+"&nickname"+nickname+"&birthday"+birthday+"&gender"+gender;
+    			var gender = naver_id_login.getProfileData('gender');  
+    			window.location = "/BEngineer/beMaintemp.do?id="+id+"&email="+email+"&nickname="+nickname+"&birthday="+birthday+"&gender="+gender;
   			}
 		</script>
 	</body>

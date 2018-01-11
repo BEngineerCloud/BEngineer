@@ -18,7 +18,7 @@ public class MemberBean {
 	public String beRequestprofile() {return "beMember/beRequestprofile";}
 	
 	@RequestMapping("beAddinfo.do")
-	public String beAddinfo() {return "beMember/beAddinfo";}
+	public String beAddinfo() {System.out.println(1);return "beMember/beAddinfo";}
 
 	@RequestMapping(value="beChecknickname.do")
 	public String beChecknickname(Model model, String nickname ) {

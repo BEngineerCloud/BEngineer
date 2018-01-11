@@ -6,7 +6,11 @@
 		select count(*) from bemember where nickname=#{nickname}
 	</select>
 	
+	<select id="beChecklogin" resultType="int" parameterType="string">
+		select count(*) from bemember where id=#{id}
+	</select>
+	
 	<select id="beInsertmember" parameterType="MemberDTO">
-		insert into bemember values(#{id},#{email},#{nickname},#{birthday},#{gender},'일반회원')
+		insert into bemember(id,email,nickname,birthday,gender,chmod) values(#{id},#{email},#{nickname},#{birthday},#{gender},2)
 	</select>
 </mapper>

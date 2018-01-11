@@ -16,6 +16,19 @@ $(function(){
 		window.location = "/BEngineer/beMain.do";
 	});
 });
+
+$(function(){
+	$("#addinfodiv > #addinfo").click(function(){
+		window.location = "/BEngineer/beMember/beAddinfo.do";
+	});
+});
+
+$(function(){
+	$("#logoutdiv > #logout").click(function(){
+		window.location = "/BEngineer/beLogout.do";
+	})
+})
+
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;">
@@ -24,8 +37,17 @@ $(function(){
 <div id="search" style="height:10%; width:70%; background-color:#99ff99; float:left;">
 	search
 </div>
-<div id="logout" style="height:10%; width:15%; background-color:#9999ff; float:left;">
-	logout
+<div align="center" id="logout" style="height:10%; width:15%;float:left;">
+	<div style="height:30%; width:100%;float:left;  margin-top: 3%"> 
+		<font size="4">'${sessionScope.nickname}' 님 환영합니다.</font>
+	</div>
+	<div align="right" id="addinfodiv" style="height:70%; width:50%;float:left; margin-top: 3%">
+		<input type="button" id="addinfo" style="height:61%; border-color: black; background-color:#FFFFFF; font-size:11pt"value="회원정보 관리"/>
+	</div>
+	<div align="left"id="logoutdiv" style="height:70%; width:50%;float:left; margin-top: 3%">
+		&emsp;
+		<input type="button" id="logout" style="height:61%; border-color: black; background-color:#FFFFFF; font-size:11pt"value="로그아웃"/>
+	</div>
 </div>
 <div id="button1" style="height:5%; width:100%; background-color:#ffff99; float:left;">
 	button1
