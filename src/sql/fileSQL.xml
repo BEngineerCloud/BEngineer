@@ -5,8 +5,8 @@
 	<select id="getref" resultType="int" parameterType="fileDTO">
 		select num from BEfilelist where filename = #{filename} and folder_ref = #{folder_ref}
 	</select>
-	<select id="myfile" resultType="fileDTO" parameterType="fileDTO">
-		select * from BEfilelist where owner = #{owner} and folder_ref = #{folder_ref} order by filetype desc, filename asc
+	<select id="getfiles" resultType="fileDTO" parameterType="int">
+		select * from BEfilelist where folder_ref = #{folder_ref} order by filetype desc, filename asc
 	</select>
 	<insert id="makedir" parameterType="fileDTO">
 		insert into BEfilelist(num,folder_ref,filename,orgname,filetype,uploaddate,updatedate,owner) values(BEfilelist_seq.NEXTVAL, #{folder_ref}, #{filename}, #{filename}, 'dir', sysdate, sysdate, #{owner})
@@ -18,30 +18,33 @@
 		insert into BEfilelist(num, folder_ref, filename, orgname, filetype, filesize, uploaddate, updatedate, owner) values(BEfilelist_seq.NEXTVAL, #{folder_ref}, #{filename}, #{orgname}, #{filetype}, #{filesize}, sysdate, sysdate, #{owner})
 	</insert>
 	<update id="changename" parameterType="fileDTO">
-		update BEfilelist set filename = #{filename}, orgname = #{orgname} where num = #{num}
+		update BEfilelist set filename = #{filename}, orgname = #{orgname}, updatedate = sysdate where num = #{num}
 	</update>
 	<select id="checksharekey" resultType="int" parameterType="String">
 		select count(*) from BEkeylist where share_key = #{code}
 	</select>
-	<select id="getchmod" resultType="int" parameterType="powerDTO">
-		select chmod from BEpowerlist where term = #{term} and randw = #{randw}
-	</select>
-	<select id="chmodcheck" resultType="int" parameterType="powerDTO">
-		select count(*) from BEpowerlist where term = #{term} and randw = #{randw}
-	</select>
-	<insert id="setchmod" parameterType="powerDTO">
-		insert into BEpowerlist(chmod, term, randw) values(BEpowerlist_seq.NEXTVAL, #{term}, #{randw})
-	</insert>
-	<insert id="sharefile" parameterType="keyDTO">
-		insert into BEkeylist(share_key, filenum, chmod) values(#{share_key}, #{filenum}, #{chmod})
-	</insert>
-	<select id="keycheck" parameterType="keyDTO" resultType="String">
-		select share_key from BEkeylist where filenum = #{filenum} and chmod = #{chmod}
-	</select>
-	<select id="getchmod2" parameterType="String" resultType="int">
-		select chmod from BEkeylist where share_key = #{share_key}
+	<update id="hit" parameterType="int">
+		update BEfilelist set hitcount = hitcount + 1 where num = #{file_ref}
+	</update>
+	<update id="updatefile" parameterType="fileDTO">
+		update BEfilelist set filename = #{filename}, filesize = #{filesize}, updatedate = sysdate where folder_ref = #{folder_ref} and orgname = #{orgname}
+	</update>
+	<select id="open" parameterType="string" resultType="keyDTO">
+		select * from BEkeylist where share_key = #{share_key}
 	</select>
 	<insert id="getsharedfile" parameterType="shareDTO">
-		insert into BEsharelist(num,share_key,chmod,nickname) values(BEsharelist_seq.NEXTVAL, #{share_key}, #{chmod}, #{nickname})
+		insert into BEsharelist(num, share_key, nickname) values(BEsharelist_seq.NEXTVAL, #{share_key}, #{nickname})
 	</insert>
+	<select id="keycheck" parameterType="keyDTO" resultType="string">
+		select share_key from BEkeylist where filenum = #{filenum} and enddate = #{enddate} and rw = #{rw}
+	</select>
+	<insert id="insertkey" parameterType="keyDTO">
+		insert into BEkeylist(share_key, filenum, enddate, rw) values(#{share_key}, #{filenum}, #{enddate}, #{rw})
+	</insert>
+	<select id="getkey" parameterType="shareDTO" resultType="keyDTO">
+		select b.share_key share_key, b.filenum filenum, b.enddate enddate, b.rw rw from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.nickname = #{nickname} and b.filenum = #{num} and b.enddate >= sysdate
+	</select>
+	<select id="mysharedfile" parameterType="string" resultType="fileDTO">
+		select * from BEfilelist where num in (select b.filenum from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.nickname = #{nickname} and b.enddate >= sysdate)
+	</select>
 </mapper>

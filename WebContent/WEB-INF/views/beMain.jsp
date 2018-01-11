@@ -7,6 +7,11 @@ $(function(){
 	});
 });
 $(function(){
+	$("#mysharedfile").click(function(){
+		window.location = "/BEngineer/beFiles/beSharedList.do?folder=0";
+	});
+});
+$(function(){
 	$("#beLogo").click(function(){
 		window.location = "/BEngineer/beMain.do";
 	});
@@ -29,7 +34,8 @@ $(function(){
 	address
 </div>
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
-	<input type="button" id="myfile" value="내 파일보기"/>
+	<input type="button" id="myfile" value="내 파일"/>
+	<input type="button" id="mysharedfile" value="공유 파일"/>
 	button2
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">

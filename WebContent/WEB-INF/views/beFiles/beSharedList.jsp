@@ -20,7 +20,7 @@
 			var filename = $(this).text();
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
-				window.location = "/BEngineer/beFiles/beMyList.do?folder=" + $(this).attr("name");
+				window.location = "/BEngineer/beFiles/beSharedList.do?folder=" + $(this).attr("name");
 			}
 			if(type.value != "dir"){ // 파일일 때 해당 파일 다운로드
 				window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + $(this).attr("name");
@@ -188,11 +188,6 @@
 			form = document.getElementById("changenameform"); // 폴더생성 폼
 			form.name.type = "hidden";
 			form.submitchangename.type = "hidden";
-			form = document.getElementById("shareform");
-			form.enddate.type = "hidden";
-			form.rw.hidden = true;
-			form.submitshare.type = "hidden";
-			document.getElementById("text").type = "hidden";
 		}
 		function setForm(filename, ref){
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
@@ -259,23 +254,6 @@
 				<input type="hidden" name="submitchangename" />
 			</form>
 		</div>
-		<!-- 공유 폼 -->
-		<div style="height:5%; width:relative; margin:0; float:left;">
-			<div style="height:100%; width:relative; margin-top:5; float:left;">
-				<input type="hidden" id="text" style="background-color:transparent; border:0px; text-color:black; width:70px;" value="공유 기한 : " disabled/>
-			</div>
-			<div style="height:100%; width:relative; margin:0; float:left;">
-				<form action="/BEngineer/beFiles/shareFile.do" id="shareform" method="post">
-					<input type="hidden" name="ref" />
-					<input type="hidden" name="enddate" />
-					<select name="rw" hidden style="height:25px;">
-						<option value="0">보기만 허용</option>
-						<option value="1">쓰기도 허용</option>
-					</select>
-					<input type="hidden" name="submitshare" value="공유하기"/>
-				</form>
-			</div>
-		</div>
 	</c:if>
 	button1
 </div>
@@ -284,7 +262,7 @@
 	<!-- 폴더경로 보여주기 -->
 	<c:forEach var="addr" items="${folderaddress }">
 		<c:if test="${orgaddress[num] != null }">
-			<a href="/BEngineer/beFiles/beMyList.do?folder=${orgaddress[num] }">${addr }</a> /
+			<a href="/BEngineer/beFiles/beSharedList.do?folder=${orgaddress[num] }">${addr }</a> /
 		</c:if>
 		<c:if test="${orgaddress[num] == null }">
 			${folderaddress[num] } /
@@ -292,7 +270,7 @@
 		<c:set var="num" value="${num + 1 }" />
 	</c:forEach>
 	<!-- 선택파일 보여주기용 -->
-	<font id="filename"></font>
+	<font id="filename"></font><c:if test="${folder_ref != 0 }">${enddate }까지 <c:if test="${write }">쓰기</c:if><c:if test="${!write }">읽기</c:if> 가능</c:if>
 </div>
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>

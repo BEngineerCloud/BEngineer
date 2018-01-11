@@ -7,7 +7,6 @@
 		<typeAlias type="bengineer.spring.web.FileDTO"  alias="fileDTO"    />
 		<typeAlias type="bengineer.spring.web.MemberDTO"  alias="memberDTO"    />
 		<typeAlias type="bengineer.spring.web.KeyDTO"  alias="keyDTO"    />
-		<typeAlias type="bengineer.spring.web.PowerDTO"  alias="powerDTO"    />
 		<typeAlias type="bengineer.spring.web.ShareDTO"  alias="shareDTO"    />
 	</typeAliases>
 	<mappers>
