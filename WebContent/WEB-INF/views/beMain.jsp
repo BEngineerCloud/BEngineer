@@ -26,8 +26,8 @@ $(function(){
 $(function(){
 	$("#logoutdiv > #logout").click(function(){
 		window.location = "/BEngineer/beLogout.do";
-	})
-})
+	});
+});
 
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">

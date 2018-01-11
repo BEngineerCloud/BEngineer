@@ -42,6 +42,18 @@
 			window.location = "/BEngineer/beMain.do";
 		});
 	});
+	$(function(){
+		$("#addinfodiv > #addinfo").click(function(){
+			window.location = "/BEngineer/beMember/beAddinfo.do";
+		});
+	});
+
+	$(function(){
+		$("#logoutdiv > #logout").click(function(){
+			window.location = "/BEngineer/beLogout.do";
+		});
+	});
+
 </script>
 <c:if test="${write }"><!-- 쓰기권한이 있을 때 -->
 	<script type="text/javascript">
@@ -229,7 +241,16 @@
 	search
 </div>
 <div id="logout" style="height:10%; width:15%; background-color:#9999ff; float:left;">
-	logout
+	<div style="height:30%; width:100%;float:left;  margin-top: 3%"> 
+		<font size="4">'${sessionScope.nickname}' 님 환영합니다.</font>
+	</div>
+	<div align="right" id="addinfodiv" style="height:70%; width:50%;float:left; margin-top: 3%">
+		<input type="button" id="addinfo" style="height:61%; border-color: black; background-color:#FFFFFF; font-size:11pt"value="회원정보 관리"/>
+	</div>
+	<div align="left"id="logoutdiv" style="height:70%; width:50%;float:left; margin-top: 3%">
+		&emsp;
+		<input type="button" id="logout" style="height:61%; border-color: black; background-color:#FFFFFF; font-size:11pt"value="로그아웃"/>
+	</div>
 </div>
 <div id="button1" style="height:5%; width:100%; background-color:#ffff99; float:left;">
 	<c:if test="${write }"><!-- 쓰기권한이 있을 때 -->
@@ -302,7 +323,7 @@
 <!-- 파일들 창 -->
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
 	<c:forEach var="file" items="${list }">
-		<div class="file" name="${file.num }" style="height:10%; width:10%; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.filename }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>

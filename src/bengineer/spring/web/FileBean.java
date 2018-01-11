@@ -449,6 +449,7 @@ public class FileBean {
 	}
 	private List getAddr(List address, int folder_ref) { // 폴더 실 주소 확인을 위한 메서드
 		FileDTO folder = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder_ref);
+		if(folder == null) {return null;}
 		address.add(folder);
 		folder_ref = folder.getFolder_ref();
 		if(folder_ref == 0) {
@@ -463,6 +464,7 @@ public class FileBean {
 	}
 	private List getShareAddr(List address, int folder_ref, String id) { // 폴더 실 주소 확인을 위한 메서드
 		FileDTO folder = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder_ref);
+		if(folder == null) {return null;}
 		address.add(folder);
 		ShareDTO sdto = new ShareDTO();
 		sdto.setId(id);
