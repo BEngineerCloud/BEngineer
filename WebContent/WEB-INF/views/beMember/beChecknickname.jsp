@@ -53,7 +53,8 @@
 <script type="text/javascript">
 $(function(){
 	$("#useNickname").click(function(){
-			$("#nickname",opener.document).val("${nickname }"); // jQuery 방식 1
+			$("#nickname",opener.document).val("${nickname}"); 
+			$("#checkConfirmnickname",opener.document).val("true");  
 			self.close();
 			
 	});
