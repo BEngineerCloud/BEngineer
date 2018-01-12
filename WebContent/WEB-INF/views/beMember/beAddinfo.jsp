@@ -28,6 +28,14 @@ $(function(){
 			
 	});
 	
+	
+	$("#nickname").keydown(function(){
+		$("#confirmNickname").prop("disabled",true);
+		var nickname = $("#nickname").val();
+		if(nickname.length>1 && nickname.length<11)
+			$("#confirmNickname").prop("disabled",false);
+	});
+	
 	$("#beAddinfo").validate({
 		rules:{
 			nickname:{required:true, rangelength:[2,10]}
