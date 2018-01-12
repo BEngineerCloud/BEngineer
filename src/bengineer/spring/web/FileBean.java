@@ -341,7 +341,13 @@ public class FileBean {
 		List address_ref = getAddr(ref);
 		if(changeDirName(name, address_ref)) { // 폴더 생성 완료시
 			model.addAttribute("alert", "폴더명 변경 완료");
-			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+			FileDTO dto = (FileDTO)address_ref.get(0);
+			String owner = dto.getOwner();
+			if(owner.equals(session.getAttribute("id"))) {
+				model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+			}else {
+				model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+			}
 			return "beFiles/alert";
 		}else { // 폴더생성 오류시
 			model.addAttribute("alert", "폴더의 이름을 변경하는 도충 오류가 발생했습니다.");
@@ -362,7 +368,12 @@ public class FileBean {
 		dto.setFilename(name);
 		sqlSession.update("bengineer.changename", dto);
 		model.addAttribute("alert", "파일명 변경 완료");
-		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+		String owner = dto.getOwner();
+		if(owner.equals(session.getAttribute("id"))) {
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+		}else {
+			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+		}
 		return "beFiles/alert";
 	}
 	@RequestMapping("shareFile.do")

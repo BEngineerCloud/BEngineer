@@ -240,7 +240,7 @@
 <div id="search" style="height:10%; width:70%; background-color:#99ff99; float:left;">
 	search
 </div>
-<div id="logout" style="height:10%; width:15%; background-color:#9999ff; float:left;">
+<div align="center" id="logout" style="height:10%; width:15%;float:left;">
 	<div style="height:30%; width:100%;float:left;  margin-top: 3%"> 
 		<font size="4">'${sessionScope.nickname}' 님 환영합니다.</font>
 	</div>
@@ -321,7 +321,7 @@
 	button2
 </div>
 <!-- 파일들 창 -->
-<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
+<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
 		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.filename }type" value="${file.filetype }"/>
