@@ -10,6 +10,10 @@
 		select count(*) from bemember where id=#{id}
 	</select>
 	
+	<select id="beSelectmember" resultType="MemberDTO" parameterType="string">
+		select * from bemember where id=#{id}
+	</select>
+	
 	<select id="beInsertmember" parameterType="MemberDTO">
 		insert into bemember(id,email,nickname,birthday,gender,chmod) values(#{id},#{email},#{nickname},#{birthday},#{gender},2)
 	</select>

@@ -47,7 +47,7 @@ $(function(){
 		</div>
 		<div id="Addcontents4" style="height:100%; width:65%; float:left;">
 			<div style="height:20%; width:100%; float:left; ">
-				<font size="4">이메일 아이디</font><br/><br/><hr color="black"><br/>
+				<font size="4">${memberDTO.email}</font><br/><br/><hr color="black"><br/>
 			</div>
 			<div style="height:20%; width:100%; float:left; margin-top: 10.7%">
 				<input type="text" id="nickname" style="border-color:black; width:70%; height:65%"/>

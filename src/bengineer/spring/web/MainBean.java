@@ -27,7 +27,7 @@ public class MainBean {
 	}
 	
 	@RequestMapping(value="beMaintemp.do") // 메인페이지
-	public String beMaintemp(MemberDTO dto, HttpSession session) {
+	public String beMaintemp(MemberDTO dto, HttpSession session, Model model) {
 		Integer check = (Integer)sqlSession.selectOne("bengineer.beChecklogin",dto.getId());
 		if(check!=1) {
 			sqlSession.insert("bengineer.beInsertmember", dto);

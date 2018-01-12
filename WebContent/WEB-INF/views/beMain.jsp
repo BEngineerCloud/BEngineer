@@ -19,7 +19,7 @@ $(function(){
 
 $(function(){
 	$("#addinfodiv > #addinfo").click(function(){
-		window.location = "/BEngineer/beMember/beAddinfo.do";
+		window.location = "/BEngineer/beMember/beAddinfo.do?;
 	});
 });
 

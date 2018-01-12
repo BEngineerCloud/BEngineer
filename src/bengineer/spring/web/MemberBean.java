@@ -1,5 +1,7 @@
 package bengineer.spring.web;
 
+import javax.servlet.http.HttpSession;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,7 +20,11 @@ public class MemberBean {
 	public String beRequestprofile() {return "beMember/beRequestprofile";}
 	
 	@RequestMapping("beAddinfo.do")
-	public String beAddinfo() {return "beMember/beAddinfo";}
+	public String beAddinfo(Model model,HttpSession session) {
+		MemberDTO memberDTO = (MemberDTO)sqlSession.selectOne("bengineer.beSelectmember", session.getAttribute("id"));
+		model.addAttribute("memberDTO",memberDTO);
+		return "beMember/beAddinfo";
+	}
 
 	@RequestMapping(value="beChecknickname.do")
 	public String beChecknickname(Model model, String nickname ) {
