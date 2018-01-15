@@ -14,8 +14,11 @@
 		select * from bemember where id=#{id}
 	</select>
 	
-	<select id="beInsertmember" parameterType="MemberDTO">
+	<insert id="beInsertmember" parameterType="MemberDTO">
 		insert into bemember(id,email,nickname,birthday,gender,chmod) values(#{id},#{email},#{nickname},#{birthday},#{gender},2)
-	</select>
-
+	</insert>
+	
+	<update id="beUpdatenickname" parameterType="MemberDTO">
+		update bemember set nickname = #{nickname} where id=#{id}
+	</update>
 </mapper>

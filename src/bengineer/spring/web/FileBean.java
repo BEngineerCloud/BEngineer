@@ -1,6 +1,8 @@
 package bengineer.spring.web;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Date;
@@ -11,6 +13,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -297,19 +300,41 @@ public class FileBean {
 		}
 	}
 	@RequestMapping("beDownload.do") // 파일 다운로드
-	public ModelAndView download(int file_ref) {
-		List address_ref = getAddr(file_ref);
+	public ModelAndView download(String file_ref, HttpSession session) {
+		String [] files = file_ref.split(",");
 		String fileaddress = "";
-		FileDTO dto = new FileDTO();
-		for(int i = address_ref.size() - 1; i >= 0; i--) {
-			dto = (FileDTO)address_ref.get(i);
-			fileaddress += dto.getOrgname();
-			if(i != 0) {
-				fileaddress += "/";
+		File file = null;
+		if(files.length == 1) {
+			int filenum = Integer.parseInt(files[0]);
+			List address_ref = getAddr(filenum);
+			FileDTO dto = new FileDTO();
+			for(int i = address_ref.size() - 1; i >= 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				fileaddress += dto.getOrgname();
+				if(i != 0) {
+					fileaddress += "/";
+				}
 			}
+			fileaddress = "d:/PM/BEngineer/" + fileaddress;
+			if(dto.getFiletype().equals("dir")) {
+				
+			}else {
+				file = new File(fileaddress);
+			}
+			sqlSession.update("bengineer.hit", file_ref);
+		}else if(files.length > 1) {
+			String path = "d://PM/BEngineer/";
+			int size = 1024;
+			String id = (String)session.getAttribute("id");
+			path += id;
+			
+		}else {
+			ModelAndView mav = new ModelAndView();
+			mav.setViewName("beFiles/alert");
+			mav.addObject("alert", "유효하지 않은 접근입니다.");
+			mav.addObject("location", "history.go(-1)");
+			return mav;
 		}
-		File file = new File("d:/PM/BEngineer/" + fileaddress);
-		sqlSession.update("bengineer.hit", file_ref);
 		ModelAndView mv = new ModelAndView("download","downloadFile",file);
 		return mv;
 	}
@@ -592,5 +617,18 @@ public class FileBean {
 			result = "none";
 		}
 		return result;
+	}
+	private File zipFiles(String zipPath, List files) { // 파일들 압축용 메서드 zipPath 압축파일을 만들 실제 경로, 압축할 파일들의 실제 경로 
+		int size = 1024;
+		byte[] buf = new byte[size];
+		FileInputStream fis = null;
+		ZipArchiveOutputStream zos = null;
+		BufferedInputStream bis = null;
+		File file = null;
+		try {
+		}catch(Exception e){
+			
+		}
+		return file;
 	}
 }

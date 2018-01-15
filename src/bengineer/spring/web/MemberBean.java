@@ -29,6 +29,15 @@ public class MemberBean {
 		model.addAttribute("memberDTO",memberDTO);
 		return "beMember/beAddinfo";
 	}
+	
+	@RequestMapping("beAddinfopro.do")
+	public String beAddinfopro(String nickname, HttpSession session) {
+		MemberDTO memberDTO = (MemberDTO)sqlSession.selectOne("bengineer.beSelectmember", session.getAttribute("id"));
+		memberDTO.setNickname(nickname);
+		sqlSession.update("bengineer.beUpdatenickname", memberDTO);
+		session.setAttribute("nickname", memberDTO.getNickname());
+		return "beMember/beAddinfopro";
+	}
 
 	@RequestMapping(value="beChecknickname.do")
 	public String beChecknickname(Model model, String nickname ) {
