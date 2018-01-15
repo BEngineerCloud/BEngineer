@@ -1,8 +1,12 @@
 package bengineer.spring.web;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Date;
@@ -13,6 +17,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -601,7 +606,7 @@ public class FileBean {
 		image.add(".tiff");
 		etc.add(".ttf");
 	}
-	private String checkFile(String filetype) { // 파일타입 확인용 메서드
+	public String checkFile(String filetype) { // 파일타입 확인용 메서드
 		String result = null;
 		if(image.contains(filetype)) {
 			result = "image";
@@ -618,16 +623,42 @@ public class FileBean {
 		}
 		return result;
 	}
-	private File zipFiles(String zipPath, List files) { // 파일들 압축용 메서드 zipPath 압축파일을 만들 실제 경로, 압축할 파일들의 실제 경로 
+	private File zipFiles(String path, String zipName, List files) { // 파일들 압축용 메서드 path는 압축파일을 만들 실제 경로, files는 압축할 파일들의 path 기준의 상대 경로 
 		int size = 1024;
 		byte[] buf = new byte[size];
 		FileInputStream fis = null;
+		FileOutputStream fos = null;
 		ZipArchiveOutputStream zos = null;
 		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
 		File file = null;
 		try {
+			fos = new FileOutputStream(path + zipName);
+			bos = new BufferedOutputStream(fos);
+			zos = new ZipArchiveOutputStream(bos);
+			for(int i = 0; i < files.size(); i++) {
+				zos.setEncoding("UTF-8");
+				fis = new FileInputStream(path + files.get(i));
+				bis = new BufferedInputStream(fis, size);
+				zos.putArchiveEntry(new ZipArchiveEntry((String)files.get(i)));
+				for(int j = 0; j != -1; j = bis.read(buf, 0, size)) {
+					zos.write(buf, 0, j);
+				}
+				bis.close();
+				fis.close();
+				zos.closeArchiveEntry();
+			}
+			zos.close();
+			bos.close();
+			fos.close();
 		}catch(Exception e){
-			
+			e.printStackTrace();
+		}finally {
+			if(bis != null) {try{bis.close();}catch(IOException i) {}}
+			if(fis != null) {try{fis.close();}catch(IOException i) {}}
+			if(zos != null) {try{zos.close();}catch(IOException i) {}}
+			if(bos != null) {try{bos.close();}catch(IOException i) {}}
+			if(fos != null) {try{fos.close();}catch(IOException i) {}}
 		}
 		return file;
 	}
