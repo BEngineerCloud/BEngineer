@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="board">	<!-- board = bengineer.spring.board.BoardDTO -->
+	<!-- 공지사항 작성-->
+	<insert id="write" parameterType="board">
+		insert into beboard(num,title,content,id)
+		values(sequence_BEboard.nextval,#{title},#{content},#{id})
+	</insert>
+	<!-- 공지사항 목록-->
+	<select id="List" resultType="board">
+		select * from beboard
+	</select>
+ 	<!-- 공지사항을 수정하기위해 해당 게시글 불러옴 -->
+	<select id="read" parameterType="int" resultType="board">
+		select * from beboard where num=#{num}
+	</select>
+	<!-- 공지사항 수정-->
+	<update id="updateBoard" parameterType="board">
+  		update  beboard set
+  		title = #{title},
+        content = #{content}
+        where num = #{num}
+  	</update>
+	<!-- 공지사항 삭제 -->
+	<delete id="deleteBoard" parameterType="board">
+		delete from beboard 
+		where num=#{num}
+	</delete>
+	<!-- 문의하기  -->
+	<insert id="inquiry" parameterType="bengineer.spring.board.InquiryDTO">
+		insert into BEinquiry(num,title,content,id)
+		values(sequence_BEinquiry.nextval,#{title},#{content},#{id})
+	</insert>
+			<!-- 
+		insert into BEinquiry(num,title,content,id)
+		values(sequence_BEinquiry.nextval,#{title},#{content},#{id})
+		 -->
+	<!-- 문의 목록 -->
+	<select id="inList" resultType="bengineer.spring.board.InquiryDTO">
+		select * from BEinquiry where id=#{id}
+	</select>
+	<!-- 문의 답변 -->
+	<update id="reply" parameterType="bengineer.spring.board.InquiryDTO">
+  		update  BEinquiry set
+		reply=#{reply}
+		where num = #{num}
+  	</update>
+	
+</mapper>

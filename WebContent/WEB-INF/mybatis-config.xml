@@ -8,9 +8,13 @@
 		<typeAlias type="bengineer.spring.web.MemberDTO"  alias="memberDTO"    />
 		<typeAlias type="bengineer.spring.web.KeyDTO"  alias="keyDTO"    />
 		<typeAlias type="bengineer.spring.web.ShareDTO"  alias="shareDTO"    />
+		<typeAlias type="bengineer.spring.manager.ManagerDTO"  alias="manager"/>
+		<typeAlias type="bengineer.spring.board.BoardDTO"  alias="board"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="/sql/fileSQL.xml"/>
 		<mapper resource="/sql/memberSQL.xml"/>
+		<mapper resource="/sql/managerSQL.xml"/>
+		<mapper resource="/sql/boardSQL.xml"/>
 	</mappers>
 </configuration>

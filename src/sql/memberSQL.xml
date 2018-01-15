@@ -17,4 +17,5 @@
 	<select id="beInsertmember" parameterType="MemberDTO">
 		insert into bemember(id,email,nickname,birthday,gender,chmod) values(#{id},#{email},#{nickname},#{birthday},#{gender},2)
 	</select>
+
 </mapper>

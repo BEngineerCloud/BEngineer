@@ -65,5 +65,8 @@ $(function(){
 </div>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
 	etc
+		<a href="/BEngineer/inquiry/inList.do?id=<%=session.getAttribute("Id")%>">문의내역</a>
+        <a href="/BEngineer/beMember/beboard.do?id=<%=session.getAttribute("Id")%>">공지사항</a>
+        <a href="">사이트맵</a>
 </div>
 </body>

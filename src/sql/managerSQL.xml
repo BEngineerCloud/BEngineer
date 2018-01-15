@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="manager">
+	
+	<select id="loginCheck" resultType="int" parameterType="bengineer.spring.manager.ManagerDTO">
+		select count(*)
+		from manager 
+		where id=#{id} and pw=#{pw}
+	</select>
+	
+	<!-- 제제받을 멤버검색  
+	<select id="impose" resultType="bengineer.spring.member.MemberDTO" parameterType="string">
+		select *
+		from bemember 
+		where email=#{email}
+	</select> -->
+	<!-- 
+	<update id="impose" parameterType="bengineer.spring.web.MemberDTO">
+  		update  bemember set
+  		chmod = #{chmod}
+        where email = #{email}
+  	</update>
+	 -->
+	 <insert id="impose" parameterType="bengineer.spring.manager.ImposeDTO">
+  		insert into beimpose(email,term,startDay,endDay)
+		values(#{email},#{term},sysdate,sysdate+#{term})
+  	</insert>
+</mapper>
