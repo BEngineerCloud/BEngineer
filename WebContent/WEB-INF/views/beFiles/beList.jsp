@@ -271,6 +271,13 @@
 				<input type="submit" value="폴더 생성" />
 			</form>
 		</div>
+		<!-- 폴더 자동정리 폼 -->
+		<div style="height:5%; width:relative; margin:0; float:left;">
+			<form action="/BEngineer/beFiles/autoArrangefile.do" id="autoarrangeform" method="post">
+				<input type="hidden" name="folder" value="${folder_ref }" />
+				<input type="submit" value="파일 자동정리" />
+			</form>
+		</div>
 		<!-- 폴더명 변경 폼 -->
 		<div style="height:5%; width:relative; margin:0; float:left;">
 			<form id="changenameform" method="post">
