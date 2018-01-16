@@ -21,4 +21,13 @@
 	<update id="beUpdatenickname" parameterType="MemberDTO">
 		update bemember set nickname = #{nickname} where id=#{id}
 	</update>
+
+	<select id="imposeMember" resultType="int">
+		<![CDATA[
+		SELECT count(*) FROM beimpose e, bemember m
+		WHERE e.email = m.email
+		and e.email in (select email from beimpose where sysdate < endDay and email=${email})
+		]]>
+	</select>
+
 </mapper>

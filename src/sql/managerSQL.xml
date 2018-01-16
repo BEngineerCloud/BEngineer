@@ -4,28 +4,58 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="manager">
-	
+		<!-- 로그인체크 -->
 	<select id="loginCheck" resultType="int" parameterType="bengineer.spring.manager.ManagerDTO">
 		select count(*)
 		from manager 
 		where id=#{id} and pw=#{pw}
 	</select>
 	
-	<!-- 제제받을 멤버검색  
-	<select id="impose" resultType="bengineer.spring.member.MemberDTO" parameterType="string">
-		select *
-		from bemember 
+	<!-- 이미 제제한 유저가 있는지 -->
+	<select id="check" resultType="int" parameterType="bengineer.spring.manager.ImposeDTO">
+		select count(*)
+		from beimpose
 		where email=#{email}
-	</select> -->
-	<!-- 
-	<update id="impose" parameterType="bengineer.spring.web.MemberDTO">
-  		update  bemember set
-  		chmod = #{chmod}
-        where email = #{email}
+	</select>
+	 
+	 <!-- 새로운 유저 제제하기 //무결성때문-->
+	 <insert id="insert" parameterType="bengineer.spring.manager.ImposeDTO">
+  		insert into beimpose(email,term,cause,startDay,endDay)
+		values(#{email},#{term},#{cause},sysdate,sysdate+#{term})
+  	</insert>
+  	<!-- 제제햇던 유저 제제하기//무결성때문 -->
+  	<update id="update" parameterType="bengineer.spring.manager.ImposeDTO">
+  		update  beimpose set
+		term=#{term},
+		cause=#{cause},
+		startDay=sysdate,
+		endDay=sysdate+#{term}
+		where email = #{email}
   	</update>
-	 -->
+  	
+  	<!-- 전체 문의목록 -->
+  	<select id="List" resultType="bengineer.spring.board.InquiryDTO">
+		select * from beinquiry
+	</select>
+  	<!-- 읽고 -->
+  	<select id="read" resultType="bengineer.spring.board.InquiryDTO" parameterType="int">
+		select * from beinquiry where num=#{num}
+	</select>
+	<!-- 답변완료 -->
+	<update id="reply" parameterType="bengineer.spring.board.InquiryDTO">
+  		update  BEinquiry set
+		reply=#{reply}
+		where num = #{num}
+  	</update>
+	<!-- 
+	<select id="loginCheck" resultType="int" parameterType="bengineer.spring.manager.ManagerDTO">
+		select count(*)
+		from manager 
+		where id=#{id} and pw=#{pw}
+	</select>
 	 <insert id="impose" parameterType="bengineer.spring.manager.ImposeDTO">
   		insert into beimpose(email,term,startDay,endDay)
 		values(#{email},#{term},sysdate,sysdate+#{term})
   	</insert>
+  	-->
 </mapper>

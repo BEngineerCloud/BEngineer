@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
+    <h2>dd${Id}</h2>
 <form name="inForm" action="inPro.do" method="post">
 <table border="1">
   <tr>
@@ -21,7 +22,7 @@
   <tr>
   <td  width="100">ÀÛ¼ºÀÚ</td>
    <!-- <td  width="300"> <input type="text" size="40" maxlength="30" name="title"><br/></td>-->
-     <td>${Id}<input type="hidden" value="${Id}" name="id"><br/></td> 
+     <td>${Id}<input type="hidden" value="${Id}" name="Id"><br/></td> 
   </tr>
   
   <tr>
