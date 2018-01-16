@@ -8,6 +8,9 @@
 	<select id="getfiles" resultType="fileDTO" parameterType="int">
 		select * from BEfilelist where folder_ref = #{folder_ref} order by filetype desc, filename asc
 	</select>
+	<insert id="makebasedir" parameterType="fileDTO">
+		insert into BEfilelist(num,folder_ref,filename,orgname,filetype,uploaddate,updatedate,important,owner) values(BEfilelist_seq.NEXTVAL, #{folder_ref}, #{filename}, #{orgname}, 'dir', sysdate, sysdate, -1, #{owner})
+	</insert>
 	<insert id="makedir" parameterType="fileDTO">
 		insert into BEfilelist(num,folder_ref,filename,orgname,filetype,uploaddate,updatedate,owner) values(BEfilelist_seq.NEXTVAL, #{folder_ref}, #{filename}, #{orgname}, 'dir', sysdate, sysdate, #{owner})
 	</insert>
