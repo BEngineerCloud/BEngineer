@@ -54,6 +54,7 @@ public class MemberBean {
 		session.setAttribute("Id", dto.getId());
 		return "beMember/beboard";
 	}
+	//문의내역읽기
 	@RequestMapping("beread.do")
 	public String updateForm(Model model,int num) { 
 		BoardDTO con = (BoardDTO)sqlSession.selectOne("board.read",num);	

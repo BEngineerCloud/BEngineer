@@ -13,6 +13,11 @@
 			var filename = $(this).text();
 			var ref = $(this).attr("name");
 			setForm(filename, ref);
+			if(type.value == "dir"){
+				var form = document.getElementById("folderdownform");
+				form.file_ref.value = ref;
+				form.submitfolderdown.type = "submit";
+			}
 		});
 	});
 	$(function(){
@@ -136,38 +141,6 @@
 			});
 		});
 		$(function(){
-			$("#shareform").submit(function(){ // 공유 버튼 클릭시
-				var date = new Date();
-				var today = date.getFullYear() + "-";
-				var month = (date.getMonth() + 1);
-				if(month < 10){
-					today = today + "0" + month + "-";
-				}else{
-					today = today + month + "-";
-				}
-				var day = date.getDate();
-				if(day < 10){
-					today = today + "0" + day;
-				}else{
-					today = today + day;
-				}
-				var form = document.getElementById("shareform"); // 폼 받아오기
-				form.enddate.min = today;
-				if(form.enddate.type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
-					hinder(); // 다른 폼 닫기
-					document.getElementById("text").type = "text";
-					form.enddate.type = "date";
-					form.rw.hidden = false;
-					form.submitshare.type = "submit";
-					return false;
-				}
-				if(!form.enddate.value){ // 공유기한 미입력시
-					alert('공유기한을 입력해주세요');
-					return false;
-				}
-			});
-		});
-		$(function(){
 			$("input[name='filename']").focus(function(){ // 파일이름 창 클릭시 초기화
 				if($(this).val() == '파일 이름'){
 					$(this).val("")
@@ -200,6 +173,8 @@
 			form = document.getElementById("changenameform"); // 폴더생성 폼
 			form.name.type = "hidden";
 			form.submitchangename.type = "hidden";
+			form = document.getElementById("folderdownform");
+			form.submitfolderdown.type = "hidden";
 		}
 		function setForm(filename, ref){
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
@@ -224,7 +199,10 @@
 </c:if>
 <c:if test="${!write }">
 	<script>
-		function hinder(){}
+	function hinder(){
+		form = document.getElementById("folderdownform");
+		form.submitfolderdown.type = "hidden";
+	}
 		function setForm(filename, ref){}
 	</script>
 </c:if>
@@ -276,6 +254,13 @@
 			</form>
 		</div>
 	</c:if>
+	<!-- 폴더 다운로드 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
+			<input type="hidden" name="file_ref" />
+			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
+		</form>
+	</div>
 	button1
 </div>
 <div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">

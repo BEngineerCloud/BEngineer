@@ -34,19 +34,17 @@
 		insert into BEinquiry(num,title,content,id)
 		values(sequence_BEinquiry.nextval,#{title},#{content},#{id})
 	</insert>
-			<!-- 
-		insert into BEinquiry(num,title,content,id)
-		values(sequence_BEinquiry.nextval,#{title},#{content},#{id})
-		 -->
+
 	<!-- 문의 목록 -->
-	<select id="inList" resultType="bengineer.spring.board.InquiryDTO">
-		select * from BEinquiry where id=#{id}
+	<select id="inList" resultType="bengineer.spring.board.InquiryDTO" parameterType="string">
+		select * from BEinquiry
+		where id=#{id}
 	</select>
-	<!-- 문의 답변 -->
-	<update id="reply" parameterType="bengineer.spring.board.InquiryDTO">
-  		update  BEinquiry set
-		reply=#{reply}
-		where num = #{num}
-  	</update>
+	
+	<!-- 답변보기 -->
+	<select id="reply" resultType="bengineer.spring.board.InquiryDTO" parameterType="int">
+		select * from BEinquiry
+		where num=#{num}
+	</select>
 	
 </mapper>

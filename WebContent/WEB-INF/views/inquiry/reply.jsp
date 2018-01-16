@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=EUC-KR"
     pageEncoding="EUC-KR"%>
-<%
-	String id = (String)session.getAttribute("Id");
-%>
+<h1>답변완료..!!</h1>
+

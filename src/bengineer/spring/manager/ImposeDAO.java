@@ -27,27 +27,18 @@ public class ImposeDAO {
 	
 	@RequestMapping("impose.do")
 	public String impose() { return "/manager/impose";}	
-	// Á¦Á¦
+	@RequestMapping("imposeForm.do")
+	public String imposeForm() { return "/manager/imposeForm";}
+	// ì œì œ
 	@RequestMapping("imposePro.do")
-	public String imposePro(ImposeDTO dto,String email,int term) { 
-		sqlSession.insert("manager.impose",dto);
+	public String imposePro(ImposeDTO dto,String email,int term,String cause) { 
+		Integer check = (Integer)sqlSession.selectOne("check",dto);
+		if(check==1) {
+		sqlSession.update("manager.update",dto);
+		}else {
+		sqlSession.insert("manager.insert",dto);
+		}
 		return "redirect:/manager/mMain.do";
 	}
-	/*
-	@RequestMapping("imposePro.do")
-	public String imposePro(MemberDTO dto,String email,int chmod) {
-		sqlSession.update("manager.impose",dto);
-		return "redirect:/manager/mMain.do";		
-	}
-	*/
-	/*
-	 	@RequestMapping("userInfo.do")
-	public String userInfo(Model model,
-			@RequestParam(value="id",defaultValue="guest") String id) {	// °ªÀÌ ³Ñ¾î¿À¸é id ·Î ¾È³Ñ¾î¿À¸é guest·Î °Ë»ö
-		//TestDTO testDTO = (TestDTO)sqlSession.selectOne("test.selectOne",id);
-		TestDTO testDTO = (TestDTO)sqlSession.selectOne("test.selectIf",id);	
-		model.addAttribute("testDTO",testDTO);
-		return "/test/userInfo"; 
-	}	
-	 */
+
 }

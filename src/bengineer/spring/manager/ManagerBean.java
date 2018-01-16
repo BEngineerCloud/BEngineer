@@ -20,10 +20,10 @@ public class ManagerBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 
-	// ¸Å´ÏÀú ·Î±×ÀÎÃ¢
+	// ë§¤ë‹ˆì € ë¡œê·¸ì¸ì°½
 	@RequestMapping("login.do")
 	public String main() { return "/manager/login"; }
-	//·Î±×ÀÎÃ¼Å©
+	// ë¡œê·¸ì¸ì²´í¬
 	@RequestMapping("loginPro.do")
 	public String loginPro(ManagerDTO dto,HttpSession session) {
 	
@@ -36,7 +36,7 @@ public class ManagerBean {
 		}
 		return view;	
 	}	
-	//·Î±×¾Æ¿ô
+	// ë¡œê·¸ì•„ì›ƒ
 	@RequestMapping("logout.do")
 	public String logout(HttpSession session) { 
 		session.invalidate();
@@ -44,7 +44,7 @@ public class ManagerBean {
 		return "redirect:/manager/login.do"; 
 	}
 	
-	//¸ŞÀÎÃ¢
+	// ë©”ì¸ì°½
 	@RequestMapping("mMain.do")
 	public String mMain(ManagerDTO dto,HttpSession session,String Id,ManagerDTO m) {
 		String ss = (String)session.getAttribute("Id");

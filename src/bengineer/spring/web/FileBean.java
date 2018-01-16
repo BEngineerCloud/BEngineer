@@ -12,6 +12,7 @@ import java.net.UnknownHostException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,15 +59,15 @@ public class FileBean {
 			dto.setOrgname(owner);
 			dto.setFilename(nickname);
 			dto.setFolder_ref(0);
-			sqlSession.insert("bengineer.makedir", dto);
+			sqlSession.insert("bengineer.makebasedir", dto);
 			folder_ref = (int)sqlSession.selectOne("bengineer.getref", dto);
 			address_ref = getAddr(folder_ref);
 			boolean mkdirch = true;
-			if(!makeDir("image", address_ref)) {mkdirch = false;}
-			if(!makeDir("video", address_ref)) {mkdirch = false;}
-			if(!makeDir("music", address_ref)) {mkdirch = false;}
-			if(!makeDir("document", address_ref)) {mkdirch = false;}
-			if(!makeDir("etc", address_ref)) {mkdirch = false;}
+			if(!makeBaseDir("image", address_ref)) {mkdirch = false;}
+			if(!makeBaseDir("video", address_ref)) {mkdirch = false;}
+			if(!makeBaseDir("music", address_ref)) {mkdirch = false;}
+			if(!makeBaseDir("document", address_ref)) {mkdirch = false;}
+			if(!makeBaseDir("etc", address_ref)) {mkdirch = false;}
 			if(!mkdirch) { // 하나라도 오류 발생시
 				sqlSession.delete("bengineer.deletefile", folder_ref);
 				model.addAttribute("alert", "폴더를 생성하는 도중 오류가 발생했습니다.");
@@ -322,17 +323,64 @@ public class FileBean {
 			}
 			fileaddress = "d:/PM/BEngineer/" + fileaddress;
 			if(dto.getFiletype().equals("dir")) {
-				
+				List filelist = getFilelist(fileaddress);
+				if(filelist == null || filelist.size() == 0) {
+					ModelAndView mav = new ModelAndView();
+					mav.setViewName("beFiles/alert");
+					mav.addObject("alert", "다운로드할 파일이 없습니다.");
+					mav.addObject("location", "history.go(-1)");
+					return mav;
+				}else if(filelist.get(0) instanceof Boolean) {
+					ModelAndView mav = new ModelAndView();
+					mav.setViewName("beFiles/alert");
+					mav.addObject("alert", (String)filelist.get(1));
+					mav.addObject("location", "history.go(-1)");
+					return mav;
+				}
+				Date time = new Date(System.currentTimeMillis());
+				SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
+				String zipname = "d:/PM/BEngineer/downtemp/" + dto.getFilename() + format.format(time).substring(0, 12) + ".zip";
+				file = zipFiles(fileaddress, zipname, filelist);
 			}else {
 				file = new File(fileaddress);
 			}
-			sqlSession.update("bengineer.hit", file_ref);
+			sqlSession.update("bengineer.hit", filenum);
 		}else if(files.length > 1) {
-			String path = "d://PM/BEngineer/";
-			int size = 1024;
-			String id = (String)session.getAttribute("id");
-			path += id;
-			
+			int filenum = Integer.parseInt(files[0]);
+			List address_ref = getAddr(filenum);
+			FileDTO dto = new FileDTO();
+			for(int i = address_ref.size() - 1; i > 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				fileaddress += dto.getOrgname();
+				if(i != 0) {
+					fileaddress += "/";
+				}
+			}
+			fileaddress = "d:/PM/BEngineer/" + fileaddress;
+			List filelist = new ArrayList();
+			for(int i = 0; i < files.length; i++) {
+				filenum = Integer.parseInt(files[i]);
+				dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
+				if(dto.getFiletype().equals("dir")) {
+					List add = getFilelist(fileaddress);
+					if(add != null && !(add.get(0) instanceof Boolean)) {
+						filelist.addAll(add);
+					}
+				}else {
+					filelist.add(dto.getOrgname());
+				}
+				if(filelist == null || filelist.size() == 0) {
+					ModelAndView mav = new ModelAndView();
+					mav.setViewName("beFiles/alert");
+					mav.addObject("alert", "다운로드할 파일이 없습니다.");
+					mav.addObject("location", "history.go(-1)");
+					return mav;
+				}
+			}
+			Date time = new Date(System.currentTimeMillis());
+			SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
+			String zipname = "d:/PM/BEngineer/downtemp/" + dto.getFilename() + format.format(time).substring(0, 12) + ".zip";
+			file = zipFiles(fileaddress, zipname, filelist);
 		}else {
 			ModelAndView mav = new ModelAndView();
 			mav.setViewName("beFiles/alert");
@@ -468,7 +516,23 @@ public class FileBean {
 		if(check > 0) {code = makecode();}
 		return code;
 	}
-	private boolean makeDir(String name, List address_ref) { // 기본폴더생성용 메서드 성공시 true
+	private boolean makeBaseDir(String name, List address_ref) { // 기본폴더생성용 메서드 성공시 true
+		FileDTO dto = new FileDTO();
+		FileDTO ref = (FileDTO)address_ref.get(0);
+		dto.setFolder_ref(ref.getNum());
+		dto.setOwner(ref.getOwner());
+		dto.setFilename(name);
+		dto.setOrgname(name);
+		sqlSession.insert("bengineer.makebasedir", dto);
+		String address = "";
+		for(int i = 0; i < address_ref.size(); i++) {
+			ref = (FileDTO)address_ref.get(i);
+			address = "/" + ref.getOrgname() + address;
+		}
+		File file = new File("d:/PM/BEngineer" + address + "/" + name);
+		return file.mkdirs();
+	}
+	private boolean makeDir(String name, List address_ref) { // 폴더생성용 메서드 성공시 true
 		FileDTO dto = new FileDTO();
 		FileDTO ref = (FileDTO)address_ref.get(0);
 		dto.setFolder_ref(ref.getNum());
@@ -633,12 +697,12 @@ public class FileBean {
 		BufferedOutputStream bos = null;
 		File file = null;
 		try {
-			fos = new FileOutputStream(path + zipName);
+			fos = new FileOutputStream(zipName);
 			bos = new BufferedOutputStream(fos);
 			zos = new ZipArchiveOutputStream(bos);
 			for(int i = 0; i < files.size(); i++) {
 				zos.setEncoding("UTF-8");
-				fis = new FileInputStream(path + files.get(i));
+				fis = new FileInputStream(path + "/" + files.get(i));
 				bis = new BufferedInputStream(fis, size);
 				zos.putArchiveEntry(new ZipArchiveEntry((String)files.get(i)));
 				for(int j = 0; j != -1; j = bis.read(buf, 0, size)) {
@@ -651,6 +715,7 @@ public class FileBean {
 			zos.close();
 			bos.close();
 			fos.close();
+			file = new File(zipName);
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally {
@@ -661,5 +726,39 @@ public class FileBean {
 			if(fos != null) {try{fos.close();}catch(IOException i) {}}
 		}
 		return file;
+	}
+	private List getFilelist(String dirPath) {return getFilelist(dirPath, "");}
+	private List getFilelist(String dirPath, String pre) { // 폴더 내의 모든 파일의 상대 주소를 리스트로 돌려주는 메서드
+		List result = new ArrayList();
+		File file = new File(dirPath + pre);
+		if(!file.exists()) {
+			result.add(false);
+			result.add("폴더가 존재하지 않습니다.");
+			return result;
+		}
+		if(!file.isDirectory()) {
+			result.add(false);
+			result.add("폴더가 존재하지 않습니다.");
+			return result;
+		}
+		String [] names = file.list();
+		if(names.length == 0) {
+			result.add(false);
+			result.add("다운로드할 파일이 존재하지 않습니다.");
+			return result;
+		}
+		for(int i = 0; i < names.length; i++) {
+			String path = dirPath + pre + "/" + names[i];
+			File files = new File(path);
+			if(files.isDirectory()) {
+				List add = getFilelist(dirPath, pre + "/" + names[i]);
+				if(add != null && !(add.get(0) instanceof Boolean)) {
+					result.addAll(add);
+				}
+			}else {
+				result.add(pre + "/" + names[i]);
+			}
+		}
+		return result;
 	}
 }

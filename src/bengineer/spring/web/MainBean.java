@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import bengineer.spring.manager.ImposeDTO;
+
 
 @Controller
 public class MainBean {
@@ -27,15 +29,24 @@ public class MainBean {
 	}
 	
 	@RequestMapping(value="beMaintemp.do") // 메인페이지
-	public String beMaintemp(MemberDTO dto, HttpSession session, Model model) {
+	public String beMaintemp(MemberDTO dto,ImposeDTO email, HttpSession session, Model model) {
 		Integer check = (Integer)sqlSession.selectOne("bengineer.beChecklogin",dto.getId());
+		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember",email.getEmail());
+		String veiw= "redirect:/beMain.do";
+		if(impose==1) {
+			veiw="redirect:/beMember/imposeMember.do";
+		}else {
 		if(check!=1) {
 			sqlSession.insert("bengineer.beInsertmember", dto);
 		}
-		session.setAttribute("id", dto.getId()); // 테스트용으로 임시 세션 등록
+		session.setAttribute("id", dto.getId()); // 테스트용임시세션등록
 		session.setAttribute("nickname", dto.getNickname());
-		return "redirect:/beMain.do";
+		}
+		System.out.println(email.getEmail());
+		return veiw;
 	}
+	@RequestMapping("imposeMember.do") // 메인페이지
+	public String imposeMember() {return "beMember/imposeMember";}
 	
 	@RequestMapping("beLogout.do") // 메인페이지
 	public String beLogout(HttpSession session) {
