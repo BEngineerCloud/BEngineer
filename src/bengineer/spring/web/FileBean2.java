@@ -9,6 +9,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.nio.channels.FileChannel;
 import java.nio.file.*;
@@ -28,10 +29,12 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/beFiles/")
 public class FileBean2 {
+	
+	
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("autoArrangefile.do") //파일 자동정리
-	public String autoArrangefile(HttpSession session) {
+	public String autoArrangefile(HttpSession session, Model model) {
 		String owner = (String)session.getAttribute("id");
 		String filePath=""; //파일경로
 		String fileName=""; //파일이름
@@ -39,113 +42,56 @@ public class FileBean2 {
 		String moveFolder=""; //이동할 파일폴더
 		File path = new File("d:/PM/BEngineer/" + owner); //사용자폴더 경로
 		File[] list = path.listFiles(); //사용자폴더 안에 모든 파일/폴더 받아오기
+		FileBean filebean = new FileBean();
+		FileDTO dto = new FileDTO();
+		dto.setOwner(owner);
 		
 		if(list.length > 0){
 		    for(int i=0; i < list.length; i++){
 		    	if(list[i].isFile()) { //파일인지 판단, 파일이면
 		    		fileName=list[i].getName();
+		    		dto.setOrgname(fileName);
 		    		filePath=list[i].getPath();
 		    		fileType = fileName.substring(fileName.lastIndexOf("."));
-		    		System.out.println(fileType);
-		    		moveFolder = checkFile(fileType); //파일확장자 범주에 들어가는 폴더이름
-		    		boolean success = true;
-		    		success = moveFile(filePath, fileName, moveFolder); //파일 이동
-		    		if(success) {
+		    		moveFolder = filebean.checkFile(fileType); //파일확장자 범주에 들어가는 폴더이름	
+		    		Integer moveParent = moveFile(filePath, fileName, moveFolder, owner); //파일 이동
+		    		if( moveParent!=null) {
+		    			dto.setNum(moveParent);
+		    			sqlSession.update("bengineer.autoarrange",dto);
 		    			System.out.println("성공");
 		    		}
 		    	}
 		    }
 		}
-		return "beMain";
+		model.addAttribute("alert", "자동정리가 완료되었습니다.");
+		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		return "beFiles/alert";
 	}
-
-	// 파일타입 확인용 리스트들
-	private static List image = new ArrayList();
-	private static List video = new ArrayList();
-	private static List music = new ArrayList();
-	private static List document = new ArrayList();
-	private static List etc = new ArrayList();
-	public FileBean2() {
-		image.add(".jpeg");
-		image.add(".jpg");
-		image.add(".png");
-		image.add(".gif");
-		image.add(".bmp");
-		video.add(".webm");
-		video.add(".mpeg4");
-		video.add(".3gpp");
-		video.add(".mov");
-		video.add(".avi");
-		video.add(".mpegps");
-		video.add(".wmv");
-		video.add(".flv");
-		video.add(".ogg");
-		music.add(".mp3");
-		music.add(".mpeg");
-		music.add(".wav");
-		document.add(".txt");
-		document.add(".doc");
-		document.add(".docx");
-		document.add(".xls");
-		document.add(".xlsx");
-		document.add(".ppt");
-		document.add(".pptx");
-		etc.add(".zip");
-		etc.add(".rar");
-		etc.add(".tar");
-		etc.add(".gzip");
-		etc.add(".css");
-		etc.add(".html");
-		etc.add(".php");
-		etc.add(".c");
-		etc.add(".cpp");
-		etc.add(".h");
-		etc.add(".hpp");
-		etc.add(".js");
-		image.add(".dxf");
-		image.add(".ai");
-		image.add(".psd");
-		document.add(".pdf");
-		document.add(".xps");
-		image.add(".eps");
-		etc.add(".ps");
-		image.add(".svg");
-		image.add(".tiff");
-		etc.add(".ttf");
-	}
-	private String checkFile(String filetype) { // 파일타입 확인용 메서드
-		String result = null;
-		if(image.contains(filetype)) {
-			result = "image";
-		}else if(music.contains(filetype)) {
-			result = "music";
-		}else if(video.contains(filetype)) {
-			result = "video";
-		}else if(document.contains(filetype)) {
-			result = "document";
-		}else if(etc.contains(filetype)) {
-			result = "etc";
-		}else {
-			result = "none";
-		}
-		return result;
-	}
-	private boolean moveFile(String filePath, String fileName, String moveFolder) {
+	
+	private int moveFile(String filePath, String fileName, String moveFolder, String owner) {
 		boolean is_Move = false;
+		HashMap<String, String> moveP = new HashMap<String, String>();
+		moveP.put("owner", owner);
 		String filePathtemp=filePath.substring(0, filePath.lastIndexOf(fileName));
 		if(moveFolder.equals("image")) {
 			is_Move = nioFilemove(filePath, filePathtemp+"image/"+fileName);
+			moveP.put("orgname","image");
 		}else if(moveFolder.equals("music")) {
 			is_Move = nioFilemove(filePath, filePathtemp+"music/"+fileName);
+			moveP.put("orgname","music");
 		}else if(moveFolder.equals("video")) {
 			is_Move = nioFilemove(filePath, filePathtemp+"video/"+fileName);
+			moveP.put("orgname","video");
 		}else if(moveFolder.equals("document")) {
 			is_Move = nioFilemove(filePath, filePathtemp+"document/"+fileName);
+			moveP.put("orgname","document");
 		}else {
 			is_Move = nioFilemove(filePath, filePathtemp+"etc/"+fileName);
+			moveP.put("orgname","etc");
 		}
-		return is_Move;
+		return (Integer)sqlSession.selectOne("bengineer.getparentnum",moveP);
 	}
+	
 	private boolean nioFilemove(String originFilePath, String moveFilePath) { //파일이동, NIO방식
 		Path originPath = Paths.get(originFilePath);
 		Path movePath = Paths.get(moveFilePath);

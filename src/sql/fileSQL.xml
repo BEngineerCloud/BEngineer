@@ -50,4 +50,10 @@
 	<delete id="deletefile" parameterType="int">
 		delete from BEfilelist where num = #{folder_ref}
 	</delete>
+	<select id="getparentnum" parameterType="hashmap" resultType="int">
+		select num from BEfilelist where owner = #{owner} and important = -1 and orgname = #{orgname}
+	</select>
+	<update id="autoarrange" parameterType="fileDTO">
+		update BEfilelist set folder_ref = #{num} where owner = #{owner} and orgname = #{orgname}
+	</update>
 </mapper>
