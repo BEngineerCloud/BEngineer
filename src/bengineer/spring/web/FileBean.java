@@ -379,7 +379,13 @@ public class FileBean {
 			}
 			Date time = new Date(System.currentTimeMillis());
 			SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
-			String name = dto.getFilename().substring(0, dto.getFilename().lastIndexOf(".")) + "외";
+			String name = dto.getFilename();
+			int index = name.lastIndexOf("."); 
+			if(index != -1) {
+				name = name.substring(0, index) + "외";
+			}else {
+				name += "외";
+			}
 			String zipname = "d:/PM/BEngineer/downtemp/" + name + format.format(time).substring(0, 12) + ".zip";
 			file = zipFiles(fileaddress, zipname, filelist);
 		}else {
@@ -711,8 +717,8 @@ public class FileBean {
 			for(int i = 0; i < files.size(); i++) {
 				zos.setEncoding("UTF-8");
 				String filename = (String)files.get(i);
-				zos.putArchiveEntry(new ZipArchiveEntry(filename));
 				if(filename.indexOf(".") != -1) {
+					zos.putArchiveEntry(new ZipArchiveEntry(filename));
 					fis = new FileInputStream(path + "/" + files.get(i));
 					bis = new BufferedInputStream(fis, size);
 					for(int j = 0; j != -1; j = bis.read(buf, 0, size)) {
@@ -720,6 +726,8 @@ public class FileBean {
 					}
 					bis.close();
 					fis.close();
+				}else {
+					zos.putArchiveEntry(new ZipArchiveEntry(filename + "/"));
 				}
 				zos.closeArchiveEntry();
 			}

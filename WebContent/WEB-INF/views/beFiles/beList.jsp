@@ -12,12 +12,12 @@
 			var ref = $(this).attr("name");
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			form = document.getElementById("multidownform");
-			if(document.getElementById("multidowntext").type == "text"){
+			if(document.getElementById("multidowntext").type == "text"){ // 여러 파일 다운로드 상태일 때
 				var index = clickedfile.indexOf(ref);
-				if(index == -1){
+				if(index == -1){ // 배열에 클릭한 파일이 없을 때
 					clickedfile.push(ref);
 					$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
-				}else{
+				}else{ // 배열에 클릭한 파일이 있을 때
 					clickedfile.splice(index, 1);
 					$(this).css("background-color","#ff6666"); // 클릭파일 색 바꾸기
 				}
@@ -112,24 +112,6 @@
 		});
 	});
 	$(function(){
-		$("#multidownform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
-			var form = document.getElementById("multidownform"); // 폼 받아오기
-			if(document.getElementById("multidowntext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
-				hinder(); // 다른 폼 닫기
-				document.getElementById("multidowntext").type = "text";
-				document.getElementById("cancelmultidown").type = "button";
-				form.submitmultidown.type = "submit";
-				form.submitmultidown.value = "다운로드";
-				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
-				return false;
-			}
-			if(!form.file_ref.value){ // 업로드할 파일 미선택시
-				alert('업로드할 파일을 선택해주세요');
-				return false;
-			}
-		});
-	});
-	$(function(){
 		$("#folderform").submit(function(){ // 폴더생성 버튼 클릭시
 			var form = document.getElementById("folderform"); // 폼 받아오기
 			if(form.foldername.type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
@@ -214,6 +196,24 @@
 		});
 	});
 	$(function(){
+		$("#multidownform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
+			var form = document.getElementById("multidownform"); // 폼 받아오기
+			if(document.getElementById("multidowntext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
+				hinder(); // 다른 폼 닫기
+				document.getElementById("multidowntext").type = "text";
+				document.getElementById("cancelmultidown").type = "button";
+				form.submitmultidown.type = "submit";
+				form.submitmultidown.value = "다운로드";
+				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+				return false;
+			}
+			if(!form.file_ref.value){ // 업로드할 파일 미선택시
+				alert('업로드할 파일을 선택해주세요');
+				return false;
+			}
+		});
+	});
+	$(function(){
 		$("input[name='filename']").focus(function(){ // 파일이름 창 클릭시 초기화
 			if($(this).val() == '파일 이름'){
 				$(this).val("")
@@ -246,21 +246,22 @@
 		form = document.getElementById("changenameform"); // 폴더생성 폼
 		form.name.type = "hidden";
 		form.submitchangename.type = "hidden";
-		form = document.getElementById("shareform");
+		form = document.getElementById("shareform"); // 공유 폼
 		form.enddate.type = "hidden";
 		form.rw.hidden = true;
 		form.submitshare.type = "hidden";
 		document.getElementById("text").type = "hidden";
-		form = document.getElementById("folderdownform");
+		form = document.getElementById("folderdownform"); // 폴더 다운로드 폼
 		form.submitfolderdown.type = "hidden";
 		clickedfile = new Array();
-		form = document.getElementById("multidownform");
+		form = document.getElementById("multidownform"); // 여러 폴더 다운로드 폼
 		form.file_ref.value = "";
 		form.submitmultidown.value = "여러 파일 다운로드";
 		document.getElementById("multidowntext").type = "hidden";
 		document.getElementById("cancelmultidown").type = "hidden";
 	}
 	function setForm(type, ref){
+		// 폴더명/파일명 바꾸기 폼 보이기
 		var form = document.getElementById("changenameform");
 		form.ref.value = ref;
 		if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
@@ -274,6 +275,7 @@
 			form.submitchangename.value = "파일명 변경";
 		}
 		form.submitchangename.type = "submit";
+		// 공유 폼 보이기
 		form = document.getElementById("shareform");
 		form.ref.value = ref;
 		form.submitshare.type = "submit";

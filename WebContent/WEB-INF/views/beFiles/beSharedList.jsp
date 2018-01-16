@@ -2,24 +2,40 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script type="text/javascript">
-	$(function(){
-		$("#files > div").click(function(){ // 파일 클릭시
+var clickedfile = new Array();
+$(function(){
+	$("#files > div").click(function(){ // 파일 클릭시
+		var filename = $(this).text();
+		var orgname = document.getElementById(filename); // 원 파일명 저장되어있는 인풋의 값 가져오기
+		$("font#filename").text(orgname.value); // 주소부분에 표시
+		var filename = $(this).text();
+		var ref = $(this).attr("name");
+		var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+		form = document.getElementById("multidownform");
+		if(document.getElementById("multidowntext").type == "text"){
+			var index = clickedfile.indexOf(ref);
+			if(index == -1){
+				clickedfile.push(ref);
+				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+			}else{
+				clickedfile.splice(index, 1);
+				$(this).css("background-color","#ff6666"); // 클릭파일 색 바꾸기
+			}
+			form.file_ref.value = clickedfile.join();
+		}else{
 			hinder(); // 업로드 입력, 폴더생성 입력 취소
+			form.submitmultidown.type = "submit";
 			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 			$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
-			var filename = $(this).text();
-			var orgname = document.getElementById(filename); // 원 파일명 저장되어있는 인풋의 값 가져오기
-			$("font#filename").text(orgname.value); // 주소부분에 표시
-			var filename = $(this).text();
-			var ref = $(this).attr("name");
-			setForm(filename, ref);
+			setForm(type, ref);
 			if(type.value == "dir"){
 				var form = document.getElementById("folderdownform");
 				form.file_ref.value = ref;
 				form.submitfolderdown.type = "submit";
 			}
-		});
+		}
 	});
+});
 	$(function(){
 		$("#files > div").dblclick(function(){ // 파일 더블클릭시
 			var filename = $(this).text();
@@ -48,6 +64,17 @@
 		});
 	});
 	$(function(){
+		$("#cancelmultidown").click(function(){ // 다중선택 취소시
+			clickedfile = new Array();
+			var form = document.getElementById("multidownform");
+			form.file_ref.value = "";
+			form.submitmultidown.value = "여러 파일 다운로드";
+			document.getElementById("multidowntext").type = "hidden";
+			document.getElementById("cancelmultidown").type = "hidden";
+			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+		});
+	});
+	$(function(){
 		$("#addinfodiv > #addinfo").click(function(){
 			window.location = "/BEngineer/beMember/beAddinfo.do";
 		});
@@ -56,6 +83,24 @@
 	$(function(){
 		$("#logoutdiv > #logout").click(function(){
 			window.location = "/BEngineer/beLogout.do";
+		});
+	});
+	$(function(){
+		$("#multidownform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
+			var form = document.getElementById("multidownform"); // 폼 받아오기
+			if(document.getElementById("multidowntext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
+				hinder(); // 다른 폼 닫기
+				document.getElementById("multidowntext").type = "text";
+				document.getElementById("cancelmultidown").type = "button";
+				form.submitmultidown.type = "submit";
+				form.submitmultidown.value = "다운로드";
+				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+				return false;
+			}
+			if(!form.file_ref.value){ // 업로드할 파일 미선택시
+				alert('업로드할 파일을 선택해주세요');
+				return false;
+			}
 		});
 	});
 
@@ -175,6 +220,12 @@
 			form.submitchangename.type = "hidden";
 			form = document.getElementById("folderdownform");
 			form.submitfolderdown.type = "hidden";
+			clickedfile = new Array();
+			form = document.getElementById("multidownform");
+			form.file_ref.value = "";
+			form.submitmultidown.value = "여러 파일 다운로드";
+			document.getElementById("multidowntext").type = "hidden";
+			document.getElementById("cancelmultidown").type = "hidden";
 		}
 		function setForm(filename, ref){
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
@@ -199,10 +250,16 @@
 </c:if>
 <c:if test="${!write }">
 	<script>
-	function hinder(){
-		form = document.getElementById("folderdownform");
-		form.submitfolderdown.type = "hidden";
-	}
+		function hinder(){
+			form = document.getElementById("folderdownform");
+			form.submitfolderdown.type = "hidden";
+			clickedfile = new Array();
+			form = document.getElementById("multidownform");
+			form.file_ref.value = "";
+			form.submitmultidown.value = "여러 파일 다운로드";
+			document.getElementById("multidowntext").type = "hidden";
+			document.getElementById("cancelmultidown").type = "hidden";
+		}
 		function setForm(filename, ref){}
 	</script>
 </c:if>
@@ -261,7 +318,19 @@
 			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
 		</form>
 	</div>
-	button1
+	<!-- 다수 파일 다운로드 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<div style="height:100%; width:relative; margin-top:5; float:left;">
+			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
+		</div>
+		<div style="height:100%; width:relative; margin:0; float:left;">
+			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
+				<input type="hidden" name="file_ref" />
+				<input type="submit" name="submitmultidown" value="여러 파일 다운로드"/>
+				<input type="hidden" id="cancelmultidown" value="취소" />
+			</form>
+		</div>
+	</div>
 </div>
 <div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">
 	<c:set var="num" value="0" />
