@@ -22,11 +22,11 @@
 		update bemember set nickname = #{nickname} where id=#{id}
 	</update>
 
-	<select id="imposeMember" resultType="int">
+	<select id="imposeMember" parameterType="String" resultType="int">
 		<![CDATA[
 		SELECT count(*) FROM beimpose e, bemember m
 		WHERE e.email = m.email
-		and e.email in (select email from beimpose where sysdate < endDay and email=${email})
+		and e.email in (select email from beimpose where sysdate < endDay and email = #{email})
 		]]>
 	</select>
 

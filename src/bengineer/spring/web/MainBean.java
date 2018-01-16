@@ -29,9 +29,11 @@ public class MainBean {
 	}
 	
 	@RequestMapping(value="beMaintemp.do") // 메인페이지
-	public String beMaintemp(MemberDTO dto,ImposeDTO email, HttpSession session, Model model) {
+	public String beMaintemp(MemberDTO dto, HttpSession session, Model model) {
+		System.out.println(dto.getEmail());
+		String email = dto.getEmail();
 		Integer check = (Integer)sqlSession.selectOne("bengineer.beChecklogin",dto.getId());
-		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember",email.getEmail());
+		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember", email);
 		String veiw= "redirect:/beMain.do";
 		if(impose==1) {
 			veiw="redirect:/beMember/imposeMember.do";
@@ -42,7 +44,6 @@ public class MainBean {
 		session.setAttribute("id", dto.getId()); // 테스트용임시세션등록
 		session.setAttribute("nickname", dto.getNickname());
 		}
-		System.out.println(email.getEmail());
 		return veiw;
 	}
 	@RequestMapping("imposeMember.do") // 메인페이지

@@ -362,7 +362,7 @@ public class FileBean {
 				filenum = Integer.parseInt(files[i]);
 				dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
 				if(dto.getFiletype().equals("dir")) {
-					List add = getFilelist(fileaddress);
+					List add = getFilelist(fileaddress, "/" + dto.getOrgname());
 					if(add != null && !(add.get(0) instanceof Boolean)) {
 						filelist.addAll(add);
 					}
@@ -379,12 +379,20 @@ public class FileBean {
 			}
 			Date time = new Date(System.currentTimeMillis());
 			SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
-			String zipname = "d:/PM/BEngineer/downtemp/" + dto.getFilename() + format.format(time).substring(0, 12) + ".zip";
+			String name = dto.getFilename().substring(0, dto.getFilename().lastIndexOf(".")) + "외";
+			String zipname = "d:/PM/BEngineer/downtemp/" + name + format.format(time).substring(0, 12) + ".zip";
 			file = zipFiles(fileaddress, zipname, filelist);
 		}else {
 			ModelAndView mav = new ModelAndView();
 			mav.setViewName("beFiles/alert");
 			mav.addObject("alert", "유효하지 않은 접근입니다.");
+			mav.addObject("location", "history.go(-1)");
+			return mav;
+		}
+		if(file == null) {
+			ModelAndView mav = new ModelAndView();
+			mav.setViewName("beFiles/alert");
+			mav.addObject("alert", "다운로드 중 오류가 발생했습니다.");
 			mav.addObject("location", "history.go(-1)");
 			return mav;
 		}
@@ -702,14 +710,17 @@ public class FileBean {
 			zos = new ZipArchiveOutputStream(bos);
 			for(int i = 0; i < files.size(); i++) {
 				zos.setEncoding("UTF-8");
-				fis = new FileInputStream(path + "/" + files.get(i));
-				bis = new BufferedInputStream(fis, size);
-				zos.putArchiveEntry(new ZipArchiveEntry((String)files.get(i)));
-				for(int j = 0; j != -1; j = bis.read(buf, 0, size)) {
-					zos.write(buf, 0, j);
+				String filename = (String)files.get(i);
+				zos.putArchiveEntry(new ZipArchiveEntry(filename));
+				if(filename.indexOf(".") != -1) {
+					fis = new FileInputStream(path + "/" + files.get(i));
+					bis = new BufferedInputStream(fis, size);
+					for(int j = 0; j != -1; j = bis.read(buf, 0, size)) {
+						zos.write(buf, 0, j);
+					}
+					bis.close();
+					fis.close();
 				}
-				bis.close();
-				fis.close();
 				zos.closeArchiveEntry();
 			}
 			zos.close();
@@ -743,8 +754,7 @@ public class FileBean {
 		}
 		String [] names = file.list();
 		if(names.length == 0) {
-			result.add(false);
-			result.add("다운로드할 파일이 존재하지 않습니다.");
+			result.add(pre);
 			return result;
 		}
 		for(int i = 0; i < names.length; i++) {

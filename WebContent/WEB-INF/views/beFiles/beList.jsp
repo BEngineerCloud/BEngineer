@@ -18,7 +18,7 @@
 					clickedfile.push(ref);
 					$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
 				}else{
-					clickedfile.splice(ref, 1);
+					clickedfile.splice(index, 1);
 					$(this).css("background-color","#ff6666"); // 클릭파일 색 바꾸기
 				}
 				form.file_ref.value = clickedfile.join();
@@ -68,10 +68,10 @@
 			clickedfile = new Array();
 			var form = document.getElementById("multidownform");
 			form.file_ref.value = "";
-			var submit = form.submitmultidown;
-			submit.type = "hidden";
-			document.getelementById("multidowntext").type = "hidden";
-			document.getelementById("cancelmultidown").type = "hidden";
+			form.submitmultidown.value = "여러 파일 다운로드";
+			document.getElementById("multidowntext").type = "hidden";
+			document.getElementById("cancelmultidown").type = "hidden";
+			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 		});
 	});
 	$(function(){
@@ -118,6 +118,8 @@
 				hinder(); // 다른 폼 닫기
 				document.getElementById("multidowntext").type = "text";
 				document.getElementById("cancelmultidown").type = "button";
+				form.submitmultidown.type = "submit";
+				form.submitmultidown.value = "다운로드";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				return false;
 			}
@@ -251,6 +253,12 @@
 		document.getElementById("text").type = "hidden";
 		form = document.getElementById("folderdownform");
 		form.submitfolderdown.type = "hidden";
+		clickedfile = new Array();
+		form = document.getElementById("multidownform");
+		form.file_ref.value = "";
+		form.submitmultidown.value = "여러 파일 다운로드";
+		document.getElementById("multidowntext").type = "hidden";
+		document.getElementById("cancelmultidown").type = "hidden";
 	}
 	function setForm(type, ref){
 		var form = document.getElementById("changenameform");
@@ -354,9 +362,9 @@
 			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
 		</div>
 		<div style="height:100%; width:relative; margin:0; float:left;">
-			<form action="/BEngineer/beFiles/shareFile.do" id="multidownform" method="post">
-				<input type="text" name="file_ref" />
-				<input type="hidden" name="submitmultidown" value="여러 파일 다운로드"/>
+			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
+				<input type="hidden" name="file_ref" />
+				<input type="submit" name="submitmultidown" value="여러 파일 다운로드"/>
 				<input type="hidden" id="cancelmultidown" value="취소" />
 			</form>
 		</div>
