@@ -24,7 +24,8 @@
 				form.file_ref.value = clickedfile.join();
 			}else{
 				hinder(); // 업로드 입력, 폴더생성 입력 취소
-				form.submitmultidown.type = "submit";
+				form.file_ref.value = ref;
+				document.getElementById("throwtotrashcan").type = "button";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
 				setForm(type, ref);
@@ -68,10 +69,17 @@
 			clickedfile = new Array();
 			var form = document.getElementById("multidownform");
 			form.file_ref.value = "";
-			form.submitmultidown.value = "여러 파일 다운로드";
+			form.submitmultidown.value = "여러 파일 선택하기";
 			document.getElementById("multidowntext").type = "hidden";
 			document.getElementById("cancelmultidown").type = "hidden";
+			document.getElementById("throwtotrashcan").type = "hidden";
 			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+		});
+	});
+	$(function(){
+		$("#throwtotrashcan").click(function(){ // 지우기 클릭 시
+			var form = document.getElementById("multidownform");
+			window.location = "/BEngineer/beFiles/throwToTrashcan.do?file_ref=" + form.file_ref.value + "&folder=" + ${folder_ref };
 		});
 	});
 	$(function(){
@@ -118,8 +126,8 @@
 				hinder(); // 다른 폼 닫기
 				document.getElementById("multidowntext").type = "text";
 				document.getElementById("cancelmultidown").type = "button";
-				form.submitmultidown.type = "submit";
 				form.submitmultidown.value = "다운로드";
+				document.getElementById("throwtotrashcan").type = "button";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				return false;
 			}
@@ -127,6 +135,8 @@
 				alert('업로드할 파일을 선택해주세요');
 				return false;
 			}
+			hinder();
+			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 		});
 	});
 	$(function(){
@@ -272,9 +282,10 @@
 		clickedfile = new Array();
 		form = document.getElementById("multidownform");
 		form.file_ref.value = "";
-		form.submitmultidown.value = "여러 파일 다운로드";
+		form.submitmultidown.value = "여러 파일 선택하기";
 		document.getElementById("multidowntext").type = "hidden";
 		document.getElementById("cancelmultidown").type = "hidden";
+		document.getElementById("throwtotrashcan").type = "hidden";
 		form = document.getElementById("moveform");
 		form.submitmove.value="이동";
 		form.submitmove.type="hidden";
@@ -385,8 +396,12 @@
 		<form id="moveform" method="post" >
 			<input type="hidden" name="ref" />
 			<input type="hidden" name="folder-ref"/>
-			<input type="hidden"  name="submitmove" value="이동"/>
-			<input type="hidden"  id="movecancel" name="movecancel" value="취소"/>
+			<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="hidden"  name="submitmove" value="이동"/>
+			</div>
+			<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="hidden"  id="movecancel" name="movecancel" value="취소"/>
+			</div>
 		</form>
 	</div>
 	<!-- 다수 파일 다운로드 폼 -->
@@ -397,8 +412,15 @@
 		<div style="height:100%; width:relative; margin:0; float:left;">
 			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
 				<input type="hidden" name="file_ref" />
-				<input type="submit" name="submitmultidown" value="여러 파일 다운로드"/>
-				<input type="hidden" id="cancelmultidown" value="취소" />
+				<div style="height:100%; width:relative; float:left;">
+					<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="throwtotrashcan" value="지우기" />
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="cancelmultidown" value="취소" />
+				</div>
 			</form>
 		</div>
 	</div>

@@ -316,7 +316,16 @@ public class FileBean {
 		String fileaddress = "";
 		File file = null;
 		if(files.length == 1) {
-			int filenum = Integer.parseInt(files[0]);
+			int filenum = 0;
+			try {
+				 filenum = Integer.parseInt(files[0]);
+			}catch(Exception e) {
+				ModelAndView mav = new ModelAndView();
+				mav.setViewName("beFiles/alert");
+				mav.addObject("alert", "유효하지 않은 접근입니다.");
+				mav.addObject("location", "history.go(-1)");
+				return mav;
+			}
 			List address_ref = getAddr(filenum);
 			FileDTO dto = new FileDTO();
 			for(int i = address_ref.size() - 1; i >= 0; i--) {
@@ -351,7 +360,16 @@ public class FileBean {
 			}
 			sqlSession.update("bengineer.hit", filenum);
 		}else if(files.length > 1) {
-			int filenum = Integer.parseInt(files[0]);
+			int filenum = 0;
+			try {
+				 filenum = Integer.parseInt(files[0]);
+			}catch(Exception e) {
+				ModelAndView mav = new ModelAndView();
+				mav.setViewName("beFiles/alert");
+				mav.addObject("alert", "유효하지 않은 접근입니다.");
+				mav.addObject("location", "history.go(-1)");
+				return mav;
+			}
 			List address_ref = getAddr(filenum);
 			FileDTO dto = new FileDTO();
 			for(int i = address_ref.size() - 1; i > 0; i--) {
@@ -364,7 +382,15 @@ public class FileBean {
 			fileaddress = "d:/PM/BEngineer/" + fileaddress;
 			List filelist = new ArrayList();
 			for(int i = 0; i < files.length; i++) {
-				filenum = Integer.parseInt(files[i]);
+				try {
+					 filenum = Integer.parseInt(files[0]);
+				}catch(Exception e) {
+					ModelAndView mav = new ModelAndView();
+					mav.setViewName("beFiles/alert");
+					mav.addObject("alert", "유효하지 않은 접근입니다.");
+					mav.addObject("location", "history.go(-1)");
+					return mav;
+				}
 				dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
 				if(dto.getFiletype().equals("dir")) {
 					List add = getFilelist(fileaddress, "/" + dto.getOrgname());
@@ -509,7 +535,13 @@ public class FileBean {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		String id = (String)session.getAttribute("id");
 		KeyDTO kdto = (KeyDTO)sqlSession.selectOne("bengineer.open", share_key);
-		
+		int filenum = kdto.getFilenum();
+		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
+		if(id.equals(dto.getOwner())) {
+			model.addAttribute("alert", "니 파일입니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		if(kdto != null) {
 			ShareDTO sdto = new ShareDTO();
 			sdto.setId(id);
@@ -524,7 +556,7 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 	}
-	/*@RequestMapping("throwToTrashcan.do")
+	@RequestMapping("throwToTrashcan.do")
 	public String throwToTrashcan(HttpSession session, Model model, String file_ref, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkPower((String)session.getAttribute("id"), folder)) {
@@ -532,7 +564,53 @@ public class FileBean {
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
-	}*/
+		String [] files = file_ref.split(",");
+		String result = "";
+		String owner = "";
+		int filenum = 0;
+		if(files.length == 1) {
+			try {
+				 filenum = Integer.parseInt(files[0]);
+			}catch(Exception e) {
+				model.addAttribute("alert", "유효하지 않은 접근입니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
+			if(dto.getImportant() == -1) {
+				model.addAttribute("alert", "기본폴더는 지울 수 없습니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			owner = dto.getOwner();
+			if(dto.getFiletype().equals("dir")) {
+				List subfiles = getSubFilenum(filenum);
+				sqlSession.update("bengineer.throwalltotrashcan", subfiles);
+				result = "파일을 휴지통에 버렸습니다.";
+			}else {
+				if(dto.getFilesize() > 10 * 1024 * 1024) {
+					model.addAttribute("confirm", "휴지통에 넣기엔 파일이 너무 큽니다. 완전 삭제하시겠습니까?");
+					model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + filenum + "\"");
+					return "beFiles/confirm";
+				}else {
+					sqlSession.update("bengineer.throwtotrashcan", filenum);
+					result = "파일을 휴지통에 버렸습니다.";
+				}
+			}
+		}else if(files.length > 1) {
+		}else {
+			model.addAttribute("alert", "유효하지 않은 접근입니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		model.addAttribute("alert", result);
+		if(owner.equals(session.getAttribute("id"))) {
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+		}else {
+			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+		}
+		return "beFiles/alert";
+	}
 	private String makecode() {
 		String code = "";
 		for(int i = 0; i < 20; i++) {
@@ -796,6 +874,28 @@ public class FileBean {
 				}
 			}else {
 				result.add(pre + "/" + names[i]);
+			}
+		}
+		return result;
+	}
+	private List getSubFilenum(int folder) {
+		List result = new ArrayList();
+		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder);
+		if(dto.getFiletype().equals("dir")) {
+			result.add(folder);
+		}else {
+			return null;
+		}
+		List files = sqlSession.selectList("bengineer.getfiles", folder);
+		int filenum = 0;
+		if(files != null && files.size() > 0) {
+			for(int i = 0; i < files.size(); i++) {
+				dto = (FileDTO)files.get(i);
+				filenum = dto.getNum();
+				if(dto.getFiletype().equals("dir")) {
+					result.addAll(getSubFilenum(filenum));
+				}
+				result.add(filenum);
 			}
 		}
 		return result;

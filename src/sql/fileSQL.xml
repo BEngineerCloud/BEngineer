@@ -6,7 +6,7 @@
 		select num from BEfilelist where orgname = #{orgname} and folder_ref = #{folder_ref}
 	</select>
 	<select id="getfiles" resultType="fileDTO" parameterType="int">
-		select * from BEfilelist where folder_ref = #{folder_ref} order by filetype desc, filename asc
+		select * from BEfilelist where folder_ref = #{folder_ref} and important > -2 order by filetype desc, filename asc
 	</select>
 	<insert id="makebasedir" parameterType="fileDTO">
 		insert into BEfilelist(num,folder_ref,filename,orgname,filetype,uploaddate,updatedate,important,owner) values(BEfilelist_seq.NEXTVAL, #{folder_ref}, #{filename}, #{orgname}, 'dir', sysdate, sysdate, -1, #{owner})
@@ -48,11 +48,20 @@
 		select b.share_key share_key, b.filenum filenum, b.enddate enddate, b.rw rw from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.id = #{id} and b.filenum = #{num} and b.enddate >= sysdate
 	</select>
 	<select id="mysharedfile" parameterType="string" resultType="fileDTO">
-		select * from BEfilelist where num in (select b.filenum from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.id = #{id} and b.enddate >= sysdate)
+		select * from BEfilelist where num in (select b.filenum from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.id = #{id} and b.enddate >= sysdate) and important > -2
 	</select>
 	<delete id="deletefile" parameterType="int">
 		delete from BEfilelist where num = #{folder_ref}
 	</delete>
+	<update id="throwtotrashcan" parameterType="int">
+		update BEfilelist set important = -2 where num = #{filenum}
+	</update>
+	<update id="throwalltotrashcan" parameterType="list">
+		update BEfilelist set important = -2 where num in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
 	<select id="getparentnum" parameterType="hashmap" resultType="int">
 		select num from BEfilelist where owner = #{owner} and important = -1 and orgname = #{orgname}
 	</select>

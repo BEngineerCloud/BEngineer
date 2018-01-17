@@ -21,8 +21,6 @@ public class MainBean {
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beMain.do") // 메인페이지
 	public String main(HttpSession session) {
-		session.setAttribute("id","id"); // 테스트용임시세션등록
-		session.setAttribute("nickname", "nickname");
 		if(loginCheck(session)) {
 			return "redirect:/beMember/beLogin.do";
 		}else {
