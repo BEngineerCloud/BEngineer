@@ -73,7 +73,7 @@ $(function(){
 			clickedfile = new Array();
 			var form = document.getElementById("multidownform");
 			form.file_ref.value = "";
-			form.submitmultidown.value = "여러 파일 다운로드";
+			form.submitmultidown.value = "여러 파일 선택하기";
 			document.getElementById("multidowntext").type = "hidden";
 			document.getElementById("cancelmultidown").type = "hidden";
 			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
@@ -228,7 +228,7 @@ $(function(){
 			clickedfile = new Array();
 			form = document.getElementById("multidownform");
 			form.file_ref.value = "";
-			form.submitmultidown.value = "여러 파일 다운로드";
+			form.submitmultidown.value = "여러 파일 선택하기";
 			document.getElementById("multidowntext").type = "hidden";
 			document.getElementById("cancelmultidown").type = "hidden";
 		}
@@ -331,7 +331,7 @@ $(function(){
 		<div style="height:100%; width:relative; margin:0; float:left;">
 			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
 				<input type="hidden" name="file_ref" />
-				<input type="submit" name="submitmultidown" value="여러 파일 다운로드"/>
+				<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
 				<input type="hidden" id="cancelmultidown" value="취소" />
 			</form>
 		</div>

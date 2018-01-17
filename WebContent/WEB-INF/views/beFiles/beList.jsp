@@ -135,8 +135,6 @@
 				alert('업로드할 파일을 선택해주세요');
 				return false;
 			}
-			hinder();
-			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 		});
 	});
 	$(function(){

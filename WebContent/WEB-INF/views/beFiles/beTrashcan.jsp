@@ -11,8 +11,24 @@
 			var filename = $(this).text();
 			var ref = $(this).attr("name");
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
-			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
-			$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+			form = document.getElementById("multiform");
+			if(document.getElementById("multitext").type == "text"){
+				var index = clickedfile.indexOf(ref);
+				if(index == -1){
+					clickedfile.push(ref);
+					$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+				}else{
+					clickedfile.splice(index, 1);
+					$(this).css("background-color","#ff6666"); // 클릭파일 색 바꾸기
+				}
+				form.file_ref.value = clickedfile.join();
+			}else{
+				hinder(); // 업로드 입력, 폴더생성 입력 취소
+				form.file_ref.value = ref;
+				document.getElementById("submitdelete").type = "button";
+				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+			}
 		});
 	});
 	$(function(){
@@ -45,21 +61,21 @@
 		});
 	});
 	$(function(){
-		$("#cancelmultidown").click(function(){ // 다중선택 취소시
+		$("#cancelmulti").click(function(){ // 다중선택 취소시
 			clickedfile = new Array();
-			var form = document.getElementById("multidownform");
+			var form = document.getElementById("multiform");
 			form.file_ref.value = "";
 			form.submitmulti.value = "여러 파일 선택하기";
-			document.getElementById("multidowntext").type = "hidden";
-			document.getElementById("cancelmultidown").type = "hidden";
-			document.getElementById("deletefile").type = "hidden";
+			document.getElementById("multitext").type = "hidden";
+			document.getElementById("cancelmulti").type = "hidden";
+			document.getElementById("submitdelete").type = "hidden";
 			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 		});
 	});
 	$(function(){
-		$("#throwtotrashcan").click(function(){ // 지우기 클릭 시
-			var form = document.getElementById("multidownform");
-			window.location = "/BEngineer/beFiles/throwToTrashcan.do?file_ref=" + form.file_ref.value + "&folder=" + ${folder_ref };
+		$("#submitdelete").click(function(){ // 지우기 클릭 시
+			var form = document.getElementById("multiform");
+			window.location = "/BEngineer/beFiles/deleteFile.do?file_ref=" + form.file_ref.value + "&folder=" + ${folder_ref };
 		});
 	});
 	$(function(){
@@ -74,32 +90,34 @@
 		});
 	});
 	$(function(){
-		$("#multidownform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
-			var form = document.getElementById("multidownform"); // 폼 받아오기
-			if(document.getElementById("multidowntext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
+		$("#multiform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
+			var form = document.getElementById("multiform"); // 폼 받아오기
+			alert(1);
+			if(document.getElementById("multitext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
 				hinder(); // 다른 폼 닫기
-				document.getElementById("multidowntext").type = "text";
-				document.getElementById("cancelmultidown").type = "button";
+				document.getElementById("multitext").type = "text";
+				document.getElementById("cancelmulti").type = "button";
+				document.getElementById("submitdelete").type = "button";
+				alert(2);
 				form.submitmulti.value = "복구";
-				document.getElementById("throwtotrashcan").type = "button";
+				document.getElementById("").type = "button";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				return false;
 			}
+			alert(3);
 			if(!form.file_ref.value){ // 업로드할 파일 미선택시
 				alert('업로드할 파일을 선택해주세요');
 				return false;
 			}
-			hinder();
-			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 		});
 	});
 	function hinder(){ // 모든 폼 닫기 함수
-		form = document.getElementById("multidownform");
+		form = document.getElementById("multiform");
 		form.file_ref.value = "";
 		form.submitmulti.value = "여러 파일 선택하기";
-		document.getElementById("multidowntext").type = "hidden";
-		document.getElementById("cancelmultidown").type = "hidden";
-		document.getElementById("deletefile").type = "hidden";
+		document.getElementById("multitext").type = "hidden";
+		document.getElementById("cancelmulti").type = "hidden";
+		document.getElementById("submitdelete").type = "hidden";
 	}
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
@@ -125,16 +143,19 @@
 	<!-- 다수 파일 선택 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<div style="height:100%; width:relative; margin-top:5; float:left;">
-			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
+			<input type="hidden" id="multitext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
 		</div>
 		<div style="height:100%; width:relative; margin:0; float:left;">
-			<form action="/BEngineer/beFiles/deleteFile.do" id="multidownform" method="post">
+			<form action="/BEngineer/beFiles/deleteFile.do" id="multiform" method="post">
 				<input type="hidden" name="file_ref" />
 				<div style="height:100%; width:relative; float:left;">
 					<input type="submit" name="submitmulti" value="여러 파일 선택하기"/>
 				</div>
 				<div style="height:100%; width:relative; float:left;">
-					<input type="hidden" id="cancelmultidown" value="취소" />
+					<input type="hidden" id="cancelmulti" value="취소" />
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="submitdelete" value="지우기" />
 				</div>
 			</form>
 		</div>
