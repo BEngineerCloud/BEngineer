@@ -45,7 +45,6 @@ public class FileBean2 {
 		FileBean filebean = new FileBean();
 		FileDTO dto = new FileDTO();
 		dto.setOwner(owner);
-		
 		if(list.length > 0){
 		    for(int i=0; i < list.length; i++){
 		    	if(list[i].isFile()) { //파일인지 판단, 파일이면
@@ -58,7 +57,6 @@ public class FileBean2 {
 		    		if( moveParent!=null) {
 		    			dto.setNum(moveParent);
 		    			sqlSession.update("bengineer.autoarrange",dto);
-		    			System.out.println("성공");
 		    		}
 		    	}
 		    }
