@@ -192,15 +192,26 @@
 		});
 	});
 	$(function(){
-		$("#moveform").submit(function(){ // 폴더명/파일명 변경 버튼 클릭시
+		$("#moveform").submit(function(){ // 폴더명/파일명 이동 버튼 클릭시
 			var form = document.getElementById("moveform"); // 폼 받아오기
+			var ref = $("#files > div").attr("name");
+			if(form.submitmove.value=="이동"){
+				
+				form.ref.value=ref;
+				alert(form.ref.value);
 				form.submitmove.value="확인"
 				form.movecancel.type="button";
 				return false;
+			}
+			else if(form.submitmove.value=="확인"){
+				
+				form.folder_ref.value=ref;
+				alert(form.folder_ref.value);
+			}
 		});
 	});
 	$(function(){
-		$("#movecancel").click(function(){ // 폴더명/파일명 변경 버튼 클릭시
+		$("#movecancel").click(function(){ // 폴더명/파일명 이동 취소 버튼 클릭시
 			var form = document.getElementById("moveform"); // 폼 받아오기
 				form.submitmove.value="이동"
 				form.movecancel.type="hidden";
@@ -287,9 +298,6 @@
 		document.getElementById("cancelmultidown").type = "hidden";
 		document.getElementById("throwtotrashcan").type = "hidden";
 		form = document.getElementById("moveform");
-		form.submitmove.value="이동";
-		form.submitmove.type="hidden";
-		form.movecancel.type="hidden";
 	}
 	function setForm(type, ref){
 		var form = document.getElementById("changenameform");
@@ -393,11 +401,11 @@
 	</div>
 	<!-- 파일/폴더 이동 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="moveform" method="post" >
+		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
 			<input type="hidden" name="ref" />
-			<input type="hidden" name="folder-ref"/>
+			<input type="hidden" name="folder_ref"/>
 			<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="hidden"  name="submitmove" value="이동"/>
+				<input type="hidden"  id="submitmove"name="submitmove" value="이동"/>
 			</div>
 			<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="hidden"  id="movecancel" name="movecancel" value="취소"/>
