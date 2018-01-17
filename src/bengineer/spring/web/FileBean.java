@@ -35,6 +35,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class FileBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
+	public void setSqlSession(SqlSessionTemplate sqlSession) {
+		this.sqlSession = sqlSession;
+	}
 	@RequestMapping("beMyList.do") // 내 파일 보기
 	public String myFile(HttpSession session, Model model, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
@@ -106,7 +109,7 @@ public class FileBean {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("write", true);
-		return "beFiles/beList2";
+		return "beFiles/beList";
 	}
 	@RequestMapping("beSharedList.do") // 내 공유파일 보기
 	public String shareFile(HttpSession session, Model model, int folder) {
