@@ -307,6 +307,11 @@ public class FileBean {
 	}
 	@RequestMapping("beDownload.do") // 파일 다운로드
 	public ModelAndView download(String file_ref, HttpSession session) {
+		if(MainBean.loginCheck(session)) {
+			ModelAndView mav = new ModelAndView();
+			mav.setViewName("redirect:/beMember/beLogin.do");
+			return mav;
+		} // 로그인 체크
 		String [] files = file_ref.split(",");
 		String fileaddress = "";
 		File file = null;
@@ -431,9 +436,15 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 		List address_ref = getAddr(ref);
+		FileDTO dto = (FileDTO)address_ref.get(0);
+		if(dto.getImportant() < 0) {
+			model.addAttribute("alert", "기본 폴더의 이름은 바꿀 수 없습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		if(changeDirName(name, address_ref)) { // 폴더 생성 완료시
 			model.addAttribute("alert", "폴더명 변경 완료");
-			FileDTO dto = (FileDTO)address_ref.get(0);
+			dto = (FileDTO)address_ref.get(0);
 			String owner = dto.getOwner();
 			if(owner.equals(session.getAttribute("id"))) {
 				model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
@@ -498,6 +509,7 @@ public class FileBean {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		String id = (String)session.getAttribute("id");
 		KeyDTO kdto = (KeyDTO)sqlSession.selectOne("bengineer.open", share_key);
+		
 		if(kdto != null) {
 			ShareDTO sdto = new ShareDTO();
 			sdto.setId(id);
@@ -512,6 +524,15 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 	}
+	/*@RequestMapping("throwToTrashcan.do")
+	public String throwToTrashcan(HttpSession session, Model model, String file_ref, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		if(!checkPower((String)session.getAttribute("id"), folder)) {
+			model.addAttribute("alert", "권한이 없습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+	}*/
 	private String makecode() {
 		String code = "";
 		for(int i = 0; i < 20; i++) {
@@ -562,7 +583,7 @@ public class FileBean {
 		File file = new File("d:/PM/BEngineer" + address + "/" + name);
 		return file.mkdirs();
 	}
-	private List getAddr(int folder_ref) {
+	public List getAddr(int folder_ref) {
 		List address = new ArrayList();
 		return getAddr(address, folder_ref);
 	}
@@ -577,7 +598,7 @@ public class FileBean {
 			return getAddr(address, folder_ref);
 		}
 	}
-	private List getShareAddr(int folder_ref, String id) {
+	public List getShareAddr(int folder_ref, String id) {
 		List address = new ArrayList();
 		return getShareAddr(address, folder_ref, id);
 	}
