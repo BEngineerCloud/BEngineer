@@ -62,6 +62,24 @@
 			#{item}
 		</foreach>
 	</update>
+	<select id="checkall1" parameterType="list" resultType="fileDTO">
+		select * from BEfilelist where important = -1 and num in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	<select id="checkall2" parameterType="list" resultType="fileDTO">
+		select * from BEfilelist where filesize > 10*1024*1024 and num in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</select>
+	<select id="mytrashcan" parameterType="String" resultType="fileDTO">
+		select * from BEfilelist where owner = #{owner} and important = -2 and folder_ref not in (select num from BEfilelist where owner = #{owner} and important = -2) order by filetype desc, filename asc
+	</select>
+	<select id="mytrashcanfolder" parameterType="int" resultType="fileDTO">
+		select * from BEfilelist where folder_ref = #{folder_ref} and important = -2 order by filetype desc, filename asc
+	</select>
 	<select id="getparentnum" parameterType="hashmap" resultType="int">
 		select num from BEfilelist where owner = #{owner} and important = -1 and orgname = #{orgname}
 	</select>

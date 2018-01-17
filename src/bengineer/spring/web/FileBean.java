@@ -108,7 +108,7 @@ public class FileBean {
 		model.addAttribute("write", true);
 		return "beFiles/beList";
 	}
-	@RequestMapping("beSharedList.do") // 내 파일 보기
+	@RequestMapping("beSharedList.do") // 내 공유파일 보기
 	public String shareFile(HttpSession session, Model model, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		String id = (String)session.getAttribute("id");
@@ -169,6 +169,59 @@ public class FileBean {
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
 			return "beFiles/beSharedList";
+		}
+	}
+	@RequestMapping("beTrashcan.do") // 내 삭제파일 보기
+	public String trashcan(HttpSession session, Model model, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
+		String id = (String)session.getAttribute("id");
+		if(folder == 0) {
+			List filelist = sqlSession.selectList("bengineer.mytrashcan", id);
+			model.addAttribute("list", filelist);
+			List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
+			List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 전체 경로를 하나씩 저장하기 위한 리스트
+			folderaddress.add("휴지통");
+			orgaddress.add(0);
+			model.addAttribute("folderaddress", folderaddress);
+			model.addAttribute("orgaddress", orgaddress);
+			model.addAttribute("folder_ref", folder);
+			model.addAttribute("write", false);
+			return "beFiles/beTrashcan";
+		}else {
+			List address_ref = getTrashAddr(folder);
+			if(address_ref == null) {
+				model.addAttribute("alert", "잘못된 접근입니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			List filelist = sqlSession.selectList("bengineer.mytrashcanfolder", folder);
+			model.addAttribute("list", filelist);
+			List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
+			List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
+			FileDTO dto = new FileDTO();
+			if(address_ref.size() < 4) {
+				folderaddress.add("휴지통");
+				orgaddress.add(0);
+				for(int i = address_ref.size() - 1; i >= 0; i--) {
+					dto = (FileDTO)address_ref.get(i);
+					folderaddress.add(dto.getFilename());
+					orgaddress.add(dto.getNum());
+				}
+			}else {
+				folderaddress.add("휴지통");
+				orgaddress.add(0);
+				folderaddress.add("..."); // 폴더 경로가 5개를 넘어길 시 기본폴더와 가장 위의 3개를 제외하고 생략
+				orgaddress.add(null);
+				for(int i = 2; i >= 0; i--) {
+					dto = (FileDTO)address_ref.get(i);
+					folderaddress.add(dto.getFilename());
+					orgaddress.add(dto.getNum());
+				}
+			}
+			model.addAttribute("folderaddress", folderaddress);
+			model.addAttribute("orgaddress", orgaddress);
+			model.addAttribute("folder_ref", folder);
+			return "beFiles/beTrashcan";
 		}
 	}
 	@RequestMapping(value="fileupload.do", method=RequestMethod.POST) // 업로드 페이지
@@ -577,20 +630,27 @@ public class FileBean {
 				return "beFiles/alert";
 			}
 			FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
-			if(dto.getImportant() == -1) {
-				model.addAttribute("alert", "기본폴더는 지울 수 없습니다.");
-				model.addAttribute("location", "history.go(-1)");
-				return "beFiles/alert";
-			}
 			owner = dto.getOwner();
 			if(dto.getFiletype().equals("dir")) {
 				List subfiles = getSubFilenum(filenum);
+				List check = sqlSession.selectList("bengineer.checkall1", subfiles);
+				if(check != null && check.size() != 0) {
+					model.addAttribute("alert", "기본폴더는 지울 수 없습니다.");
+					model.addAttribute("location", "history.go(-1)");
+					return "beFiles/alert";
+				}
+				check = sqlSession.selectList("bengineer.checkall2", subfiles);
+				if(check != null && check.size() != 0) {
+					model.addAttribute("confirm", "휴지통에 넣기엔 파일이 너무 큽니다. 완전 삭제하시겠습니까?(주의 : 예를 클릭할 시 모든 파일이 완전 삭제됩니다.)");
+					model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + file_ref + "\"");
+					return "beFiles/confirm";
+				}
 				sqlSession.update("bengineer.throwalltotrashcan", subfiles);
-				result = "파일을 휴지통에 버렸습니다.";
+				result = "파일들을 휴지통에 버렸습니다.";
 			}else {
 				if(dto.getFilesize() > 10 * 1024 * 1024) {
 					model.addAttribute("confirm", "휴지통에 넣기엔 파일이 너무 큽니다. 완전 삭제하시겠습니까?");
-					model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + filenum + "\"");
+					model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + file_ref + "\"");
 					return "beFiles/confirm";
 				}else {
 					sqlSession.update("bengineer.throwtotrashcan", filenum);
@@ -598,6 +658,37 @@ public class FileBean {
 				}
 			}
 		}else if(files.length > 1) {
+			List subfiles = new ArrayList();
+			for(int i = 0; i < files.length; i++) {
+				try {
+					 filenum = Integer.parseInt(files[i]);
+				}catch(Exception e) {
+					model.addAttribute("alert", "유효하지 않은 접근입니다.");
+					model.addAttribute("location", "history.go(-1)");
+					return "beFiles/alert";
+				}
+				FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
+				if(i == 0) {owner = dto.getOwner();}
+				if(dto.getFiletype().equals("dir")) {
+					subfiles = getSubFilenum(filenum);
+				}else {
+					subfiles.add(filenum);
+				}
+			}
+			List check = sqlSession.selectList("bengineer.checkall1", subfiles);
+			if(check != null && check.size() != 0) {
+				model.addAttribute("alert", "기본폴더는 지울 수 없습니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			check = sqlSession.selectList("bengineer.checkall2", subfiles);
+			if(check != null && check.size() != 0) {
+				model.addAttribute("confirm", "휴지통에 넣기엔 파일이 너무 큽니다. 완전 삭제하시겠습니까?(주의 : 예를 클릭할 시 모든 파일이 완전 삭제됩니다.)");
+				model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + file_ref + "\"");
+				return "beFiles/confirm";
+			}
+			sqlSession.update("bengineer.throwalltotrashcan", subfiles);
+			result = "파일들을 휴지통에 버렸습니다.";
 		}else {
 			model.addAttribute("alert", "유효하지 않은 접근입니다.");
 			model.addAttribute("location", "history.go(-1)");
@@ -674,6 +765,25 @@ public class FileBean {
 			return address;
 		}else {
 			return getAddr(address, folder_ref);
+		}
+	}
+	public List getTrashAddr(int folder_ref) {
+		List address = new ArrayList();
+		return getTrashAddr(address, folder_ref);
+	}
+	private List getTrashAddr(List address, int folder_ref) { // 폴더 실 주소 확인을 위한 메서드
+		FileDTO folder = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder_ref);
+		if(folder == null) {return null;}
+		if(folder.getImportant() == -2) {
+			address.add(folder);
+			folder_ref = folder.getFolder_ref();
+			if(folder_ref == 0) {
+				return address;
+			}else {
+				return getTrashAddr(address, folder_ref);
+			}
+		}else {
+			return address;
 		}
 	}
 	public List getShareAddr(int folder_ref, String id) {
