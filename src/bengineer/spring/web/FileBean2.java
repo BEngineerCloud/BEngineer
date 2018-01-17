@@ -74,7 +74,8 @@ public class FileBean2 {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 비 로그인 상태시 로그인 창으로 리디렉트
 		String owner = (String)session.getAttribute("id");
 		FileBean filebean = new FileBean();
-		List originalAddr = filebean.getAddr(ref);
+		List originalAddr = null;
+		originalAddr = filebean.getAddr(ref);
 		String originalPath = "d:/PM/BEngineer/";
 		FileDTO dto = new FileDTO();
 		for(int i = originalAddr.size() - 1; i >= 0; i--) {

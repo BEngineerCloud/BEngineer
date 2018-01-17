@@ -106,7 +106,7 @@ public class FileBean {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("write", true);
-		return "beFiles/beList";
+		return "beFiles/beList2";
 	}
 	@RequestMapping("beSharedList.do") // 내 공유파일 보기
 	public String shareFile(HttpSession session, Model model, int folder) {

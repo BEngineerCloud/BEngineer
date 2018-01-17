@@ -65,11 +65,6 @@
 		});
 	});
 	$(function(){
-		$("#mytrashcan").click(function(){
-			window.location = "/BEngineer/beFiles/beTrashcan.do?folder=0";
-		});
-	});
-	$(function(){
 		$("#cancelmultidown").click(function(){ // 다중선택 취소시
 			clickedfile = new Array();
 			var form = document.getElementById("multidownform");
@@ -456,7 +451,6 @@
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
-	<input type="button" id="mytrashcan" value="휴지통"/>
 	button2
 </div>
 <!-- 파일들 창 -->
