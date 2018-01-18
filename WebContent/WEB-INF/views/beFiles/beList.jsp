@@ -10,6 +10,19 @@
 			$("font#filename").text(orgname.value); // 주소부분에 표시
 			var filename = $(this).text();
 			var ref = $(this).attr("name");
+			var moveform = document.getElementById("moveform"); // moveform 가져오기
+			
+			if(moveform.submitmove.value == "이동"){ // moveform.submitmove 값이 '이동'일 시
+				moveform.select_flag.value=ref;		// movefrom.select_flag의 값에 클릭된 fileform.ref 대입
+			}else if(moveform.submitmove.value == "이동하기"){ // moveform.submitmove 값이 '이동하기'일 시
+				moveform.folder_ref.value=ref;			  // moveform.folder_ref 값에 클릭된 fileform.ref 대입
+			}
+			
+			//현재 파일 이동하기 클릭 후 다른파일을 선택했을 때 이동하기 버튼이 나오게하기 위해서
+			if(moveform.folder_ref.value!=0){ 	   // moveform.folder_ref 값이 0이 아닐시
+				moveform.submitmove.type="submit"; // moveform.submitmove 타입을 submit으로 설정
+			}
+			
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			form = document.getElementById("multidownform");
 			if(document.getElementById("multidowntext").type == "text"){
@@ -41,32 +54,33 @@
 		$("#files > div").dblclick(function(){ // 파일 더블클릭시
 			var filename = $(this).text();
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			var moveform = document.getElementById("moveform");
 			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
-				window.location = "/BEngineer/beFiles/beMyList.do?folder=" + $(this).attr("name");
+				// 파일/폴더의 이동 버튼 클릭 후 다른 폴더로 이동해서 옮기기위해서
+				if(moveform.select_flag.value==0 || moveform.folder_ref.value==0) 
+					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + $(this).attr("name");
+				else
+					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + $(this).attr("name")+"&movefile_Ref="+moveform.select_flag.value+"&movefile_FRef="+moveform.folder_ref.value; 
+					// 파일/폴더를 선택 한 후 다른 폴더 경로로 들어갈 때 movefile_Ref, movefile_FRef에 값을 대입
 			}
 			if(type.value != "dir"){ // 파일일 때 해당 파일 다운로드
-				window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + $(this).attr("name");
+				window.location = "/BEngineer2/beFiles/beDownload.do?file_ref=" + $(this).attr("name");
 			}
 		});
 	});
 	$(function(){
 		$("#myfile").click(function(){ // 내 파일보기 버튼 클릭 시 페이지 이동
-			window.location = "/BEngineer/beFiles/beMyList.do?folder=0";
+			window.location = "/BEngineer2/beFiles/beMyList.do?folder=0";
 		});
 	});
 	$(function(){
 		$("#mysharedfile").click(function(){
-			window.location = "/BEngineer/beFiles/beSharedList.do?folder=0";
+			window.location = "/BEngineer2/beFiles/beSharedList.do?folder=0";
 		});
 	});
 	$(function(){
 		$("#beLogo").click(function(){ // 로고 클릭시 메인으로 이동
-			window.location = "/BEngineer/beMain.do";
-		});
-	});
-	$(function(){
-		$("#mytrashcan").click(function(){
-			window.location = "/BEngineer/beFiles/beTrashcan.do?folder=0";
+			window.location = "/BEngineer2/beMain.do";
 		});
 	});
 	$(function(){
@@ -84,18 +98,18 @@
 	$(function(){
 		$("#throwtotrashcan").click(function(){ // 지우기 클릭 시
 			var form = document.getElementById("multidownform");
-			window.location = "/BEngineer/beFiles/throwToTrashcan.do?file_ref=" + form.file_ref.value + "&folder=" + ${folder_ref };
+			window.location = "/BEngineer2/beFiles/throwToTrashcan.do?file_ref=" + form.file_ref.value + "&folder=" + ${folder_ref };
 		});
 	});
 	$(function(){
 		$("#addinfodiv > #addinfo").click(function(){
-			window.location = "/BEngineer/beMember/beAddinfo.do";
+			window.location = "/BEngineer2/beMember/beAddinfo.do";
 		});
 	});
 	
 	$(function(){
 		$("#logoutdiv > #logout").click(function(){
-			window.location = "/BEngineer/beLogout.do";
+			window.location = "/BEngineer2/beLogout.do";
 		});
 	});
 	$(function(){
@@ -140,6 +154,8 @@
 				alert('업로드할 파일을 선택해주세요');
 				return false;
 			}
+			hinder();
+			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 		});
 	});
 	$(function(){
@@ -195,30 +211,46 @@
 		});
 	});
 	$(function(){
-		$("#moveform").submit(function(){ // 폴더명/파일명 이동 버튼 클릭시
-			var form = document.getElementById("moveform"); // 폼 받아오기
-			var ref = $("#files > div").attr("name");
-			if(form.submitmove.value=="이동"){
-				
-				form.ref.value=ref;
-				alert(form.ref.value);
-				form.submitmove.value="확인"
-				form.movecancel.type="button";
+		$("#moveform").submit(function(){ // 파일/폴더 이동 버튼 클릭시
+			var form = document.getElementById("moveform"); // moveform 받아오기, *$(this)사용
+			if(form.submitmove.value=="이동"){ // submitmove 값이 이동일 시
+				var fileform = document.getElementById(form.select_flag.value); // 클릭되어있는 fileform 가져오기
+				 // moveform.ref에 fileform.ref 대입하기
+				fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
+				form.ref.value=form.select_flag.value;
+				form.submitmove.value="이동하기" 		// moveform.submitmove 값을 확인으로 설정
+				form.submitmove.type="hidden"; 	// moveform.submitmove 타입을 '숨김'으로 설정
+				form.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정				
 				return false;
 			}
-			else if(form.submitmove.value=="확인"){
-				
-				form.folder_ref.value=ref;
-				alert(form.folder_ref.value);
+			if(form.submitmove.value=="이동하기"){
+				// 다른 폴더로 이동한 후에 처음에 선택한 파일/폴더의 ref 값이 없을 시
+				if(form.ref.value==0){
+					form.ref.value=form.select_flag.value;
+				}
 			}
 		});
 	});
 	$(function(){
-		$("#movecancel").click(function(){ // 폴더명/파일명 이동 취소 버튼 클릭시
-			var form = document.getElementById("moveform"); // 폼 받아오기
-				form.submitmove.value="이동"
-				form.movecancel.type="hidden";
-				return false;
+		$("#movecancel").click(function(){ // 파일/폴더 이동 취소 버튼 클릭시
+			var form = document.getElementById("moveform"); // moveform 받아오기, *$(this)사용
+			if(form.ref.value!=0){ // 클릭한 파일이 같은 위치에 있을 시
+				if(form.select_flag.value!=0){ // 이동버튼만 클릭한 뒤 취소버튼을 클릭 시
+					var fileform = document.getElementById(form.select_flag.value); // 클릭되어있는 fileform 가져오기
+					fileform.style.border="none"; //fileform의 테두리를 '없음'으로 설정
+					fileform.style.backgroundColor="#ff6666";
+				}
+				if(form.folder_ref.value!=0){ // 이동버튼을 클릭한 뒤 다른 파일 클릭한 후 취소버튼 클릭 시
+					var fileform2 = document.getElementById(form.folder_ref.value);
+					fileform2.style.backgroundColor="#ff6666";
+				}
+			}
+			form.ref.value=""; 				// moveform.ref 값을 빈칸으로 설정
+			form.folder_ref.value=""; 		// moveform.folder_ref 값을 빈칸으로 설정
+			form.submitmove.value="이동" // moveform.submitmove 값을 이동으로 설정 		
+			form.submitmove.type="hidden"; 	// moveform.subitmove 타입을 submit으로 설정
+			form.movecancel.type="hidden"; 	//moveform.movecancel 타입을 '숨김'으로 설정
+			return false;
 		});
 	});
 	$(function(){
@@ -300,18 +332,17 @@
 		document.getElementById("multidowntext").type = "hidden";
 		document.getElementById("cancelmultidown").type = "hidden";
 		document.getElementById("throwtotrashcan").type = "hidden";
-		form = document.getElementById("moveform");
 	}
 	function setForm(type, ref){
 		var form = document.getElementById("changenameform");
 		form.ref.value = ref;
 		if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
-			form.action = "/BEngineer/beFiles/changeFolderName.do";
+			form.action = "/BEngineer2/beFiles/changeFolderName.do";
 			form.name.value = "폴더 이름";
 			form.submitchangename.value = "폴더명 변경";
 		}
 		if(type.value != "dir"){ // 폴더일 때 해당 폴더로 이동
-			form.action = "/BEngineer/beFiles/changeFileName.do";
+			form.action = "/BEngineer2/beFiles/changeFileName.do";
 			form.name.value = "파일 이름";
 			form.submitchangename.value = "파일명 변경";
 		}
@@ -321,14 +352,15 @@
 		form.ref.value = ref;
 		form.submitshare.type = "submit";
 		
-		form = document.getElementById("moveform");
-		form.ref.value = ref;
-		form.submitmove.type = "submit"; //클릭하면 버튼 생성
+		form = document.getElementById("moveform"); // moveform 받아오기
+		if(form.submitmove.value=="이동"){ 			// form.submitmove 값을 이동으로 설정
+			form.submitmove.type = "submit"; 		// form.submitmove 타입을 submit으로 설정
+		}
 	}
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; background-color:#ff9999; float:left;">
-	<img src="/BEngineer/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
+	<img src="/BEngineer2/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
 </div>
 <div id="search" style="height:10%; width:70%; background-color:#99ff99; float:left;">
 	search
@@ -348,7 +380,7 @@
 <div id="button1" style="height:5%; width:100%; background-color:#ffff99; float:left;">
 	<!-- 파일업로드 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form action="/BEngineer/beFiles/fileupload.do" id="uploadform" method="post" enctype="multipart/form-data">
+		<form action="/BEngineer2/beFiles/fileupload.do" id="uploadform" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="folder" value="${folder_ref }" />
 			<input type="hidden" name="save" />
 			<input type="hidden" name="filename" value="파일 이름"/>
@@ -357,7 +389,7 @@
 	</div>
 	<!-- 폴더생성 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form action="/BEngineer/beFiles/createFolder.do" id="folderform" method="post">
+		<form action="/BEngineer2/beFiles/createFolder.do" id="folderform" method="post">
 			<input type="hidden" name="folder" value="${folder_ref }" />
 			<input type="hidden" name="foldername" value="폴더 이름"/>
 			<input type="submit" value="폴더 생성" />
@@ -365,8 +397,34 @@
 	</div>
 	<!-- 파일/폴더 자동정리 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form action="/BEngineer/beFiles/autoArrangefile.do" id="autoarrangeform" method="post">
+		<form action="/BEngineer2/beFiles/autoArrangefile.do" id="autoarrangeform" method="post">
 			<input type="submit" value="파일 자동정리" />
+		</form>
+	</div>
+	<!-- 파일/폴더 이동 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<form id="moveform" method="post" action="/BEngineer2/beFiles/beMove.do">
+			<input type="hidden" name="ref"/>
+			<c:if test="${movefile_Ref!=0 && movefile_FRef!=0 }">
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="submit"  id="submitmove"name="submitmove" value="이동하기"/>
+				<input type="hidden" name="select_flag" value="${movefile_Ref }"/>
+				<input type="hidden" name="folder_ref" value="${movefile_FRef }"/>
+				</div>
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="button"  id="movecancel" name="movecancel" value="이동 취소"/>
+				</div>
+			</c:if>
+			<c:if test="${movefile_Ref==0 && movefile_FRef==0 }">
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="hidden"  id="submitmove"name="submitmove" value="이동"/>
+				<input type="hidden" name="select_flag"/>
+				<input type="hidden" name="folder_ref"/>
+				</div>
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="hidden"  id="movecancel" name="movecancel" value="이동 취소"/>
+				</div>
+			</c:if>
 		</form>
 	</div>
 	<!-- 폴더명 변경 폼 -->
@@ -384,7 +442,7 @@
 			<input type="hidden" id="text" style="background-color:transparent; border:0px; text-color:black; width:70px;" value="공유 기한 : " disabled/>
 		</div>
 		<div style="height:100%; width:relative; margin:0; float:left;">
-			<form action="/BEngineer/beFiles/shareFile.do" id="shareform" method="post">
+			<form action="/BEngineer2/beFiles/shareFile.do" id="shareform" method="post">
 				<input type="hidden" name="ref" />
 				<input type="hidden" name="enddate" />
 				<select name="rw" hidden style="height:25px;">
@@ -397,22 +455,9 @@
 	</div>
 	<!-- 폴더 다운로드 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
+		<form id="folderdownform" method="post" action="/BEngineer2/beFiles/beDownload.do">
 			<input type="hidden" name="file_ref" />
 			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
-		</form>
-	</div>
-	<!-- 파일/폴더 이동 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
-			<input type="hidden" name="ref" />
-			<input type="hidden" name="folder_ref"/>
-			<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="hidden"  id="submitmove"name="submitmove" value="이동"/>
-			</div>
-			<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="hidden"  id="movecancel" name="movecancel" value="취소"/>
-			</div>
 		</form>
 	</div>
 	<!-- 다수 파일 다운로드 폼 -->
@@ -421,7 +466,7 @@
 			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
 		</div>
 		<div style="height:100%; width:relative; margin:0; float:left;">
-			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
+			<form action="/BEngineer2/beFiles/beDownload.do" id="multidownform" method="post">
 				<input type="hidden" name="file_ref" />
 				<div style="height:100%; width:relative; float:left;">
 					<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
@@ -441,7 +486,7 @@
 	<!-- 폴더경로 보여주기 -->
 	<c:forEach var="addr" items="${folderaddress }">
 		<c:if test="${orgaddress[num] != null }">
-			<a href="/BEngineer/beFiles/beMyList.do?folder=${orgaddress[num] }">${addr }</a> /
+			<a href="/BEngineer2/beFiles/beMyList.do?folder=${orgaddress[num] }">${addr }</a> /
 		</c:if>
 		<c:if test="${orgaddress[num] == null }">
 			${folderaddress[num] } /
@@ -454,13 +499,12 @@
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
-	<input type="button" id="mytrashcan" value="휴지통"/>
 	button2
 </div>
 <!-- 파일들 창 -->
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
-		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.filename }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>
