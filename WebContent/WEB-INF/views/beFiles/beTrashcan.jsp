@@ -38,6 +38,11 @@
 			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
 				window.location = "/BEngineer/beFiles/beTrashcan.do?folder=" + $(this).attr("name");
 			}
+			if(type.value != "dir"){ // 폴더일 때 해당 폴더로 이동
+				if(confirm("파일을 복구하시겠습니까?(주의 : 기존의 폴더가 삭제된 경우 기본 폴더에 복구됩니다.)")){
+					window.location = "/BEngineer/beFiles/repairFile.do?file_ref=" + $(this).attr("name") + "&folder=" + ${folder_ref};
+				}
+			}
 		});
 	});
 	$(function(){
@@ -75,6 +80,10 @@
 	$(function(){
 		$("#submitdelete").click(function(){ // 지우기 클릭 시
 			var form = document.getElementById("multiform");
+			if(!form.file_ref.value){ // 업로드할 파일 미선택시
+				alert('삭제할 파일을 선택해주세요');
+				return false;
+			}
 			window.location = "/BEngineer/beFiles/deleteFile.do?file_ref=" + form.file_ref.value + "&folder=" + ${folder_ref };
 		});
 	});
@@ -90,23 +99,19 @@
 		});
 	});
 	$(function(){
-		$("#multiform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
+		$("#multiform").submit(function(){ // 여러 파일 선택하기 버튼 클릭시
 			var form = document.getElementById("multiform"); // 폼 받아오기
-			alert(1);
 			if(document.getElementById("multitext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
 				hinder(); // 다른 폼 닫기
 				document.getElementById("multitext").type = "text";
 				document.getElementById("cancelmulti").type = "button";
 				document.getElementById("submitdelete").type = "button";
-				alert(2);
 				form.submitmulti.value = "복구";
-				document.getElementById("").type = "button";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				return false;
 			}
-			alert(3);
 			if(!form.file_ref.value){ // 업로드할 파일 미선택시
-				alert('업로드할 파일을 선택해주세요');
+				alert('복구할 파일을 선택해주세요');
 				return false;
 			}
 		});
@@ -146,8 +151,9 @@
 			<input type="hidden" id="multitext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
 		</div>
 		<div style="height:100%; width:relative; margin:0; float:left;">
-			<form action="/BEngineer/beFiles/deleteFile.do" id="multiform" method="post">
+			<form action="/BEngineer/beFiles/repairFile.do" id="multiform" method="post">
 				<input type="hidden" name="file_ref" />
+				<input type="hidden" name="folder" value="${folder_ref }"/>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="submit" name="submitmulti" value="여러 파일 선택하기"/>
 				</div>

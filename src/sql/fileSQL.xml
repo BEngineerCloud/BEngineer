@@ -74,6 +74,9 @@
 			#{item}
 		</foreach>
 	</select>
+	<update id="repairfile" parameterType="fileDTO">
+		update BEfilelist set important = 0, folder_ref = #{folder_ref} where num = #{num} 
+	</update>
 	<select id="mytrashcan" parameterType="String" resultType="fileDTO">
 		select * from BEfilelist where owner = #{owner} and important = -2 and folder_ref not in (select num from BEfilelist where owner = #{owner} and important = -2) order by filetype desc, filename asc
 	</select>

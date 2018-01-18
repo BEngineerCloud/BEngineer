@@ -19,6 +19,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -635,7 +636,8 @@ public class FileBean {
 			FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
 			owner = dto.getOwner();
 			if(dto.getFiletype().equals("dir")) {
-				List subfiles = getSubFilenum(filenum);
+				List subfiles = throwtrash(owner, filenum);
+				TrashHolder trashcan = (TrashHolder)subfiles.remove(subfiles.size() - 1);
 				List check = sqlSession.selectList("bengineer.checkall1", subfiles);
 				if(check != null && check.size() != 0) {
 					model.addAttribute("alert", "기본폴더는 지울 수 없습니다.");
@@ -648,6 +650,10 @@ public class FileBean {
 					model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + file_ref + "\"");
 					return "beFiles/confirm";
 				}
+				List trashlist = trashcan.getTrashList();
+				for(int i = 0; i < trashlist.size(); i++) {
+					ziptrash(owner, (Trash)trashlist.get(i));
+				}
 				sqlSession.update("bengineer.throwalltotrashcan", subfiles);
 				result = "파일들을 휴지통에 버렸습니다.";
 			}else {
@@ -656,12 +662,16 @@ public class FileBean {
 					model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + file_ref + "\"");
 					return "beFiles/confirm";
 				}else {
+					TrashHolder trashcan = (TrashHolder)throwtrash(owner, dto.getNum()).get(1);
+					ziptrash(owner, (Trash)trashcan.getTrashList().get(0));
 					sqlSession.update("bengineer.throwtotrashcan", filenum);
 					result = "파일을 휴지통에 버렸습니다.";
 				}
 			}
 		}else if(files.length > 1) {
 			List subfiles = new ArrayList();
+			TrashHolder trashcan = new TrashHolder();
+			FileDTO dto = null;
 			for(int i = 0; i < files.length; i++) {
 				try {
 					 filenum = Integer.parseInt(files[i]);
@@ -670,12 +680,23 @@ public class FileBean {
 					model.addAttribute("location", "history.go(-1)");
 					return "beFiles/alert";
 				}
-				FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
-				if(i == 0) {owner = dto.getOwner();}
+				List address_ref = getAddr(filenum);
+				dto = (FileDTO)address_ref.get(0);
+				owner = dto.getOwner();
+				String fileaddress = "d:/PM/BEngineer/";
+				for(int j = address_ref.size() - 1; j > 0; j--) {
+					dto = (FileDTO)address_ref.get(j);
+					fileaddress += dto.getOrgname();
+					if(j != 1) {
+						fileaddress += "/";
+					}
+				}
 				if(dto.getFiletype().equals("dir")) {
-					subfiles = getSubFilenum(filenum);
+					subfiles.addAll(throwtrash(owner, filenum));
+					trashcan.addallTrash((TrashHolder)subfiles.remove(subfiles.size() - 1));
 				}else {
 					subfiles.add(filenum);
+					trashcan.addTrash(fileaddress, dto.getOrgname(), dto.getNum());
 				}
 			}
 			List check = sqlSession.selectList("bengineer.checkall1", subfiles);
@@ -690,6 +711,11 @@ public class FileBean {
 				model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + file_ref + "\"");
 				return "beFiles/confirm";
 			}
+			List trashlist = trashcan.getTrashList();
+			System.out.println(trashlist.size());
+			for(int i = 0; i < trashlist.size(); i++) {
+				ziptrash(owner, (Trash)trashlist.get(i));
+			}
 			sqlSession.update("bengineer.throwalltotrashcan", subfiles);
 			result = "파일들을 휴지통에 버렸습니다.";
 		}else {
@@ -698,11 +724,78 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 		model.addAttribute("alert", result);
-		if(owner.equals(session.getAttribute("id"))) {
+		if(owner.equals((String)session.getAttribute("id"))) {
 			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 		}else {
 			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
 		}
+		return "beFiles/alert";
+	}
+	@RequestMapping("repairFile.do")
+	public String repairFile(HttpSession session, Model model, String file_ref, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		String [] files = file_ref.split(",");
+		String result = "";
+		String owner = "";
+		int filenum = 0;
+		List repairList = new ArrayList();
+		if(files.length == 1) {
+			try {
+				 filenum = Integer.parseInt(files[0]);
+			}catch(Exception e) {
+				model.addAttribute("alert", "유효하지 않은 접근입니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			List address_ref = getTrashAddr(filenum);
+			FileDTO dto = (FileDTO)address_ref.get(0);
+			owner = dto.getOwner();
+			if(!owner.equals((String)session.getAttribute("id"))){
+				model.addAttribute("alert", "권한이 없습니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			String fileaddress = "d:/PM/BEngineer/";
+			if(address_ref.size() == 1) {
+				address_ref = getAddr(filenum);
+				for(int i = address_ref.size() - 1; i >= 0; i--) {
+					dto = (FileDTO)address_ref.get(i);
+					fileaddress += dto.getOrgname();
+					if(i != 0) {fileaddress += "/";}
+				}
+			}else {
+				fileaddress += owner + "/" + dto.getOrgname();
+				result += "기본 폴더에 ";
+				dto.setOrgname(owner);
+				int folder_ref = sqlSession.selectOne("bengineer.getparentnum", dto);
+				dto.setFolder_ref(folder_ref);
+			}
+			if(dto.getFiletype().equals("dir")) {
+			}else {
+				dto.setOrgname(fileaddress);
+				repairList.add(dto);
+				result += "파일이 복구되었습니다.";
+			}
+		}else if(files.length > 1) {
+		}else {
+			model.addAttribute("alert", "유효하지 않은 접근입니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		for(int i = 0; i < repairList.size(); i++) {
+			FileDTO dto = (FileDTO)repairList.get(i);
+			String fileaddress = dto.getOrgname();
+			File check = new File(fileaddress);
+			if(check.exists()) {
+				model.addAttribute("alert", "같은 경로에 동일한 이름의 파일이 존재합니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			unzipFile(fileaddress, "d:/PM/BEngineer/" + dto.getOwner() + "/beTrashcan/" + dto.getNum() + ".zip");
+			sqlSession.update("bengineer.repairfile", dto);
+		}
+		model.addAttribute("alert", result);
+		model.addAttribute("location", "\"/BEngineer/beFiles/beTrashcan.do?folder=" + folder + "\"");
 		return "beFiles/alert";
 	}
 	private String makecode() {
@@ -958,6 +1051,46 @@ public class FileBean {
 		}
 		return file;
 	}
+	private boolean unzipFile(String path, String zipName) { // 파일들 압축용 메서드 path는 압축파일을 만들 실제 경로, files는 압축할 파일들의 path 기준의 상대 경로
+		boolean result = false;
+		int size = 1024;
+		byte[] buf = new byte[size];
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		ZipArchiveInputStream zis = null;
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		File file = null;
+		ZipArchiveEntry zipEntry = null;
+		try {
+			fis = new FileInputStream(zipName);
+			bis = new BufferedInputStream(fis);
+			zis = new ZipArchiveInputStream(bis);
+			zipEntry = zis.getNextZipEntry();
+			fos = new FileOutputStream(path);
+			bos = new BufferedOutputStream(fos);
+			for(int j = 0; j != -1; j = zis.read(buf, 0, size)) {
+				bos.write(buf, 0, j);
+			}
+			bos.close();
+			fos.close();
+			zis.close();
+			bis.close();
+			fis.close();
+			result = true;
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally {
+			if(bos != null) {try{bos.close();}catch(IOException i) {}}
+			if(fos != null) {try{fos.close();}catch(IOException i) {}}
+			if(zis != null) {try{zis.close();}catch(IOException i) {}}
+			if(bis != null) {try{bis.close();}catch(IOException i) {}}
+			if(fis != null) {try{fis.close();}catch(IOException i) {}}
+		}
+		File trash = new File(zipName);
+		trash.delete();
+		return result;
+	}
 	private List getFilelist(String dirPath) {return getFilelist(dirPath, "");}
 	private List getFilelist(String dirPath, String pre) { // 폴더 내의 모든 파일의 상대 주소를 리스트로 돌려주는 메서드
 		List result = new ArrayList();
@@ -991,26 +1124,60 @@ public class FileBean {
 		}
 		return result;
 	}
-	private List getSubFilenum(int folder) {
+	private List throwtrash(String id, int folder) {
+		List address_ref = getAddr(folder);
+		FileDTO dto = new FileDTO();
+		String fileaddress = "d:/PM/BEngineer/";
+		for(int i = address_ref.size() - 1; i > 0; i--) {
+			dto = (FileDTO)address_ref.get(i);
+			fileaddress += dto.getOrgname();
+			if(i != 0) {
+				fileaddress += "/";
+			}
+		}
+		TrashHolder trashcan = new TrashHolder();
+		List result = throwtrash(id, folder, fileaddress, trashcan);
+		result.add(trashcan);
+		return result;
+	}
+	private List throwtrash(String id, int folder, String path, TrashHolder trashcan) {
 		List result = new ArrayList();
 		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder);
 		if(dto.getFiletype().equals("dir")) {
+			List files = sqlSession.selectList("bengineer.getfiles", folder);
+			int filenum = 0;
+			String foldername = dto.getOrgname();
+			if(files != null && files.size() > 0) {
+				for(int i = 0; i < files.size(); i++) {
+					dto = (FileDTO)files.get(i);
+					filenum = dto.getNum();
+					List add = throwtrash(id, filenum, path + "/" + foldername, trashcan);
+					if(add != null && add.size() != 0) {
+						result.addAll(add);
+					}
+				}
+			}
+			trashcan.addTrash(path, foldername, folder);
 			result.add(folder);
 		}else {
-			return null;
-		}
-		List files = sqlSession.selectList("bengineer.getfiles", folder);
-		int filenum = 0;
-		if(files != null && files.size() > 0) {
-			for(int i = 0; i < files.size(); i++) {
-				dto = (FileDTO)files.get(i);
-				filenum = dto.getNum();
-				if(dto.getFiletype().equals("dir")) {
-					result.addAll(getSubFilenum(filenum));
-				}
-				result.add(filenum);
-			}
+			trashcan.addTrash(path, dto.getOrgname(), dto.getNum());
+			result.add(dto.getNum());
 		}
 		return result;
+	}
+	private void ziptrash(String id, Trash trash) {
+		String path = trash.getPath();
+		String filename = trash.getName();
+		int filenum = trash.getNum();
+		String canpath = "d:/PM/BEngineer/" + id + "/beTrashcan";
+		File trashcan = new File(canpath);
+		if(!trashcan.exists()) {trashcan.mkdirs();}
+		File trashfile = new File(path + "/" + filename);
+		if(!trashfile.isDirectory()) {
+			List file = new ArrayList();
+			file.add(filename);
+			zipFiles(path, canpath + "/" + filenum + ".zip", file);
+		}
+		trashfile.delete();
 	}
 }
