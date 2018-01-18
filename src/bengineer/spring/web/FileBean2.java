@@ -53,7 +53,6 @@ public class FileBean2 {
 		    		fileName=list[i].getName();
 		    		dto.setOrgname(fileName);
 		    		filePath=list[i].getPath();
-		    		System.out.println(filePath);
 		    		fileType = fileName.substring(fileName.lastIndexOf("."));
 		    		moveFolder = filebean.checkFile(fileType); //파일확장자 범주에 들어가는 폴더이름	
 		    		Integer moveParent = moveFile(filePath, fileName, moveFolder, owner); //파일 이동
@@ -74,6 +73,7 @@ public class FileBean2 {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 비 로그인 상태시 로그인 창으로 리디렉트
 		String owner = (String)session.getAttribute("id");
 		FileBean filebean = new FileBean();
+		filebean.setSqlSession(sqlSession);
 		List originalAddr = null;
 		originalAddr = filebean.getAddr(ref);
 		String originalPath = "d:/PM/BEngineer/";
@@ -83,22 +83,26 @@ public class FileBean2 {
 			originalPath += dto.getOrgname();
 			if(i!=0) originalPath+="/";
 		}
-		List newAddr = filebean.getAddr(folder_ref);
+		List newAddr = null;
+		newAddr = filebean.getAddr(folder_ref);
 		String newPath = "d:/PM/BEngineer/";
 		for(int i = newAddr.size() - 1; i >= 0; i--) {
 			dto = (FileDTO)newAddr.get(i);
 			newPath += dto.getOrgname() + "/";
 		}
-		dto = (FileDTO)originalAddr.get(originalAddr.size()-1);
+		dto = (FileDTO)originalAddr.get(0);
 		String orgname = dto.getOrgname();
 		newPath += orgname;
-		dto = (FileDTO)newAddr.get(newAddr.size()-1);
+		dto = (FileDTO)newAddr.get(0);
 		int num = dto.getNum();
 		dto.setOwner(owner);
 		dto.setOrgname(orgname);
 		dto.setNum(num);
+		System.out.println(dto.getNum());
+		
 		boolean is_Move = false;
 		is_Move = nioFilemove(originalPath,newPath);
+		
 		if(is_Move) {
 			sqlSession.update("bengineer.autoarrange",dto);
 		}
