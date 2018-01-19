@@ -110,6 +110,7 @@ public class FileBean {
 		model.addAttribute("folderaddress", folderaddress);
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", folder_ref);
+		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
 		model.addAttribute("write", true);
 		model.addAttribute("movefile_Ref",movefile_Ref);
 		model.addAttribute("movefile_FRef",movefile_FRef);
