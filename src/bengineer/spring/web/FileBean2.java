@@ -93,18 +93,16 @@ public class FileBean2 {
 		dto = (FileDTO)originalAddr.get(0);
 		String orgname = dto.getOrgname();
 		newPath += orgname;
-		dto = (FileDTO)newAddr.get(0);
 		int num = dto.getNum();
-		dto.setOwner(owner);
-		dto.setOrgname(orgname);
 		dto.setNum(num);
-		System.out.println(dto.getNum());
+		int folderref = ((FileDTO)newAddr.get(0)).getNum();
+		dto.setFolder_ref(folderref);
 		
 		boolean is_Move = false;
 		is_Move = nioFilemove(originalPath,newPath);
 		
 		if(is_Move) {
-			sqlSession.update("bengineer.autoarrange",dto);
+			sqlSession.update("bengineer.changeref",dto);
 		}
 		model.addAttribute("alert", "파일/폴더 이동이 완료되었습니다.");
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");

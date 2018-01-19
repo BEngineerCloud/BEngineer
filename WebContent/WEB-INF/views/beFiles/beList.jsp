@@ -6,10 +6,9 @@
 	$(function(){
 		$("#files > div").click(function(){ // 파일 클릭시
 			var filename = $(this).text();
-			var orgname = document.getElementById(filename); // 원 파일명 저장되어있는 인풋의 값 가져오기
-			$("font#filename").text(orgname.value); // 주소부분에 표시
-			var filename = $(this).text();
 			var ref = $(this).attr("name");
+			var orgname = document.getElementById(ref); // 원 파일명 저장되어있는 인풋의 값 가져오기
+			$("font#filename").text(orgname.value); // 주소부분에 표시
 			var moveform = document.getElementById("moveform"); // moveform 가져오기
 			
 			if(moveform.submitmove.value == "이동"){ // moveform.submitmove 값이 '이동'일 시
@@ -23,7 +22,7 @@
 				moveform.submitmove.type="submit"; // moveform.submitmove 타입을 submit으로 설정
 			}
 			
-			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			form = document.getElementById("multidownform");
 			if(document.getElementById("multidowntext").type == "text"){
 				var index = clickedfile.indexOf(ref);
@@ -52,19 +51,19 @@
 	});
 	$(function(){
 		$("#files > div").dblclick(function(){ // 파일 더블클릭시
-			var filename = $(this).text();
-			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			var ref = $(this).attr("name");
+			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			var moveform = document.getElementById("moveform");
 			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
 				// 파일/폴더의 이동 버튼 클릭 후 다른 폴더로 이동해서 옮기기위해서
 				if(moveform.select_flag.value==0 || moveform.folder_ref.value==0) 
-					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + $(this).attr("name");
+					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + ref;
 				else
-					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + $(this).attr("name")+"&movefile_Ref="+moveform.select_flag.value+"&movefile_FRef="+moveform.folder_ref.value; 
+					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + ref+"&movefile_Ref="+moveform.select_flag.value+"&movefile_FRef="+moveform.folder_ref.value; 
 					// 파일/폴더를 선택 한 후 다른 폴더 경로로 들어갈 때 movefile_Ref, movefile_FRef에 값을 대입
 			}
 			if(type.value != "dir"){ // 파일일 때 해당 파일 다운로드
-				window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + $(this).attr("name");
+				window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + ref;
 			}
 		});
 	});
@@ -76,6 +75,11 @@
 	$(function(){
 		$("#mysharedfile").click(function(){
 			window.location = "/BEngineer/beFiles/beSharedList.do?folder=0";
+		});
+	});
+	$(function(){
+		$("#mytrashcan").click(function(){
+			window.location = "/BEngineer/beFiles/beTrashcan.do?folder=0";
 		});
 	});
 	$(function(){
@@ -499,13 +503,14 @@
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
+	<input type="button" id="mytrashcan" value="휴지통"/>
 	button2
 </div>
 <!-- 파일들 창 -->
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
-		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
-		<input type="hidden" id="${file.filename }type" value="${file.filetype }"/>
+		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">

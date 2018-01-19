@@ -6,11 +6,10 @@
 	$(function(){
 		$("#files > div").click(function(){ // 파일 클릭시
 			var filename = $(this).text();
-			var orgname = document.getElementById(filename); // 원 파일명 저장되어있는 인풋의 값 가져오기
-			$("font#filename").text(orgname.value); // 주소부분에 표시
-			var filename = $(this).text();
 			var ref = $(this).attr("name");
-			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			var orgname = document.getElementById(ref); // 원 파일명 저장되어있는 인풋의 값 가져오기
+			$("font#filename").text(orgname.value); // 주소부분에 표시
+			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			form = document.getElementById("multiform");
 			if(document.getElementById("multitext").type == "text"){
 				var index = clickedfile.indexOf(ref);
@@ -25,6 +24,7 @@
 			}else{
 				hinder(); // 업로드 입력, 폴더생성 입력 취소
 				form.file_ref.value = ref;
+				form.submitmultirepair.type = "submit";
 				document.getElementById("submitdelete").type = "button";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
@@ -33,14 +33,14 @@
 	});
 	$(function(){
 		$("#files > div").dblclick(function(){ // 파일 더블클릭시
-			var filename = $(this).text();
-			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			var ref = $(this).attr("name");
+			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
-				window.location = "/BEngineer/beFiles/beTrashcan.do?folder=" + $(this).attr("name");
+				window.location = "/BEngineer/beFiles/beTrashcan.do?folder=" + ref;
 			}
 			if(type.value != "dir"){ // 폴더일 때 해당 폴더로 이동
-				if(confirm("파일을 복구하시겠습니까?(주의 : 기존의 폴더가 삭제된 경우 기본 폴더에 복구됩니다.)")){
-					window.location = "/BEngineer/beFiles/repairFile.do?file_ref=" + $(this).attr("name") + "&folder=" + ${folder_ref};
+				if(confirm("파일을 복구하시겠습니까?(주의 : 기존의 폴더가 삭제된 경우 기본 화면에 복구됩니다.)")){
+					window.location = "/BEngineer/beFiles/repairFile.do?file_ref=" + ref + "&folder=" + ${folder_ref};
 				}
 			}
 		});
@@ -70,7 +70,8 @@
 			clickedfile = new Array();
 			var form = document.getElementById("multiform");
 			form.file_ref.value = "";
-			form.submitmulti.value = "여러 파일 선택하기";
+			form.submitmultirepair.type = "hidden";
+			document.getElementById("multichoice").type = "button";
 			document.getElementById("multitext").type = "hidden";
 			document.getElementById("cancelmulti").type = "hidden";
 			document.getElementById("submitdelete").type = "hidden";
@@ -88,6 +89,18 @@
 		});
 	});
 	$(function(){
+		$("#multichoice").click(function(){ // 여러 파일 선택 클릭 시
+			var form = document.getElementById("multiform"); // 폼 받아오기
+			hinder(); // 다른 폼 닫기
+			document.getElementById("multitext").type = "text";
+			document.getElementById("cancelmulti").type = "button";
+			document.getElementById("submitdelete").type = "button";
+			document.getElementById("multichoice").type = "hidden";
+			form.submitmultirepair.type = "submit";
+			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+		});
+	});
+	$(function(){
 		$("#addinfodiv > #addinfo").click(function(){
 			window.location = "/BEngineer/beMember/beAddinfo.do";
 		});
@@ -101,16 +114,7 @@
 	$(function(){
 		$("#multiform").submit(function(){ // 여러 파일 선택하기 버튼 클릭시
 			var form = document.getElementById("multiform"); // 폼 받아오기
-			if(document.getElementById("multitext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
-				hinder(); // 다른 폼 닫기
-				document.getElementById("multitext").type = "text";
-				document.getElementById("cancelmulti").type = "button";
-				document.getElementById("submitdelete").type = "button";
-				form.submitmulti.value = "복구";
-				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
-				return false;
-			}
-			if(!form.file_ref.value){ // 업로드할 파일 미선택시
+			if(!form.file_ref.value){ // 복구할 파일 미선택시
 				alert('복구할 파일을 선택해주세요');
 				return false;
 			}
@@ -119,10 +123,11 @@
 	function hinder(){ // 모든 폼 닫기 함수
 		form = document.getElementById("multiform");
 		form.file_ref.value = "";
-		form.submitmulti.value = "여러 파일 선택하기";
+		form.submitmultirepair.type = "hidden";
 		document.getElementById("multitext").type = "hidden";
 		document.getElementById("cancelmulti").type = "hidden";
 		document.getElementById("submitdelete").type = "hidden";
+		document.getElementById("multichoice").type = "button";
 	}
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
@@ -155,13 +160,16 @@
 				<input type="hidden" name="file_ref" />
 				<input type="hidden" name="folder" value="${folder_ref }"/>
 				<div style="height:100%; width:relative; float:left;">
-					<input type="submit" name="submitmulti" value="여러 파일 선택하기"/>
+					<input type="button" id="multichoice" value="여러 파일 선택하기"/>
 				</div>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="hidden" id="cancelmulti" value="취소" />
 				</div>
 				<div style="height:100%; width:relative; float:left;">
-					<input type="hidden" id="submitdelete" value="지우기" />
+					<input type="hidden" name="submitmultirepair" value="복구하기"/>
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="submitdelete" value="완전 삭제하기" />
 				</div>
 			</form>
 		</div>
@@ -191,8 +199,8 @@
 <!-- 파일들 창 -->
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
-		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
-		<input type="hidden" id="${file.filename }type" value="${file.filetype }"/>
+		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">

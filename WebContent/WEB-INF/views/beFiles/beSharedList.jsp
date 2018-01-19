@@ -6,11 +6,10 @@ var clickedfile = new Array();
 $(function(){
 	$("#files > div").click(function(){ // 파일 클릭시
 		var filename = $(this).text();
-		var orgname = document.getElementById(filename); // 원 파일명 저장되어있는 인풋의 값 가져오기
-		$("font#filename").text(orgname.value); // 주소부분에 표시
-		var filename = $(this).text();
 		var ref = $(this).attr("name");
-		var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+		var orgname = document.getElementById(ref); // 원 파일명 저장되어있는 인풋의 값 가져오기
+		$("font#filename").text(orgname.value); // 주소부분에 표시
+		var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 		form = document.getElementById("multidownform");
 		if(document.getElementById("multidowntext").type == "text"){
 			var index = clickedfile.indexOf(ref);
@@ -38,13 +37,13 @@ $(function(){
 });
 	$(function(){
 		$("#files > div").dblclick(function(){ // 파일 더블클릭시
-			var filename = $(this).text();
-			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			var ref = $(this).attr("name");
+			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
-				window.location = "/BEngineer/beFiles/beSharedList.do?folder=" + $(this).attr("name");
+				window.location = "/BEngineer/beFiles/beSharedList.do?folder=" + ref;
 			}
 			if(type.value != "dir"){ // 파일일 때 해당 파일 다운로드
-				window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + $(this).attr("name");
+				window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + ref;
 			}
 		});
 	});
@@ -361,8 +360,8 @@ $(function(){
 <!-- 파일들 창 -->
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
-		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.filename }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
-		<input type="hidden" id="${file.filename }type" value="${file.filetype }"/>
+		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">

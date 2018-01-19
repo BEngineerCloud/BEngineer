@@ -523,7 +523,7 @@ public class FileBean {
 		}
 		List address_ref = getAddr(ref);
 		FileDTO dto = (FileDTO)address_ref.get(0);
-		if(dto.getImportant() < 0) {
+		if(dto.getImportant() == -1) {
 			model.addAttribute("alert", "기본 폴더의 이름은 바꿀 수 없습니다.");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
@@ -639,7 +639,7 @@ public class FileBean {
 			FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
 			owner = dto.getOwner();
 			if(dto.getFiletype().equals("dir")) {
-				List subfiles = throwtrash(owner, filenum);
+				List subfiles = settrash(owner, filenum);
 				TrashHolder trashcan = (TrashHolder)subfiles.remove(subfiles.size() - 1);
 				List check = sqlSession.selectList("bengineer.checkall1", subfiles);
 				if(check != null && check.size() != 0) {
@@ -665,7 +665,7 @@ public class FileBean {
 					model.addAttribute("location", "\"/BEngineer/beFiles/deleteFile.do?folder=" + folder + "&file_ref=" + file_ref + "\"");
 					return "beFiles/confirm";
 				}else {
-					TrashHolder trashcan = (TrashHolder)throwtrash(owner, dto.getNum()).get(1);
+					TrashHolder trashcan = (TrashHolder)settrash(owner, dto.getNum()).get(1);
 					ziptrash(owner, (Trash)trashcan.getTrashList().get(0));
 					sqlSession.update("bengineer.throwtotrashcan", filenum);
 					result = "파일을 휴지통에 버렸습니다.";
@@ -695,7 +695,7 @@ public class FileBean {
 					}
 				}
 				if(dto.getFiletype().equals("dir")) {
-					subfiles.addAll(throwtrash(owner, filenum));
+					subfiles.addAll(settrash(owner, filenum));
 					trashcan.addallTrash((TrashHolder)subfiles.remove(subfiles.size() - 1));
 				}else {
 					subfiles.add(filenum);
@@ -715,7 +715,6 @@ public class FileBean {
 				return "beFiles/confirm";
 			}
 			List trashlist = trashcan.getTrashList();
-			System.out.println(trashlist.size());
 			for(int i = 0; i < trashlist.size(); i++) {
 				ziptrash(owner, (Trash)trashlist.get(i));
 			}
@@ -742,6 +741,9 @@ public class FileBean {
 		String owner = "";
 		int filenum = 0;
 		List repairList = new ArrayList();
+		TrashHolder trashcan = new TrashHolder();
+		List moveList = new ArrayList();
+		FileDTO dto = new FileDTO();
 		if(files.length == 1) {
 			try {
 				 filenum = Integer.parseInt(files[0]);
@@ -751,33 +753,27 @@ public class FileBean {
 				return "beFiles/alert";
 			}
 			List address_ref = getTrashAddr(filenum);
-			FileDTO dto = (FileDTO)address_ref.get(0);
+			dto = (FileDTO)address_ref.get(0);
 			owner = dto.getOwner();
 			if(!owner.equals((String)session.getAttribute("id"))){
 				model.addAttribute("alert", "권한이 없습니다.");
 				model.addAttribute("location", "history.go(-1)");
 				return "beFiles/alert";
 			}
-			String fileaddress = "d:/PM/BEngineer/";
-			if(address_ref.size() == 1) {
-				address_ref = getAddr(filenum);
-				for(int i = address_ref.size() - 1; i >= 0; i--) {
-					dto = (FileDTO)address_ref.get(i);
-					fileaddress += dto.getOrgname();
-					if(i != 0) {fileaddress += "/";}
-				}
-			}else {
-				fileaddress += owner + "/" + dto.getOrgname();
+			if(address_ref.size() == 1) { // 기존 폴더가 아직 존재하는 경우
+				repairList = settrash(owner, filenum);
+				trashcan = (TrashHolder)repairList.remove(repairList.size() - 1);
+			}else { // 기존 폴더도 삭제된 경우 기본 화면에 복원
+				String fileaddress = "d:/PM/BEngineer/";
+				fileaddress += owner;
 				result += "기본 폴더에 ";
-				dto.setOrgname(owner);
-				int folder_ref = sqlSession.selectOne("bengineer.getparentnum", dto);
-				dto.setFolder_ref(folder_ref);
+				moveList.add(filenum);
+				repairList = settrash(owner, filenum, fileaddress, trashcan);
 			}
 			if(dto.getFiletype().equals("dir")) {
+				result += "파일들을 복구하였습니다.";
 			}else {
-				dto.setOrgname(fileaddress);
-				repairList.add(dto);
-				result += "파일이 복구되었습니다.";
+				result += "파일을 복구하였습니다.";
 			}
 		}else if(files.length > 1) {
 		}else {
@@ -785,17 +781,49 @@ public class FileBean {
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
-		for(int i = 0; i < repairList.size(); i++) {
-			FileDTO dto = (FileDTO)repairList.get(i);
-			String fileaddress = dto.getOrgname();
-			File check = new File(fileaddress);
-			if(check.exists()) {
-				model.addAttribute("alert", "같은 경로에 동일한 이름의 파일이 존재합니다.");
-				model.addAttribute("location", "history.go(-1)");
-				return "beFiles/alert";
+		List trashlist = trashcan.getTrashList();
+		for(int i = trashlist.size() - 1; i >= 0; i--) {
+			Trash trash = (Trash)trashlist.get(i);
+			String fileaddress = trash.getPath();
+			String name = trash.getName();
+			if(fileaddress.indexOf(".") > -1) {
+				File check = new File(fileaddress + "/" + name);
+				if(check.exists()) {
+					model.addAttribute("alert", "같은 경로에 동일한 이름의 파일이 존재합니다.");
+					model.addAttribute("location", "history.go(-1)");
+					return "beFiles/alert";
+				}
 			}
-			unzipFile(fileaddress, "d:/PM/BEngineer/" + dto.getOwner() + "/beTrashcan/" + dto.getNum() + ".zip");
-			sqlSession.update("bengineer.repairfile", dto);
+		}
+		for(int i = trashlist.size() - 1; i >= 0; i--) {
+			Trash trash = (Trash)trashlist.get(i);
+			String fileaddress = trash.getPath();
+			String name = trash.getName();
+			if(name.lastIndexOf(".") > -1) {
+				unzipFile(fileaddress + "/" + name, "d:/PM/BEngineer/" + owner + "/beTrashcan/" + trash.getNum() + ".zip");
+			}else {
+				File check = new File(fileaddress + "/" + name);
+				if(check.exists()) {
+					dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", trash.getNum());
+					int num = (int)sqlSession.selectOne("bengineer.getfoldernum", dto);
+					dto.setFolder_ref(num);
+					sqlSession.update("bengineer.setfolderref", dto);
+					dto.setFolder_ref(dto.getNum());
+					sqlSession.delete("bengineer.deletefile", dto);
+				}else {
+					check.mkdir();
+				}
+			}
+		}
+		ListDTO ldto = new ListDTO();
+		dto.setOwner(owner);
+		dto.setOrgname(owner);
+		int folder_ref = sqlSession.selectOne("bengineer.getparentnum", dto);
+		ldto.setFolder_ref(folder_ref);
+		ldto.setMoveList(moveList);
+		sqlSession.update("bengineer.repairfiles", repairList);
+		if(moveList.size() > 0) {
+			sqlSession.update("bengineer.movefiles", ldto);
 		}
 		model.addAttribute("alert", result);
 		model.addAttribute("location", "\"/BEngineer/beFiles/beTrashcan.do?folder=" + folder + "\"");
@@ -1127,7 +1155,7 @@ public class FileBean {
 		}
 		return result;
 	}
-	private List throwtrash(String id, int folder) {
+	private List settrash(String id, int folder) {
 		List address_ref = getAddr(folder);
 		FileDTO dto = new FileDTO();
 		String fileaddress = "d:/PM/BEngineer/";
@@ -1139,22 +1167,22 @@ public class FileBean {
 			}
 		}
 		TrashHolder trashcan = new TrashHolder();
-		List result = throwtrash(id, folder, fileaddress, trashcan);
+		List result = settrash(id, folder, fileaddress, trashcan);
 		result.add(trashcan);
 		return result;
 	}
-	private List throwtrash(String id, int folder, String path, TrashHolder trashcan) {
+	private List settrash(String id, int folder, String path, TrashHolder trashcan) {
 		List result = new ArrayList();
 		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder);
 		if(dto.getFiletype().equals("dir")) {
-			List files = sqlSession.selectList("bengineer.getfiles", folder);
+			List files = sqlSession.selectList("bengineer.gettrashes", folder);
 			int filenum = 0;
 			String foldername = dto.getOrgname();
 			if(files != null && files.size() > 0) {
 				for(int i = 0; i < files.size(); i++) {
 					dto = (FileDTO)files.get(i);
 					filenum = dto.getNum();
-					List add = throwtrash(id, filenum, path + "/" + foldername, trashcan);
+					List add = settrash(id, filenum, path + "/" + foldername, trashcan);
 					if(add != null && add.size() != 0) {
 						result.addAll(add);
 					}

@@ -4,10 +4,11 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases >
-		<typeAlias type="bengineer.spring.web.FileDTO"  alias="fileDTO"    />
-		<typeAlias type="bengineer.spring.web.MemberDTO"  alias="memberDTO"    />
-		<typeAlias type="bengineer.spring.web.KeyDTO"  alias="keyDTO"    />
-		<typeAlias type="bengineer.spring.web.ShareDTO"  alias="shareDTO"    />
+		<typeAlias type="bengineer.spring.web.FileDTO"  alias="fileDTO" />
+		<typeAlias type="bengineer.spring.web.MemberDTO"  alias="memberDTO" />
+		<typeAlias type="bengineer.spring.web.KeyDTO"  alias="keyDTO" />
+		<typeAlias type="bengineer.spring.web.ShareDTO"  alias="shareDTO" />
+		<typeAlias type="bengineer.spring.web.ListDTO"  alias="listDTO" />
 		<typeAlias type="bengineer.spring.manager.ManagerDTO"  alias="manager"/>
 		<typeAlias type="bengineer.spring.board.BoardDTO"  alias="board"/>
 	</typeAliases>

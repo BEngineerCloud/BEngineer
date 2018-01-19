@@ -8,6 +8,9 @@
 	<select id="getfiles" resultType="fileDTO" parameterType="int">
 		select * from BEfilelist where folder_ref = #{folder_ref} and important > -2 order by filetype desc, filename asc
 	</select>
+	<select id="gettrashes" resultType="fileDTO" parameterType="int">
+		select * from BEfilelist where folder_ref = #{folder_ref} order by filetype desc, filename asc
+	</select>
 	<insert id="makebasedir" parameterType="fileDTO">
 		insert into BEfilelist(num,folder_ref,filename,orgname,filetype,uploaddate,updatedate,important,owner) values(BEfilelist_seq.NEXTVAL, #{folder_ref}, #{filename}, #{orgname}, 'dir', sysdate, sysdate, -1, #{owner})
 	</insert>
@@ -74,9 +77,24 @@
 			#{item}
 		</foreach>
 	</select>
-	<update id="repairfile" parameterType="fileDTO">
-		update BEfilelist set important = 0, folder_ref = #{folder_ref} where num = #{num} 
+	<update id="repairfiles" parameterType="list">
+		update BEfilelist set important = 0 where num in 
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
 	</update>
+	<update id="movefiles" parameterType="listDTO">
+		update BEfilelist set folder_ref = #{folder_ref} where num in 
+		<foreach item="item" collection="moveList" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
+	</update>
+	<update id="setfolderref" parameterType="fileDTO">
+		update BEfilelist set folder_ref = #{folder_ref} where folder_ref = #{num}
+	</update>
+	<select id="getfoldernum" parameterType="fileDTO" resultType="int">
+		select num from BEfilelist where folder_ref = #{folder_ref} and orgname = #{orgname}
+	</select>
 	<select id="mytrashcan" parameterType="String" resultType="fileDTO">
 		select * from BEfilelist where owner = #{owner} and important = -2 and folder_ref not in (select num from BEfilelist where owner = #{owner} and important = -2) order by filetype desc, filename asc
 	</select>
@@ -88,5 +106,8 @@
 	</select>
 	<update id="autoarrange" parameterType="fileDTO">
 		update BEfilelist set folder_ref = #{num} where owner = #{owner} and orgname = #{orgname}
+	</update>
+	<update id="changeref" parameterType="fileDTO">
+		update BEfilelist set folder_ref = #{folder_ref} where num = #{num}
 	</update>
 </mapper>
