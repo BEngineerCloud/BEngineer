@@ -29,8 +29,6 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/beFiles/")
 public class FileBean2 {
-	
-	
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	
@@ -42,6 +40,7 @@ public class FileBean2 {
 		String fileName=""; //파일이름
 		String fileType=""; //파일확장자
 		String moveFolder=""; //이동할 파일폴더
+		Integer moveParent = 0;
 		File path = new File("d:/PM/BEngineer/" + owner); //사용자폴더 경로
 		File[] list = path.listFiles(); //사용자폴더 안에 모든 파일/폴더 받아오기
 		FileBean filebean = new FileBean();
@@ -55,17 +54,24 @@ public class FileBean2 {
 		    		filePath=list[i].getPath();
 		    		fileType = fileName.substring(fileName.lastIndexOf("."));
 		    		moveFolder = filebean.checkFile(fileType); //파일확장자 범주에 들어가는 폴더이름	
-		    		Integer moveParent = moveFile(filePath, fileName, moveFolder, owner); //파일 이동
-		    		if( moveParent!=null) {
+		    		moveParent = moveFile(filePath, fileName, moveFolder, owner); //파일 이동
+		    		if( moveParent!=0) {
 		    			dto.setNum(moveParent);
 		    			sqlSession.update("bengineer.autoarrange",dto);
 		    		}
+		    		else
+		    			break;
 		    	}
 		    }
 		}
-		model.addAttribute("alert", "자동정리가 완료되었습니다.");
-		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
-		return "beFiles/alert";
+		if(moveParent!=0) {
+			model.addAttribute("alert", "자동정리가 완료되었습니다.");
+		}
+		else {
+			model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
+		}
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+			return "beFiles/alert";	
 	}
 	
 	@RequestMapping("beMove.do") //파일/폴더 이동
@@ -103,8 +109,11 @@ public class FileBean2 {
 		
 		if(is_Move) {
 			sqlSession.update("bengineer.changeref",dto);
+			model.addAttribute("alert", "파일/폴더 이동이 완료되었습니다.");
 		}
-		model.addAttribute("alert", "파일/폴더 이동이 완료되었습니다.");
+		else {
+			model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
+		}
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
 		return "beFiles/alert";
 	}
@@ -116,27 +125,40 @@ public class FileBean2 {
 		String filePathtemp=filePath.substring(0, filePath.lastIndexOf(fileName));
 		if(moveFolder.equals("image")) {
 			is_Move = nioFilemove(filePath, filePathtemp+"image/"+fileName);
-			moveP.put("orgname","image");
+			if(is_Move)
+				moveP.put("orgname","image");
 		}else if(moveFolder.equals("music")) {
 			is_Move = nioFilemove(filePath, filePathtemp+"music/"+fileName);
-			moveP.put("orgname","music");
+			if(is_Move)
+				moveP.put("orgname","music");
 		}else if(moveFolder.equals("video")) {
 			is_Move = nioFilemove(filePath, filePathtemp+"video/"+fileName);
-			moveP.put("orgname","video");
+			if(is_Move)
+				moveP.put("orgname","video");
 		}else if(moveFolder.equals("document")) {
 			is_Move = nioFilemove(filePath, filePathtemp+"document/"+fileName);
-			moveP.put("orgname","document");
+			if(is_Move)
+				moveP.put("orgname","document");
 		}else {
 			is_Move = nioFilemove(filePath, filePathtemp+"etc/"+fileName);
-			moveP.put("orgname","etc");
+			if(is_Move)
+				moveP.put("orgname","etc");
 		}
-		return (Integer)sqlSession.selectOne("bengineer.getparentnum",moveP);
+		if(is_Move)
+			return  (Integer)sqlSession.selectOne("bengineer.getparentnum",moveP);
+		else
+			return 0;
 	}
 	
 	private boolean nioFilemove(String originFilePath, String moveFilePath) { //파일이동, NIO방식
+		File newfile = new File(moveFilePath);
+		
 		Path originPath = Paths.get(originFilePath);
 		Path movePath = Paths.get(moveFilePath);
-		
+		if(newfile.exists()) {
+			System.out.println("이미 존재하는 파일입니다.");
+			return false;
+		}
 		if(originPath==null) {
 			throw new IllegalArgumentException("orginPath에 맞는 데이터 형식을 넣어주세요.");
 		}
