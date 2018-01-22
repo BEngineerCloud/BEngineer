@@ -29,5 +29,8 @@
 		and e.email in (select email from beimpose where sysdate < endDay and email = #{email})
 		]]>
 	</select>
+	<select id="getnickname" parameterType="string" resultType="string">
+		select nickname from BEmember where id = #{id}
+	</select>
 
 </mapper>

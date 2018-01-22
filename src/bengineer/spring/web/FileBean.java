@@ -377,6 +377,7 @@ public class FileBean {
 		String fileaddress = "";
 		File file = null;
 		if(files.length == 1) {
+			System.out.println(1);
 			int filenum = 0;
 			try {
 				 filenum = Integer.parseInt(files[0]);
@@ -444,7 +445,7 @@ public class FileBean {
 			List filelist = new ArrayList();
 			for(int i = 0; i < files.length; i++) {
 				try {
-					 filenum = Integer.parseInt(files[0]);
+					 filenum = Integer.parseInt(files[i]);
 				}catch(Exception e) {
 					ModelAndView mav = new ModelAndView();
 					mav.setViewName("beFiles/alert");
@@ -658,6 +659,9 @@ public class FileBean {
 				for(int i = 0; i < trashlist.size(); i++) {
 					ziptrash(owner, (Trash)trashlist.get(i));
 				}
+				for(int i = 0; i < subfiles.size(); i++) {
+					sqlSession.delete("bengineer.deleteover", subfiles.get(i));
+				}
 				sqlSession.update("bengineer.throwalltotrashcan", subfiles);
 				result = "파일들을 휴지통에 버렸습니다.";
 			}else {
@@ -668,6 +672,7 @@ public class FileBean {
 				}else {
 					TrashHolder trashcan = (TrashHolder)settrash(owner, dto.getNum()).get(1);
 					ziptrash(owner, (Trash)trashcan.getTrashList().get(0));
+					sqlSession.delete("bengineer.deleteover", filenum);
 					sqlSession.update("bengineer.throwtotrashcan", filenum);
 					result = "파일을 휴지통에 버렸습니다.";
 				}
@@ -719,10 +724,13 @@ public class FileBean {
 			for(int i = 0; i < trashlist.size(); i++) {
 				ziptrash(owner, (Trash)trashlist.get(i));
 			}
+			for(int i = 0; i < subfiles.size(); i++) {
+				sqlSession.delete("bengineer.deleteover", subfiles.get(i));
+			}
 			sqlSession.update("bengineer.throwalltotrashcan", subfiles);
 			result = "파일들을 휴지통에 버렸습니다.";
 		}else {
-			model.addAttribute("alert", "유효하지 않은 접근입니다.");
+			model.addAttribute("alert", "잘못된 접근입니다.");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -749,7 +757,7 @@ public class FileBean {
 			try {
 				 filenum = Integer.parseInt(files[0]);
 			}catch(Exception e) {
-				model.addAttribute("alert", "유효하지 않은 접근입니다.");
+				model.addAttribute("alert", "잘못된 접근입니다.");
 				model.addAttribute("location", "history.go(-1)");
 				return "beFiles/alert";
 			}
@@ -777,8 +785,37 @@ public class FileBean {
 				result += "파일을 복구하였습니다.";
 			}
 		}else if(files.length > 1) {
+			for(int i = 0; i < files.length; i++) {
+				try {
+					 filenum = Integer.parseInt(files[i]);
+				}catch(Exception e) {
+					model.addAttribute("alert", "잘못된 접근입니다.");
+					model.addAttribute("location", "history.go(-1)");
+					return "beFiles/alert";
+				}
+				List address_ref = getTrashAddr(filenum);
+				dto = (FileDTO)address_ref.get(0);
+				if(i == 0) {
+					owner = dto.getOwner();
+				}
+				if(!owner.equals((String)session.getAttribute("id"))){
+					model.addAttribute("alert", "권한이 없습니다.");
+					model.addAttribute("location", "history.go(-1)");
+					return "beFiles/alert";
+				}
+				if(address_ref.size() == 1) { // 기존 폴더가 아직 존재하는 경우
+					repairList.addAll(settrash(owner, filenum));
+					trashcan.addallTrash((TrashHolder)repairList.remove(repairList.size() - 1));
+				}else { // 기존 폴더도 삭제된 경우 기본 화면에 복원
+					String fileaddress = "d:/PM/BEngineer/";
+					fileaddress += owner;
+					moveList.add(filenum);
+					repairList.addAll(settrash(owner, filenum, fileaddress, trashcan));
+				}
+				result = "파일들을 복구하였습니다.";
+			}
 		}else {
-			model.addAttribute("alert", "유효하지 않은 접근입니다.");
+			model.addAttribute("alert", "잘못된 접근입니다.");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -787,7 +824,7 @@ public class FileBean {
 			Trash trash = (Trash)trashlist.get(i);
 			String fileaddress = trash.getPath();
 			String name = trash.getName();
-			if(fileaddress.indexOf(".") > -1) {
+			if(name.lastIndexOf(".") > -1) {
 				File check = new File(fileaddress + "/" + name);
 				if(check.exists()) {
 					model.addAttribute("alert", "같은 경로에 동일한 이름의 파일이 존재합니다.");
@@ -808,7 +845,7 @@ public class FileBean {
 					dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", trash.getNum());
 					int num = (int)sqlSession.selectOne("bengineer.getfoldernum", dto);
 					dto.setFolder_ref(num);
-					sqlSession.update("bengineer.setfolderref", dto);
+					sqlSession.update("bengineer.changeref", dto);
 					dto.setFolder_ref(dto.getNum());
 					sqlSession.delete("bengineer.deletefile", dto);
 				}else {
@@ -828,6 +865,119 @@ public class FileBean {
 		}
 		model.addAttribute("alert", result);
 		model.addAttribute("location", "\"/BEngineer/beFiles/beTrashcan.do?folder=" + folder + "\"");
+		return "beFiles/alert";
+	}
+	@RequestMapping("deleteFile.do")
+	public String deleteFile(HttpSession session, Model model, String file_ref, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		String [] files = file_ref.split(",");
+		String result = "";
+		String owner = "";
+		String location = "";
+		int filenum = 0;
+		List deleteList = new ArrayList();
+		TrashHolder trashcan = new TrashHolder();
+		FileDTO dto = new FileDTO();
+		if(files.length == 1) {
+			try {
+				 filenum = Integer.parseInt(files[0]);
+			}catch(Exception e) {
+				model.addAttribute("alert", "잘못된 접근입니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			if(!checkPower((String)session.getAttribute("id"), filenum)) { // 권한 체크
+				model.addAttribute("alert", "권한이 없습니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+			List address_ref = getAddr(filenum);
+			dto = (FileDTO)address_ref.get(0);
+			owner = dto.getOwner();
+			if(dto.getImportant() == 1) { // 휴지통에서 삭제하는 경우
+				String fileaddress = "trashcan/";
+				deleteList = settrash(owner, filenum, fileaddress, trashcan);
+				location = "\"/BEngineer/beFiles/beTrashcan.do?folder=" + folder + "\"";
+			}else { // 내 파일에서 바로 삭제하는 경우
+				deleteList = settrash(owner, filenum);
+				trashcan = (TrashHolder)deleteList.remove(deleteList.size() - 1);
+				location = "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"";
+			}
+			result = "파일/폴더를 완전히 삭제하였습니다.";
+		}else if(files.length > 1) {
+			for(int i = 0; i < files.length; i++) {
+				try {
+					 filenum = Integer.parseInt(files[i]);
+				}catch(Exception e) {
+					model.addAttribute("alert", "잘못된 접근입니다.");
+					model.addAttribute("location", "history.go(-1)");
+					return "beFiles/alert";
+				}
+				if(!checkPower((String)session.getAttribute("id"), filenum)) { // 권한 체크
+					model.addAttribute("alert", "권한이 없습니다.");
+					model.addAttribute("location", "history.go(-1)");
+					return "beFiles/alert";
+				}
+				List address_ref = getAddr(filenum);
+				dto = (FileDTO)address_ref.get(0);
+				if(i == 0) {
+					owner = dto.getOwner();
+				}
+				if(dto.getImportant() == 1) { // 휴지통에서 삭제하는 경우
+					String fileaddress = "trashcan/";
+					fileaddress += owner;
+					deleteList.addAll(settrash(owner, filenum, fileaddress, trashcan));
+					location = "\"/BEngineer/beFiles/beTrashcan.do?folder=" + folder + "\"";
+				}else { // 내 파일에서 바로 삭제하는 경우
+					deleteList.addAll(settrash(owner, filenum));
+					trashcan.addallTrash((TrashHolder)deleteList.remove(deleteList.size() - 1));
+					location = "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"";
+				}
+				result = "파일들을 완전히 삭제하였습니다.";
+			}
+		}else {
+			model.addAttribute("alert", "잘못된 접근입니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		List trashlist = trashcan.getTrashList();
+		for(int i = 0; i < trashlist.size(); i++) {
+			Trash trash = (Trash)trashlist.get(i);
+			String fileaddress = trash.getPath();
+			if(fileaddress.startsWith("trashcan/")) {
+				File file = new File("d:/PM/BEngineer/" + owner + "/betrashcan/" + trash.getNum() + ".zip");
+				file.delete();
+			}else {
+				String name = trash.getName();
+				File file = new File(fileaddress + "/" + name);
+				file.delete();
+			}
+		}
+		sqlSession.update("bengineer.deletefiles", deleteList);
+		model.addAttribute("alert", result);
+		model.addAttribute("location", location);
+		return "beFiles/alert";
+	}
+	@RequestMapping("lookSharedPeople.do")
+	public String lookSharedPeople(HttpSession session, Model model, int file) {
+		List idlist = getSharePeopleAddr(file);
+		String result = "";
+		for(int i = 0; i < idlist.size(); i++) {
+			KeyDTO kdto = (KeyDTO)idlist.get(i);
+			result += sqlSession.selectOne("bengineer.getnickname", kdto.getShare_key()); 
+			result += "(" + kdto.getEnddate() + "까지 ";
+			if(kdto.getRw() == 0) {
+				result += "읽기";
+			}else {
+				result += "쓰기";
+			}
+			result += " 가능)";
+			if(i != idlist.size()) {
+				result += "\n\r";
+			}
+		}
+		model.addAttribute("alert", result);
+		model.addAttribute("location", "history.go(-1)");
 		return "beFiles/alert";
 	}
 	private String makecode() {
@@ -902,7 +1052,7 @@ public class FileBean {
 	private List getTrashAddr(List address, int folder_ref) { // 폴더 실 주소 확인을 위한 메서드
 		FileDTO folder = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder_ref);
 		if(folder == null) {return null;}
-		if(folder.getImportant() == -2) {
+		if(folder.getImportant() == 1) {
 			address.add(folder);
 			folder_ref = folder.getFolder_ref();
 			if(folder_ref == 0) {
@@ -925,7 +1075,18 @@ public class FileBean {
 		ShareDTO sdto = new ShareDTO();
 		sdto.setId(id);
 		sdto.setNum(folder_ref);
-		KeyDTO kdto = sqlSession.selectOne("bengineer.getkey", sdto);
+		List keylist = sqlSession.selectList("bengineer.getkey", sdto);
+		KeyDTO kdto = null;
+		if(keylist.size() > 1) {
+			for(int i = 0; i < keylist.size(); i++) {
+				KeyDTO temp = (KeyDTO)keylist.get(i);
+				if(kdto == null || temp.getRw() > kdto.getRw()) {
+					kdto = temp;
+				}
+			}
+		}else {
+			kdto = (KeyDTO)keylist.get(0);
+		}
 		if(kdto != null) {
 			address.add(kdto);
 			return address;
@@ -937,6 +1098,15 @@ public class FileBean {
 				return getShareAddr(address, folder_ref, id);
 			}
 		}
+	}
+	private List getSharePeopleAddr(int file) {
+		List result = new ArrayList();
+		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", file);
+		result.addAll(sqlSession.selectList("bengineer.getsharedpeople", file));
+		if(dto.getFolder_ref() != 0) {
+			result.addAll(getSharePeopleAddr(dto.getFolder_ref()));
+		}
+		return result;
 	}
 	private boolean checkPower(String id, int folder_ref) {
 		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder_ref);

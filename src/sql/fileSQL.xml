@@ -6,7 +6,9 @@
 		select num from BEfilelist where orgname = #{orgname} and folder_ref = #{folder_ref}
 	</select>
 	<select id="getfiles" resultType="fileDTO" parameterType="int">
-		select * from BEfilelist where folder_ref = #{folder_ref} and important > -2 order by filetype desc, filename asc
+		<![CDATA[
+			select * from BEfilelist where folder_ref = #{folder_ref} and important < 1 order by filetype desc, important asc, filename asc
+		]]>
 	</select>
 	<select id="gettrashes" resultType="fileDTO" parameterType="int">
 		select * from BEfilelist where folder_ref = #{folder_ref} order by filetype desc, filename asc
@@ -51,16 +53,24 @@
 		select b.share_key share_key, b.filenum filenum, b.enddate enddate, b.rw rw from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.id = #{id} and b.filenum = #{num} and b.enddate >= sysdate
 	</select>
 	<select id="mysharedfile" parameterType="string" resultType="fileDTO">
-		select * from BEfilelist where num in (select b.filenum from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.id = #{id} and b.enddate >= sysdate) and important > -2
+		<![CDATA[
+			select * from BEfilelist where num in (select b.filenum from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.id = #{id} and b.enddate >= sysdate) and important < 1 order by filetype desc, important asc, filename asc
+		]]>
 	</select>
 	<delete id="deletefile" parameterType="int">
 		delete from BEfilelist where num = #{folder_ref}
 	</delete>
+	<update id="deletefiles" parameterType="list">
+		delete from BEfilelist where num in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</update>
 	<update id="throwtotrashcan" parameterType="int">
-		update BEfilelist set important = -2 where num = #{filenum}
+		update BEfilelist set important = 1 where num = #{filenum}
 	</update>
 	<update id="throwalltotrashcan" parameterType="list">
-		update BEfilelist set important = -2 where num in
+		update BEfilelist set important = 1 where num in
 		<foreach item="item" collection="list" open="(" separator="," close=")">
 			#{item}
 		</foreach>
@@ -77,6 +87,9 @@
 			#{item}
 		</foreach>
 	</select>
+	<delete id="deleteover" parameterType="int">
+		delete from BEfilelist where folder_ref = (select folder_ref from BEfilelist where num = #{num}) and orgname = (select orgname from BEfilelist where num = #{num}) and num != #{num} and important = 1
+	</delete>
 	<update id="repairfiles" parameterType="list">
 		update BEfilelist set important = 0 where num in 
 		<foreach item="item" collection="list" open="(" separator="," close=")">
@@ -89,17 +102,14 @@
 			#{item}
 		</foreach> 
 	</update>
-	<update id="setfolderref" parameterType="fileDTO">
-		update BEfilelist set folder_ref = #{folder_ref} where folder_ref = #{num}
-	</update>
 	<select id="getfoldernum" parameterType="fileDTO" resultType="int">
-		select num from BEfilelist where folder_ref = #{folder_ref} and orgname = #{orgname}
+		select num from BEfilelist where folder_ref = #{folder_ref} and orgname = #{orgname} and num != #{num}
 	</select>
 	<select id="mytrashcan" parameterType="String" resultType="fileDTO">
-		select * from BEfilelist where owner = #{owner} and important = -2 and folder_ref not in (select num from BEfilelist where owner = #{owner} and important = -2) order by filetype desc, filename asc
+		select * from BEfilelist where owner = #{owner} and important = 1 and folder_ref not in (select num from BEfilelist where owner = #{owner} and important = 1) order by filetype desc, filename asc
 	</select>
 	<select id="mytrashcanfolder" parameterType="int" resultType="fileDTO">
-		select * from BEfilelist where folder_ref = #{folder_ref} and important = -2 order by filetype desc, filename asc
+		select * from BEfilelist where folder_ref = #{folder_ref} and important = 1 order by filetype desc, filename asc
 	</select>
 	<select id="getparentnum" parameterType="hashmap" resultType="int">
 		select num from BEfilelist where owner = #{owner} and important = -1 and orgname = #{orgname}
@@ -110,4 +120,7 @@
 	<update id="changeref" parameterType="fileDTO">
 		update BEfilelist set folder_ref = #{folder_ref} where num = #{num}
 	</update>
+	<select id="getsharedpeople" parameterType="int" resultType="keyDTO">
+		select a.id share_key, b.enddate enddate, b.rw rw from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where b.filenum = #{filenum} and b.enddate >= sysdate
+	</select>
 </mapper>

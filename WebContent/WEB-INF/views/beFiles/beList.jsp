@@ -68,6 +68,9 @@
 					form.file_ref.value = ref;
 					form.submitfolderdown.type = "submit";
 				}
+				form = document.getElementById("sharecheckform");
+				form.file.value = ref;
+				form.submitsharecheck.type = "submit";
 			}
 		});
 	});
@@ -381,6 +384,8 @@
 		document.getElementById("multidowntext").type = "hidden";
 		document.getElementById("cancelmultidown").type = "hidden";
 		document.getElementById("throwtotrashcan").type = "hidden";
+		form = document.getElementById("sharecheckform");
+		form.submitsharecheck.type = "hidden";
 	}
 	function setForm(type, ref){
 		var form = document.getElementById("changenameform");
@@ -539,6 +544,13 @@
 			<c:if test="${folder==0 || orgaddress.size()==1}">
 				<input type="hidden" id="uppermovesubmit" name="uppermovesubmit" value="상위 폴더 이동"/>
 			</c:if>
+		</form>
+	</div>
+	<!-- 공유중인 사람 확인 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<form id="sharecheckform" method="post">
+			<input type="hidden" name="file" />
+			<input type="hidden" name="submitsharecheck" value="공유 중인 사람 보기"/>
 		</form>
 	</div>
 </div>
