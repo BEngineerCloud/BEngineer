@@ -7,21 +7,26 @@
 	<c:forEach items="${orgaddress}" var="item">
 		orgList.push("${item}");
 	</c:forEach>
+	
 	$(function(){
 		$("#files > div").click(function(){ // 파일 클릭시
 			var filename = $(this).text();
 			var ref = $(this).attr("name");
 			var orgname = document.getElementById(ref); // 원 파일명 저장되어있는 인풋의 값 가져오기
 			$("font#filename").text(orgname.value); // 주소부분에 표시
-			var important = $('#important').val(); // 기본 폴더, 중요폴더 구분
+			var important =document.getElementById(ref + "important");
 			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			var moveform = document.getElementById("moveform"); // moveform 가져오기
 			
-			if(important!=-1){ // 기본폴더는 important가 -1이므로 기본폴더가 아닐 시 이동버튼 나타냄
+			if(important.value!=-1){ // 기본폴더는 important가 -1이므로 기본폴더가 아닐 시 이동버튼 나타냄
 				if(moveform.submitmove.value=="이동"){ // form.submitmove 값이 이동일 시
 					moveform.submitmove.type = "submit"; // form.submitmove 타입을 submit으로 설정
 				}
 			}
+			else{ //기본 폴더일시 이동버튼 숨기기
+				moveform.submitmove.type="hidden";
+			}
+			
 			
 			if(moveform.submitmove.value == "이동"){ // moveform.submitmove 값이 '이동'일 시
 				moveform.select_flag.value=ref;		// movefrom.select_flag의 값에 클릭된 fileform.ref 대입
@@ -72,6 +77,10 @@
 			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			var moveform = document.getElementById("moveform");
 			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
+				if(moveform.select_flag.value==moveform.folder_ref.value){ // 이동버튼 클릭 후 자기자신을 더블클릭할 때
+					alert("이동할 폴더를 선택해주세요.");
+					return false;
+				}
 				// 파일/폴더의 이동 버튼 클릭 후 다른 폴더로 이동해서 옮기기위해서
 				if(moveform.select_flag.value==0 || moveform.folder_ref.value==0) 
 					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + ref;
@@ -175,8 +184,6 @@
 				alert('업로드할 파일을 선택해주세요');
 				return false;
 			}
-			hinder();
-			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 		});
 	});
 	$(function(){
@@ -266,6 +273,7 @@
 					fileform2.style.backgroundColor="#ff6666";
 				}
 			}
+			form.select_flag.value="";
 			form.ref.value=""; 				// moveform.ref 값을 빈칸으로 설정
 			form.folder_ref.value=""; 		// moveform.folder_ref 값을 빈칸으로 설정
 			form.submitmove.value="이동" // moveform.submitmove 값을 이동으로 설정 		
@@ -279,18 +287,19 @@
 			var uppermoveform = document.getElementById('uppermoveform');
 			var moveform = document.getElementById("moveform");
 			var size = orgList.length;
-			if(moveform.select_flag.value==0 || moveform.folder_ref.value==0) {
-				if(size>=2){
+			if(size>=2){ // 상위폴더가 두개 이상일시
+				if(moveform.select_flag.value==0) // 이동할 파일이 없을 시
 					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + orgList[size-2];
+				else{
+					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + orgList[size-2]+"&movefile_Ref="+moveform.select_flag.value;		
 				}
-				else{ // 상위폴더가 1개일 때
-					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + 0;
-				}
-				
 			}
-			else // 이동버튼 클릭한 후 상위폴더 이동할 때(미완성)
-				window.location = "/BEngineer2/beFiles/beMyList.do?folder=" +uppermoveform.folder_ref.value+"&movefile_Ref="+moveform.select_flag.value+"&movefile_FRef="+moveform.folder_ref.value; 
-				// 파일/폴더를 선택 한 후 다른 폴더 경로로 들어갈 때 movefile_Ref, movefile_FRef에 값을 대입
+			else{
+				if(moveform.select_flag.value==0)
+					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + 0;
+				else
+					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + 0+"&movefile_Ref="+moveform.select_flag.value;
+			}
 		});
 	});
 	$(function(){
@@ -440,11 +449,16 @@
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
 			<input type="hidden" name="ref"/>
-			<c:if test="${movefile_Ref!=0 && movefile_FRef!=0 }">
+			<c:if test="${movefile_Ref!=0 || movefile_FRef!=0 }">
 				<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="submit"  id="submitmove"name="submitmove" value="이동하기"/>
 				<input type="hidden" name="select_flag" value="${movefile_Ref }"/>
+				<c:if test="${movefile_FRef!=0 }">
 				<input type="hidden" name="folder_ref" value="${movefile_FRef }"/>
+				</c:if>
+				<c:if test="${movefile_FRef==0 }">
+				<input type="hidden" name="folder_ref" value="${folder }"/>
+				</c:if>
 				</div>
 				<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="button"  id="movecancel" name="movecancel" value="이동 취소"/>
@@ -552,8 +566,9 @@
 <!-- 파일들 창 -->
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
-		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/><input type="hidden" id="important" value="${file.important }"/></div>
+		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
+		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>
 </div>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
