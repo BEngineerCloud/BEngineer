@@ -289,16 +289,16 @@
 			var size = orgList.length;
 			if(size>=2){ // 상위폴더가 두개 이상일시
 				if(moveform.select_flag.value==0) // 이동할 파일이 없을 시
-					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + orgList[size-2];
+					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + orgList[size-2];
 				else{
-					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + orgList[size-2]+"&movefile_Ref="+moveform.select_flag.value;		
+					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + orgList[size-2]+"&movefile_Ref="+moveform.select_flag.value;		
 				}
 			}
 			else{
 				if(moveform.select_flag.value==0)
-					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + 0;
+					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + 0;
 				else
-					window.location = "/BEngineer2/beFiles/beMyList.do?folder=" + 0+"&movefile_Ref="+moveform.select_flag.value;
+					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + 0+"&movefile_Ref="+moveform.select_flag.value;
 			}
 		});
 	});
@@ -531,7 +531,7 @@
 	</div>
 	<!-- 상위폴더 이동 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="uppermoveform" method="post" action="/BEngineer2/beFiles/beDownload.do">
+		<form id="uppermoveform" method="post" action="/BEngineer/beFiles/beDownload.do">
 			<input type="hidden" id="folder_ref" value="${folder_ref }"/>
 			<c:if test="${folder!=0 && orgaddress.size()>1}">
 				<input type="button" id="uppermovesubmit" name="uppermovesubmit" value="상위 폴더 이동"/>
