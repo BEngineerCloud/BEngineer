@@ -961,21 +961,29 @@ public class FileBean {
 	@RequestMapping("lookSharedPeople.do")
 	public String lookSharedPeople(HttpSession session, Model model, int file) {
 		List idlist = getSharePeopleAddr(file);
+		System.out.println(idlist.size());
 		String result = "";
+		System.out.println(result);
 		for(int i = 0; i < idlist.size(); i++) {
 			KeyDTO kdto = (KeyDTO)idlist.get(i);
-			result += sqlSession.selectOne("bengineer.getnickname", kdto.getShare_key()); 
+			result += sqlSession.selectOne("bengineer.getnickname", kdto.getShare_key());
+			System.out.println(result); 
 			result += "(" + kdto.getEnddate() + "까지 ";
+			System.out.println(result);
 			if(kdto.getRw() == 0) {
 				result += "읽기";
+				System.out.println(result);
 			}else {
 				result += "쓰기";
+				System.out.println(result);
 			}
 			result += " 가능)";
 			if(i != idlist.size()) {
-				result += "\n\r";
+				result += "\\n\\r";
+				System.out.println(result);
 			}
 		}
+		System.out.println(result);
 		model.addAttribute("alert", result);
 		model.addAttribute("location", "history.go(-1)");
 		return "beFiles/alert";
@@ -1102,10 +1110,15 @@ public class FileBean {
 	private List getSharePeopleAddr(int file) {
 		List result = new ArrayList();
 		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", file);
+		System.out.println(result.size());
 		result.addAll(sqlSession.selectList("bengineer.getsharedpeople", file));
+		System.out.println(result.size());
 		if(dto.getFolder_ref() != 0) {
+			System.out.println(result.size());
 			result.addAll(getSharePeopleAddr(dto.getFolder_ref()));
+			System.out.println(result.size());
 		}
+		System.out.println(result.size());
 		return result;
 	}
 	private boolean checkPower(String id, int folder_ref) {

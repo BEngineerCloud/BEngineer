@@ -548,7 +548,7 @@
 	</div>
 	<!-- 공유중인 사람 확인 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="sharecheckform" method="post">
+		<form id="sharecheckform" action="lookSharedPeople.do" method="post">
 			<input type="hidden" name="file" />
 			<input type="hidden" name="submitsharecheck" value="공유 중인 사람 보기"/>
 		</form>
