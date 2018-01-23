@@ -139,7 +139,7 @@ public class FileBean2 {
 				model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
 			}	
 		}
-		model.addAttribute("location", "\"/BEngineer2/beFiles/beMyList.do?folder=0"+ "\"");
+		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
 		return "beFiles/alert";
 	}
 	
