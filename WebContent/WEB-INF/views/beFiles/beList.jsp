@@ -551,7 +551,7 @@
 	</div>
 	<!-- 상위폴더 이동 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="uppermoveform" method="post" action="/BEngineer/beFiles/beDownload.do">
+		<form id="uppermoveform" method="post">
 			<input type="hidden" id="folder_ref" value="${folder_ref }"/>
 			<c:if test="${folder!=0 && orgaddress.size()>1}">
 				<input type="button" id="uppermovesubmit" name="uppermovesubmit" value="상위 폴더 이동"/>
