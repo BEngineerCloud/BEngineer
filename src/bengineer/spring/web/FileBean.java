@@ -256,6 +256,11 @@ public class FileBean {
 				model.addAttribute("location", "history.go(-1)");
 				return "beFiles/alert";
 			}
+			if(FilenameFilter.nameFilter(orgname, filename)) {
+				model.addAttribute("alert", "파일명에 포함될 수 없는 단어가 포함되어 있습니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
 			boolean typech = true;
 			List address_ref = getAddr(folder);
 			String fileaddress = "";
@@ -852,6 +857,7 @@ public class FileBean {
 					check.mkdir();
 				}
 			}
+			sqlSession.delete("bengineer.deletetrash", trash.getNum());
 		}
 		ListDTO ldto = new ListDTO();
 		dto.setOwner(owner);
@@ -952,6 +958,7 @@ public class FileBean {
 				File file = new File(fileaddress + "/" + name);
 				file.delete();
 			}
+			sqlSession.delete("bengineer.deletetrash", trash.getNum());
 		}
 		sqlSession.update("bengineer.deletefiles", deleteList);
 		model.addAttribute("alert", result);
@@ -1384,5 +1391,6 @@ public class FileBean {
 			zipFiles(path, canpath + "/" + filenum + ".zip", file);
 		}
 		trashfile.delete();
+		sqlSession.insert("bengineer.inserttrash", filenum);
 	}
 }

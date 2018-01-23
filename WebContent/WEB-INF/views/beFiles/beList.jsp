@@ -462,6 +462,31 @@
 			<input type="submit" value="파일 자동정리" />
 		</form>
 	</div>
+	<!-- 다수 파일 다운로드 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<div style="height:100%; width:relative; margin-top:5; float:left;">
+			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
+		</div>
+		<div style="height:100%; width:relative; margin:0; float:left;">
+			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
+				<input type="hidden" name="file_ref" />
+				<div style="height:100%; width:relative; float:left;">
+					<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="multimove" value="이동" />
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="throwtotrashcan" value="지우기" />
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="cancelmultidown" value="취소" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
 	<!-- 파일/폴더 이동 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
@@ -526,29 +551,6 @@
 			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
 		</form>
 	</div>
-	<!-- 다수 파일 다운로드 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<div style="height:100%; width:relative; margin-top:5; float:left;">
-			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
-		</div>
-		<div style="height:100%; width:relative; margin:0; float:left;">
-			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
-				<input type="hidden" name="file_ref" />
-				<div style="height:100%; width:relative; float:left;">
-					<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
-				</div>
-				<div style="height:100%; width:relative; float:left;">
-					<input type="hidden" id="multimove" value="이동" />
-				</div>
-				<div style="height:100%; width:relative; float:left;">
-					<input type="hidden" id="throwtotrashcan" value="지우기" />
-				</div>
-				<div style="height:100%; width:relative; float:left;">
-					<input type="hidden" id="cancelmultidown" value="취소" />
-				</div>
-			</form>
-		</div>
-	</div>
 	<!-- 상위폴더 이동 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="uppermoveform" method="post">
@@ -584,14 +586,14 @@
 	<!-- 선택파일 보여주기용 -->
 	<font id="filename"></font>
 </div>
-<div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
+<div id="button2" style="height:75%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
 	button2
 </div>
 <!-- 파일들 창 -->
-<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
+<div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
 		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>

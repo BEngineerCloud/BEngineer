@@ -58,7 +58,7 @@
 		]]>
 	</select>
 	<delete id="deletefile" parameterType="int">
-		delete from BEfilelist where num = #{folder_ref}
+		delete from BEfilelist where num = #{num}
 	</delete>
 	<update id="deletefiles" parameterType="list">
 		delete from BEfilelist where num in
@@ -75,6 +75,15 @@
 			#{item}
 		</foreach>
 	</update>
+	<insert id="inserttrash" parameterType="int">
+		insert into BEtrashcan(num, filenum, deletedate) values(BEtrashcan_seq.NEXTVAL, #{filenum}, sysdate)
+	</insert>
+	<delete id="deletetrash" parameterType="int">
+		delete from BEtrashcan where filenum = #{filenum}
+	</delete>
+	<select id="checktrash" parameterType="int" resultType="java.sql.Date">
+		select deletedate from BEtrashcan where filenum = #{num}
+	</select>
 	<select id="checkall1" parameterType="list" resultType="fileDTO">
 		select * from BEfilelist where important = -1 and num in
 		<foreach item="item" collection="list" open="(" separator="," close=")">

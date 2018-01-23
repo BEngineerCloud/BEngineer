@@ -5,6 +5,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import bengineer.spring.web.FilenameFilter;
+
 import org.apache.catalina.User;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +57,32 @@ public class ManagerBean {
 			return "/manager/mMain";
 		}
 	}
-	
+	@RequestMapping("addFilter.do")
+	public String addFilter(HttpSession session, Model model, String filtering) {
+		String ss = (String)session.getAttribute("Id");
+		if(ss==null) {
+			return "redirect:/manager/login.do";
+		}
+		FilenameFilter filterlist = new FilenameFilter();
+		filterlist.addFilterings(filtering);
+		model.addAttribute("alert", "\\'" + filtering + "\\'을/를 필터링 단어로 추가하였습니다.");
+		model.addAttribute("location", "history.go(-1)");
+		return "beFiles/alert";
+	}
+	@RequestMapping("removeFilter.do")
+	public String removeFilter(HttpSession session, Model model, String filtering) {
+		String ss = (String)session.getAttribute("Id");
+		if(ss==null) {
+			return "redirect:/manager/login.do";
+		}
+		FilenameFilter filterlist = new FilenameFilter();
+		if(filterlist.removeFilterings(filtering)) {
+			model.addAttribute("alert", "\\'" + filtering + "\\'을/를 필터링 단어에서 해제하였습니다.");
+		}else {
+			model.addAttribute("alert", "\\'" + filtering + "\\'은/를 필터링 단어가 아닙니다.");
+		}
+		model.addAttribute("location", "history.go(-1)");
+		return "beFiles/alert";
+	}
 }
 

@@ -305,6 +305,23 @@ $(function(){
 				<input type="submit" value="폴더 생성" />
 			</form>
 		</div>
+	</c:if>
+	<!-- 다수 파일 다운로드 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<div style="height:100%; width:relative; margin-top:5; float:left;">
+			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
+		</div>
+		<div style="height:100%; width:relative; margin:0; float:left;">
+			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
+				<input type="hidden" name="file_ref" />
+				<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
+				<input type="hidden" id="cancelmultidown" value="취소" />
+			</form>
+		</div>
+	</div>
+</div>
+<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
+	<c:if test="${write }"><!-- 쓰기권한이 있을 때 -->
 		<!-- 폴더명 변경 폼 -->
 		<div style="height:5%; width:relative; margin:0; float:left;">
 			<form id="changenameform" method="post">
@@ -322,19 +339,6 @@ $(function(){
 			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
 		</form>
 	</div>
-	<!-- 다수 파일 다운로드 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<div style="height:100%; width:relative; margin-top:5; float:left;">
-			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
-		</div>
-		<div style="height:100%; width:relative; margin:0; float:left;">
-			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
-				<input type="hidden" name="file_ref" />
-				<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
-				<input type="hidden" id="cancelmultidown" value="취소" />
-			</form>
-		</div>
-	</div>
 </div>
 <div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">
 	<c:set var="num" value="0" />
@@ -351,14 +355,14 @@ $(function(){
 	<!-- 선택파일 보여주기용 -->
 	<font id="filename"></font><c:if test="${folder_ref != 0 }">  (${enddate }까지 <c:if test="${write }">쓰기</c:if><c:if test="${!write }">읽기</c:if> 가능)</c:if>
 </div>
-<div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
+<div id="button2" style="height:75%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
 	button2
 </div>
 <!-- 파일들 창 -->
-<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
+<div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
 		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
