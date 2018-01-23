@@ -103,18 +103,43 @@ public class FileBean2 {
 		dto.setNum(num);
 		int folderref = ((FileDTO)newAddr.get(0)).getNum();
 		dto.setFolder_ref(folderref);
-		
+		File file = new File(originalPath);
 		boolean is_Move = false;
-		is_Move = nioFilemove(originalPath,newPath);
+		int flag = 0;
+		
+		if(file.isFile()) { // 이동하려는 파일/폴더가 파일일 경우
+			String filetype = orgname.substring(orgname.lastIndexOf("."));
+			String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
+			String result = filebean.checkFile(filetype);
+		
+			// 이동할 위치의 폴더가 기본폴더인 경우
+			if(newFolder.equals("image")||newFolder.equals("music")||newFolder.equals("video")||newFolder.equals("document")||newFolder.equals("etc")) {
+				if(!newFolder.equals(result)) {
+					is_Move = false;
+					flag = 1;
+				}
+				else {
+					is_Move = nioFilemove(originalPath,newPath);
+				}
+			}else {
+				is_Move = nioFilemove(originalPath,newPath);
+			}
+		}else {
+			is_Move = nioFilemove(originalPath,newPath);
+		}
 		
 		if(is_Move) {
 			sqlSession.update("bengineer.changeref",dto);
 			model.addAttribute("alert", "파일/폴더 이동이 완료되었습니다.");
 		}
 		else {
-			model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
+			if(flag==1) {
+				model.addAttribute("alert", "해당폴더에 이동할수 없는 파일의 형식입니다.");
+			}else {
+				model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
+			}	
 		}
-		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		model.addAttribute("location", "\"/BEngineer2/beFiles/beMyList.do?folder=0"+ "\"");
 		return "beFiles/alert";
 	}
 	

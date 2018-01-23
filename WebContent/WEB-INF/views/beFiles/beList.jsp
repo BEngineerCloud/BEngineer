@@ -48,6 +48,7 @@
 			form = document.getElementById("multidownform");
 			if(document.getElementById("multidowntext").type == "text"){
 				var index = clickedfile.indexOf(ref);
+				moveform.submitmove.type="hidden";
 				if(index == -1){
 					clickedfile.push(ref);
 					$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
@@ -174,6 +175,8 @@
 	$(function(){
 		$("#multidownform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
 			var form = document.getElementById("multidownform"); // 폼 받아오기
+			var moveform = document.getElementById("moveform")
+			moveform.submitmove.type="hidden";
 			if(document.getElementById("multidowntext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
 				hinder(); // 다른 폼 닫기
 				document.getElementById("multidowntext").type = "text";
@@ -185,6 +188,15 @@
 			}
 			if(!form.file_ref.value){ // 업로드할 파일 미선택시
 				alert('업로드할 파일을 선택해주세요');
+				return false;
+			}
+		});
+	});
+	$(function(){
+		$("#multimove").click(function(){ // 내 파일보기 버튼 클릭 시 페이지 이동
+			var form = document.getElementById("multidownform"); // 폼 받아오기
+			if(!form.file_ref.value){ // 업로드할 파일 미선택시
+				alert('이동할 파일을 선택해주세요');
 				return false;
 			}
 		});
@@ -291,14 +303,14 @@
 			var moveform = document.getElementById("moveform");
 			var size = orgList.length;
 			if(size>=2){ // 상위폴더가 두개 이상일시
-				if(moveform.select_flag.value==0) // 이동할 파일이 없을 시
+				if(moveform.ref.value==0) // 이동할 파일이 없을 시
 					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + orgList[size-2];
 				else{
 					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + orgList[size-2]+"&movefile_Ref="+moveform.select_flag.value;		
 				}
 			}
 			else{
-				if(moveform.select_flag.value==0)
+				if(moveform.ref.value==0)
 					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + 0;
 				else
 					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + 0+"&movefile_Ref="+moveform.select_flag.value;
@@ -524,6 +536,9 @@
 				<input type="hidden" name="file_ref" />
 				<div style="height:100%; width:relative; float:left;">
 					<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="multimove" value="이동" />
 				</div>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="hidden" id="throwtotrashcan" value="지우기" />
