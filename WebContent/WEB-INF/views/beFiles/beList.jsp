@@ -499,10 +499,13 @@
 			</form>
 		</div>
 	</div>
-	<!-- 파일생성 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<input type="button" value="텍스트 파일 만들기" id="writetextbutton"/>
-	</div>
+	<c:set var="names" value="array(etc, image, music, video)"/>
+	<c:if test="${folderaddress.size() != 2 || !names.contains(folderaddress.get(1)) }">
+		<!-- 파일생성 폼 -->
+		<div style="height:5%; width:relative; margin:0; float:left;">
+			<input type="button" value="텍스트 파일 만들기" id="writetextbutton"/>
+		</div>
+	</c:if>
 </div>
 <div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
 	<!-- 파일/폴더 이동 폼 -->

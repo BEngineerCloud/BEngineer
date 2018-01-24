@@ -277,7 +277,6 @@ $(function(){
 			form.submitmultidown.value = "여러 파일 다운로드";
 			document.getElementById("multidowntext").type = "hidden";
 			document.getElementById("cancelmultidown").type = "hidden";
-			document.getElementById("files").style.height = "75%";
 		}
 		function setForm(filename, ref){}
 	</script>
@@ -341,7 +340,7 @@ $(function(){
 		</div>
 	</c:if>
 </div>
-<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left; display:none;">
+<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
 	<c:if test="${write }"><!-- 쓰기권한이 있을 때 -->
 		<!-- 폴더명 변경 폼 -->
 		<div style="height:5%; width:relative; margin:0; float:left;">
