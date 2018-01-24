@@ -60,6 +60,9 @@
 			}else{
 				hinder(); // 업로드 입력, 폴더생성 입력 취소
 				form.file_ref.value = ref;
+				document.getElementById("button1_1").style.display = "block";
+				document.getElementById("files").style.height = "75%";
+				document.getElementById("button2").style.height = "75%";
 				document.getElementById("throwtotrashcan").type = "button";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
@@ -133,6 +136,18 @@
 		$("#throwtotrashcan").click(function(){ // 지우기 클릭 시
 			var form = document.getElementById("multidownform");
 			window.location = "/BEngineer/beFiles/throwToTrashcan.do?file_ref=" + form.file_ref.value + "&folder=" + ${folder_ref };
+		});
+	});
+	$(function(){
+		$("#writetextbutton").click(function(){ // 텍스트 파일 작성 클릭 시
+			hinder();
+			document.getElementById("writetextdiv").style.display = "block";
+			document.getElementById("files").style.height = "40%";
+		});
+	});
+	$(function(){
+		$("#canclewritetext").click(function(){ // 텍스트 파일 작성 클릭 시
+			hinder();
 		});
 	});
 	$(function(){
@@ -398,6 +413,10 @@
 		document.getElementById("throwtotrashcan").type = "hidden";
 		form = document.getElementById("sharecheckform");
 		form.submitsharecheck.type = "hidden";
+		document.getElementById("button1_1").style.display = "none";
+		document.getElementById("files").style.height = "80%";
+		document.getElementById("button2").style.height = "80%";
+		document.getElementById("writetextdiv").style.display = "none";
 	}
 	function setForm(type, ref){
 		var form = document.getElementById("changenameform");
@@ -485,8 +504,12 @@
 			</form>
 		</div>
 	</div>
+	<!-- 파일생성 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<input type="button" value="텍스트 파일 만들기" id="writetextbutton"/>
+	</div>
 </div>
-<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
+<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left; display:none;">
 	<!-- 파일/폴더 이동 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
@@ -586,19 +609,40 @@
 	<!-- 선택파일 보여주기용 -->
 	<font id="filename"></font>
 </div>
-<div id="button2" style="height:75%; width:10%; background-color:#ff99ff; float:left;">
+<div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
 	button2
 </div>
 <!-- 파일들 창 -->
-<div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
+<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
 		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>
+</div>
+<!-- text파일 쓰기용 창 -->
+<div id="writetextdiv" style="height:40%; width:90%; background-color:#ffff99; float:left; overflow-y:scroll; display:none">
+	<form action="/BEngineer/beFiles/writeText.do" id="writetextform" method="post">
+		<input type="hidden" name="folder" value="${folder_ref }"/>
+		<div style="height:8%; width:50%; float:left; text-align:left;">
+			파일 별명 : <input type="text" name="filename"/>
+		</div>
+		<div style="height:8%; width:50%; float:left; text-align:left;">
+			파일명 : <input type="text" name="orgname"/>
+		</div>
+		<div style="height:84%; width:100%; float:left; text-align:left;">
+			<textarea name="content" cols="100" rows="20"></textarea>
+		</div>
+		<div style="height:8%; width:50%; float:left; text-align:left;">
+			<input type="submit" value="작성완료"/>
+		</div>
+		<div style="height:8%; width:50%; float:left; text-align:left;">
+			<input type="button" value="취소" id="canclewritetext"/>
+		</div>
+	</form>
 </div>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
 	etc

@@ -332,6 +332,11 @@ public class FileBean {
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
+		if(FilenameFilter.nameFilter(foldername)) {
+			model.addAttribute("alert", "폴더명에 포함될 수 없는 단어가 포함되어 있습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		// 폴더명에 포함될 수 없는 문자들 체크
 		int check = 0;
 		check += foldername.indexOf("\\");
@@ -382,7 +387,6 @@ public class FileBean {
 		String fileaddress = "";
 		File file = null;
 		if(files.length == 1) {
-			System.out.println(1);
 			int filenum = 0;
 			try {
 				 filenum = Integer.parseInt(files[0]);
@@ -528,6 +532,11 @@ public class FileBean {
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
+		if(FilenameFilter.nameFilter(name)) {
+			model.addAttribute("alert", "폴더명에 포함될 수 없는 단어가 포함되어 있습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		List address_ref = getAddr(ref);
 		FileDTO dto = (FileDTO)address_ref.get(0);
 		if(dto.getImportant() == -1) {
@@ -557,6 +566,11 @@ public class FileBean {
 		// 파일명 길이 확인
 		if(name.length() > 90) {
 			model.addAttribute("alert", "파일명은 한글로 30글자, 영어,숫자 또는 특수문자로 90글자까지 가능합니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		if(FilenameFilter.nameFilter(name)) {
+			model.addAttribute("alert", "파일명에 포함될 수 없는 단어가 포함되어 있습니다.");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -990,6 +1004,42 @@ public class FileBean {
 		model.addAttribute("location", "history.go(-1)");
 		return "beFiles/alert";
 	}
+	@RequestMapping("writeText.do")
+	public String writeText(HttpSession session, Model model, int folder, String filename, String orgname, String content) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		if(!checkPower((String)session.getAttribute("id"), folder)) {
+			model.addAttribute("alert", "권한이 없습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		if(FilenameFilter.nameFilter(orgname, filename)) {
+			model.addAttribute("alert", "파일명에 포함될 수 없는 단어가 포함되어 있습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		List address_ref = getAddr(folder);
+		FileDTO dto = (FileDTO)address_ref.get(0);
+		String owner = dto.getOwner();
+		String address = "d:/PM/BEngineer/";
+		for(int i = address_ref.size() - 1; i >= 0; i--) {
+			dto = (FileDTO)address_ref.get(i);
+			address += dto.getOrgname() + "/";
+		}
+		orgname += ".txt";
+		dto = writeTextFile(address, orgname, content);
+		dto.setOwner(owner);
+		dto.setFilename(filename);
+		dto.setFiletype(".txt");
+		dto.setFolder_ref(folder);
+		sqlSession.insert("bengineer.upload", dto);
+		model.addAttribute("alert", "텍스트 파일을 생성하였습니다.");
+		if(owner.equals((String)session.getAttribute("id"))) {
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+		}else {
+			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+		}
+		return "beFiles/alert";
+	}
 	private String makecode() {
 		String code = "";
 		for(int i = 0; i < 20; i++) {
@@ -1302,6 +1352,25 @@ public class FileBean {
 		File trash = new File(zipName);
 		trash.delete();
 		return result;
+	}
+	private FileDTO writeTextFile(String address, String orgname, String content) {
+		FileDTO dto = new FileDTO();
+		dto.setOrgname(orgname);
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		try {
+			fos = new FileOutputStream(address + orgname);
+			bos = new BufferedOutputStream(fos);
+			byte [] contents = content.getBytes();
+			bos.write(contents);
+			bos.close();
+			fos.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		File newFile = new File(address + orgname);
+		dto.setFilesize(newFile.length());
+		return dto;
 	}
 	private List getFilelist(String dirPath) {return getFilelist(dirPath, "");}
 	private List getFilelist(String dirPath, String pre) { // 폴더 내의 모든 파일의 상대 주소를 리스트로 돌려주는 메서드

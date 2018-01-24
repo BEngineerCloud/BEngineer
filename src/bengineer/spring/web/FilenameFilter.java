@@ -20,4 +20,15 @@ public class FilenameFilter {
 		}
 		return false;
 	}
+	public static boolean nameFilter(String filename) {
+		for(int i = 0; i < filterings.size(); i++) {
+			if(filename.contains(filterings.get(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+	public static List<String> getFilterings() {
+		return filterings;
+	}
 }
