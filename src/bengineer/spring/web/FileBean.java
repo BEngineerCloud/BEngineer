@@ -1020,6 +1020,14 @@ public class FileBean {
 		List address_ref = getAddr(folder);
 		FileDTO dto = (FileDTO)address_ref.get(0);
 		String owner = dto.getOwner();
+		if(dto.getImportant() == -1) {
+			String foldername = dto.getOrgname();
+			if(!foldername.equals("document") && !foldername.equals(owner)) {
+				model.addAttribute("alert", "파일을 생성할 수 없는 위치입니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
+		}
 		String address = "d:/PM/BEngineer/";
 		for(int i = address_ref.size() - 1; i >= 0; i--) {
 			dto = (FileDTO)address_ref.get(i);

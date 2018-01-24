@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script type="text/javascript">
 	$(function(){
@@ -10,6 +11,18 @@
 			if(!form.filtering.value || form.filtering.value == ""){
 				alert("필터링 단어를 입력해주세요");
 				return false;
+			}
+		});
+	});
+	$(function(){
+		$("#checkfilter").click(function(){
+			var div = document.getElementById("filter");
+			if(div.style.display == "none"){
+				div.style.display = "block";
+				$(this).val("파일명 필터 닫기");
+			}else{
+				div.style.display = "none";
+				$(this).val("파일명 필터 확인하기");
 			}
 		});
 	});
@@ -35,7 +48,12 @@
         	<input type="text" name="filtering" />
         	<input type="submit" value="필터 해제하기" />
         </form>
-
+		<input type="button" value="파일명 필터 확인하기" id="checkfilter"/>
+		<div id="filter" style="display:none;">
+			<c:forEach var="a" items="${filterings }">
+				${a }<br />
+			</c:forEach>
+		</div>
          <%}
  }catch(NullPointerException e){}
  %>

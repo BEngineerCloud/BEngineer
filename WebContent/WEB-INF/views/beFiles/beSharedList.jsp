@@ -190,6 +190,18 @@ $(function(){
 			});
 		});
 		$(function(){
+			$("#writetextbutton").click(function(){ // 텍스트 파일 작성 클릭 시
+				hinder();
+				document.getElementById("writetextdiv").style.display = "block";
+				document.getElementById("files").style.height = "35%";
+			});
+		});
+		$(function(){
+			$("#canclewritetext").click(function(){ // 텍스트 파일 작성 클릭 시
+				hinder();
+			});
+		});
+		$(function(){
 			$("input[name='filename']").focus(function(){ // 파일이름 창 클릭시 초기화
 				if($(this).val() == '파일 이름'){
 					$(this).val("")
@@ -230,6 +242,8 @@ $(function(){
 			form.submitmultidown.value = "여러 파일 선택하기";
 			document.getElementById("multidowntext").type = "hidden";
 			document.getElementById("cancelmultidown").type = "hidden";
+			document.getElementById("files").style.height = "75%";
+			document.getElementById("writetextdiv").style.display = "none";
 		}
 		function setForm(filename, ref){
 			var type = document.getElementById(filename + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
@@ -263,6 +277,7 @@ $(function(){
 			form.submitmultidown.value = "여러 파일 다운로드";
 			document.getElementById("multidowntext").type = "hidden";
 			document.getElementById("cancelmultidown").type = "hidden";
+			document.getElementById("files").style.height = "75%";
 		}
 		function setForm(filename, ref){}
 	</script>
@@ -319,8 +334,14 @@ $(function(){
 			</form>
 		</div>
 	</div>
+	<c:if test="${write }"><!-- 쓰기권한이 있을 때 -->
+		<!-- 파일생성 폼 -->
+		<div style="height:5%; width:relative; margin:0; float:left;">
+			<input type="button" value="텍스트 파일 만들기" id="writetextbutton"/>
+		</div>
+	</c:if>
 </div>
-<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
+<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left; display:none;">
 	<c:if test="${write }"><!-- 쓰기권한이 있을 때 -->
 		<!-- 폴더명 변경 폼 -->
 		<div style="height:5%; width:relative; margin:0; float:left;">
@@ -368,6 +389,29 @@ $(function(){
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>
+<c:if test="${write }">
+	<!-- text파일 쓰기용 창 -->
+	<div id="writetextdiv" style="height:40%; width:90%; background-color:#ffff99; float:left; overflow-y:scroll; display:none">
+		<form action="/BEngineer/beFiles/writeText.do" id="writetextform" method="post">
+			<input type="hidden" name="folder" value="${folder_ref }"/>
+			<div style="height:8%; width:50%; float:left; text-align:left;">
+				파일 별명 : <input type="text" name="filename"/>
+			</div>
+			<div style="height:8%; width:50%; float:left; text-align:left;">
+				파일명 : <input type="text" name="orgname"/>
+			</div>
+			<div style="height:84%; width:100%; float:left; text-align:left;">
+				<textarea name="content" cols="100" rows="20"></textarea>
+			</div>
+			<div style="height:8%; width:50%; float:left; text-align:left;">
+				<input type="submit" value="작성완료"/>
+			</div>
+			<div style="height:8%; width:50%; float:left; text-align:left;">
+				<input type="button" value="취소" id="canclewritetext"/>
+			</div>
+		</form>
+	</div>
+</c:if>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
 	etc
 </div>

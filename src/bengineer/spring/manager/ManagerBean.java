@@ -49,8 +49,10 @@ public class ManagerBean {
 	
 	// 메인창
 	@RequestMapping("mMain.do")
-	public String mMain(ManagerDTO dto,HttpSession session,String Id,ManagerDTO m) {
+	public String mMain(ManagerDTO dto,HttpSession session,String Id,ManagerDTO m, Model model) {
 		String ss = (String)session.getAttribute("Id");
+		FilenameFilter filterlist = new FilenameFilter();
+		model.addAttribute("filterings", filterlist.getFilterings());
 		if(ss==null) {
 			return "redirect:/manager/login.do";
 		}else{
@@ -66,7 +68,7 @@ public class ManagerBean {
 		FilenameFilter filterlist = new FilenameFilter();
 		filterlist.addFilterings(filtering);
 		model.addAttribute("alert", "\\'" + filtering + "\\'을/를 필터링 단어로 추가하였습니다.");
-		model.addAttribute("location", "history.go(-1)");
+		model.addAttribute("location", "\"/BEngineer/manager/mMain.do\"");
 		return "beFiles/alert";
 	}
 	@RequestMapping("removeFilter.do")
@@ -81,7 +83,7 @@ public class ManagerBean {
 		}else {
 			model.addAttribute("alert", "\\'" + filtering + "\\'은/를 필터링 단어가 아닙니다.");
 		}
-		model.addAttribute("location", "history.go(-1)");
+		model.addAttribute("location", "\"/BEngineer/manager/mMain.do\"");
 		return "beFiles/alert";
 	}
 }

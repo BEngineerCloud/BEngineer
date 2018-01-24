@@ -60,9 +60,6 @@
 			}else{
 				hinder(); // 업로드 입력, 폴더생성 입력 취소
 				form.file_ref.value = ref;
-				document.getElementById("button1_1").style.display = "block";
-				document.getElementById("files").style.height = "75%";
-				document.getElementById("button2").style.height = "75%";
 				document.getElementById("throwtotrashcan").type = "button";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
@@ -142,7 +139,7 @@
 		$("#writetextbutton").click(function(){ // 텍스트 파일 작성 클릭 시
 			hinder();
 			document.getElementById("writetextdiv").style.display = "block";
-			document.getElementById("files").style.height = "40%";
+			document.getElementById("files").style.height = "35%";
 		});
 	});
 	$(function(){
@@ -413,9 +410,7 @@
 		document.getElementById("throwtotrashcan").type = "hidden";
 		form = document.getElementById("sharecheckform");
 		form.submitsharecheck.type = "hidden";
-		document.getElementById("button1_1").style.display = "none";
-		document.getElementById("files").style.height = "80%";
-		document.getElementById("button2").style.height = "80%";
+		document.getElementById("files").style.height = "75%";
 		document.getElementById("writetextdiv").style.display = "none";
 	}
 	function setForm(type, ref){
@@ -509,7 +504,7 @@
 		<input type="button" value="텍스트 파일 만들기" id="writetextbutton"/>
 	</div>
 </div>
-<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left; display:none;">
+<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
 	<!-- 파일/폴더 이동 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
@@ -609,14 +604,14 @@
 	<!-- 선택파일 보여주기용 -->
 	<font id="filename"></font>
 </div>
-<div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
+<div id="button2" style="height:75%; width:10%; background-color:#ff99ff; float:left;">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
 	button2
 </div>
 <!-- 파일들 창 -->
-<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
+<div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
 		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
