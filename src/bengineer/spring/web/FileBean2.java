@@ -22,6 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
@@ -141,6 +142,175 @@ public class FileBean2 {
 		}
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
 		return "beFiles/alert";
+	}
+	@RequestMapping("beMultimove.do") // 여러파일/폴더 선택
+	public String beMultimove(String file_ref,int file_fref, HttpSession session,  Model model) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} 
+		FileBean filebean = new FileBean();
+		filebean.setSqlSession(sqlSession);
+		boolean is_Move = false;
+		String files[] = file_ref.split(",");
+		int flag = 0;
+		FileDTO dto = new FileDTO();
+		
+		for(int i = 0; i < files.length; i++) { // 기본폴더에 옮길 때 올바른 형식의 파일/폴더들이 옮겨지는지 검사
+			int filenum = 0;
+			filenum = Integer.parseInt(files[i]);
+			FileDTO dto2 = new FileDTO();
+			
+			List originalAddr = null;
+			originalAddr = filebean.getAddr(filenum);
+			String originalPath = "d:/PM/BEngineer/";
+			for(int j = originalAddr.size() - 1; j >= 0; j--) {
+				dto = (FileDTO)originalAddr.get(j);
+				originalPath += dto.getOrgname();
+				if(j!=0) originalPath+="/";
+			}
+			File file = new File(originalPath);
+			dto2 = (FileDTO)originalAddr.get(0);
+			String orgname = dto.getOrgname();
+			
+			
+			List newAddr = null;
+			newAddr = filebean.getAddr(file_fref);
+			dto2 = (FileDTO)newAddr.get(0);
+			String neworgname = dto2.getOrgname();
+			
+			if(file.isFile()) { // 이동하려는 파일/폴더가 파일일 경우
+				String filetype = orgname.substring(orgname.lastIndexOf("."));
+				String result = filebean.checkFile(filetype);
+			
+				// 이동할 위치의 폴더가 기본폴더인 경우
+				if(neworgname.equals("image")||neworgname.equals("music")||neworgname.equals("video")||neworgname.equals("document")||neworgname.equals("etc")) {
+					if(!neworgname.equals(result)) {
+						is_Move = false;
+						flag = 1;
+						break;
+					}
+				}
+			}
+		}
+		
+		if(flag == 0) { // 선택한 여러 파일/폴더 모두 다 이동할 수 있을 시
+			for(int i = 0; i < files.length; i++) {
+				int filenum = 0;
+				filenum = Integer.parseInt(files[i]);
+			
+				List originalAddr = null;
+				originalAddr = filebean.getAddr(filenum);
+				String originalPath = "d:/PM/BEngineer/";
+				
+				for(int j = originalAddr.size() - 1; j >= 0; j--) {
+					dto = (FileDTO)originalAddr.get(j);
+					originalPath += dto.getOrgname();
+					if(j!=0) originalPath+="/";
+				}
+			
+				List newAddr = null;
+				newAddr = filebean.getAddr(file_fref);
+				String newPath = "d:/PM/BEngineer/";
+			
+				for(int j = newAddr.size() - 1; j >= 0; j--) {
+					dto = (FileDTO)newAddr.get(j);
+					newPath += dto.getOrgname() + "/";
+				}
+			
+				dto = (FileDTO)originalAddr.get(0);
+				String orgname = dto.getOrgname();
+				newPath += orgname;
+				int num = dto.getNum();
+				dto.setNum(num);
+				int folderref = ((FileDTO)newAddr.get(0)).getNum();
+				dto.setFolder_ref(folderref);
+			
+				is_Move = nioFilemove(originalPath,newPath);
+			
+				if(is_Move)
+					sqlSession.update("bengineer.changeref",dto);
+				else 
+					break;
+			}
+		}
+		
+		if(is_Move)
+			model.addAttribute("alert", "파일/폴더 이동이 완료되었습니다.");
+		else {
+			if(flag==1) {
+				model.addAttribute("alert", "해당폴더에 이동할수 없는 파일의 형식입니다.");
+			}else {
+				model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
+			}	
+		}
+		
+		model.addAttribute("location", "\"/BEngineer2/beFiles/beMyList.do?folder=0"+ "\"");
+		return "beFiles/alert";
+	}
+	
+	@RequestMapping("beMultilist.do") // 여러 파일/폴더 선택 후 내파일 이동시
+	public String beMultilist(HttpSession session, Model model, int folder,@RequestParam(value="multifile_Ref", defaultValue="0") String multifile_Ref, @RequestParam(value="multifile_FRef", defaultValue="0") int multifile_FRef) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 濡쒓렇�씤 �꽭�뀡 �뾾�쓣 �떆 由щ뵒�젆�듃
+		FileBean filebean = new FileBean();
+		filebean.setSqlSession(sqlSession);
+		String owner = (String)session.getAttribute("id");
+		String nickname = (String)session.getAttribute("nickname");
+		File file = new File("d:/PM/BEngineer/" + owner);
+		FileDTO dto = new FileDTO();
+		dto.setOwner(owner);
+		int folder_ref = 0;
+		List address_ref = null;
+		if(file.exists()) {
+			if(folder == 0) {
+				dto.setOrgname(owner);
+				dto.setFolder_ref(0);
+				folder_ref = (int)sqlSession.selectOne("bengineer.getref", dto); // �뤃�뜑媛믪씠 �븞 �뱾�뼱�솕�쓣 寃쎌슦 �땳�꽕�엫怨� 媛숈� �씠由꾩쓽 湲곕낯�뤃�뜑濡� �씠�룞
+				address_ref = filebean.getAddr(folder_ref);
+			}else {
+				folder_ref = folder;
+				address_ref = filebean.getAddr(folder_ref);
+			}
+		}
+		List filelist = sqlSession.selectList("bengineer.getfiles", folder_ref);
+		sqlSession.update("bengineer.hit", folder);
+		model.addAttribute("list", filelist);
+		List folderaddress = new ArrayList(); // �뤃�뜑 寃쎈줈瑜� �븯�굹�뵫 ���옣�븯湲� �쐞�븳 由ъ뒪�듃
+		List orgaddress = new ArrayList(); // �뤃�뜑二쇱냼�뿉 ���옣�맂 媛곴컖�쓽 �뤃�뜑�뿉 ���븳 �떎�젣 寃쎈줈瑜� �븯�굹�뵫 ���옣�븯湲� �쐞�븳 由ъ뒪�듃
+		if(address_ref.size() < 5) {
+			for(int i = address_ref.size() - 1; i >= 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				folderaddress.add(dto.getFilename());
+				orgaddress.add(dto.getNum());
+			}
+		}else {
+			folderaddress.add(nickname);
+			orgaddress.add(0);
+			folderaddress.add("..."); // �뤃�뜑 寃쎈줈媛� 5媛쒕�� �꽆�뼱湲� �떆 湲곕낯�뤃�뜑�� 媛��옣 �쐞�쓽 3媛쒕�� �젣�쇅�븯怨� �깮�왂
+			orgaddress.add(null);
+			for(int i = 2; i >= 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				folderaddress.add(dto.getFilename());
+				orgaddress.add(dto.getNum());
+			}
+		}
+		if(!owner.equals(dto.getOwner())) {
+			model.addAttribute("alert", "�옒紐삳맂 �젒洹쇱엯�땲�떎.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		model.addAttribute("folderaddress", folderaddress);
+		model.addAttribute("orgaddress", orgaddress);
+		model.addAttribute("folder_ref", folder_ref);
+		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해 
+		model.addAttribute("write", true);
+		
+		model.addAttribute("multifile_Ref",multifile_Ref); 	// 이동할 파일/폴더
+		if(multifile_FRef==0) {
+			model.addAttribute("multifile_FRef",folder);  // 이동될 위치
+		}else {
+			model.addAttribute("multifile_FRef",multifile_FRef);  // 이동될 위치
+		}
+		model.addAttribute("movefile_Ref",0); 	// 이동할 파일/폴더
+		model.addAttribute("movefile_FRef",0);  // 이동될 위치
+		return "beFiles/beList";
 	}
 	
 	private int moveFile(String filePath, String fileName, String moveFolder, String owner) {
