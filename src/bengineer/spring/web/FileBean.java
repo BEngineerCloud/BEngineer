@@ -1042,7 +1042,7 @@ public class FileBean {
 		}
 		return "beFiles/alert";
 	}
-	private String makecode() {
+	public String makecode() {
 		String code = "";
 		for(int i = 0; i < 20; i++) {
 			int k = (int)(Math.random() * 62);

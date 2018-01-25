@@ -119,6 +119,7 @@ public class MainBean extends Thread{
 					}
 				}
 			}
+			sqlSession.delete("bengineer.deleteoldkey");
 			try {
 				sleep(60000L);
 			}catch(Exception e) {
