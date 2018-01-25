@@ -625,19 +625,15 @@
 <div id="writetextdiv" style="height:40%; width:90%; background-color:#ffff99; float:left; overflow-y:scroll; display:none">
 	<form action="/BEngineer/beFiles/writeText.do" id="writetextform" method="post">
 		<input type="hidden" name="folder" value="${folder_ref }"/>
-		<div style="height:8%; width:50%; float:left; text-align:left;">
+		<div style="height:8%; width:100%; float:left; text-align:left;">
 			파일 별명 : <input type="text" name="filename"/>
-		</div>
-		<div style="height:8%; width:50%; float:left; text-align:left;">
 			파일명 : <input type="text" name="orgname"/>
 		</div>
 		<div style="height:84%; width:100%; float:left; text-align:left;">
 			<textarea name="content" cols="100" rows="20"></textarea>
 		</div>
-		<div style="height:8%; width:50%; float:left; text-align:left;">
+		<div style="height:8%; width:100%; float:left; text-align:left;">
 			<input type="submit" value="작성완료"/>
-		</div>
-		<div style="height:8%; width:50%; float:left; text-align:left;">
 			<input type="button" value="취소" id="canclewritetext"/>
 		</div>
 	</form>

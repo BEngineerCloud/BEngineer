@@ -34,6 +34,9 @@
 	<update id="hit" parameterType="int">
 		update BEfilelist set hitcount = hitcount + 1 where num = #{file_ref}
 	</update>
+	<update id="newname" parameterType="fileDTO">
+		update BEfilelist set orgname = #{orgname} where num = #{num}
+	</update>
 	<update id="updatefile" parameterType="fileDTO">
 		update BEfilelist set filename = #{filename}, filesize = #{filesize}, updatedate = sysdate where folder_ref = #{folder_ref} and orgname = #{orgname}
 	</update>
@@ -81,6 +84,12 @@
 	<delete id="deletetrash" parameterType="int">
 		delete from BEtrashcan where filenum = #{filenum}
 	</delete>
+	<delete id="deletetrashes" parameterType="list">
+		delete from BEtrashcan where filenum in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
 	<select id="checktrash" parameterType="int" resultType="java.sql.Date">
 		select deletedate from BEtrashcan where filenum = #{num}
 	</select>
@@ -96,9 +105,6 @@
 			#{item}
 		</foreach>
 	</select>
-	<delete id="deleteover" parameterType="int">
-		delete from BEfilelist where folder_ref = (select folder_ref from BEfilelist where num = #{num}) and orgname = (select orgname from BEfilelist where num = #{num}) and num != #{num} and important = 1
-	</delete>
 	<update id="repairfiles" parameterType="list">
 		update BEfilelist set important = 0 where num in 
 		<foreach item="item" collection="list" open="(" separator="," close=")">

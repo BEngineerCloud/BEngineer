@@ -131,6 +131,7 @@ public class FileBean {
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
 			model.addAttribute("write", false);
+			model.addAttribute("basedir", false);
 			return "beFiles/beSharedList";
 		}else {
 			List address_ref = getShareAddr(folder, id);
@@ -172,6 +173,11 @@ public class FileBean {
 					folderaddress.add(dto.getFilename());
 					orgaddress.add(dto.getNum());
 				}
+			}
+			if(dto.getImportant() == -1) {
+				model.addAttribute("basedir", true);
+			}else {
+				model.addAttribute("basedir", false);
 			}
 			model.addAttribute("folderaddress", folderaddress);
 			model.addAttribute("orgaddress", orgaddress);
@@ -678,9 +684,6 @@ public class FileBean {
 				for(int i = 0; i < trashlist.size(); i++) {
 					ziptrash(owner, (Trash)trashlist.get(i));
 				}
-				for(int i = 0; i < subfiles.size(); i++) {
-					sqlSession.delete("bengineer.deleteover", subfiles.get(i));
-				}
 				sqlSession.update("bengineer.throwalltotrashcan", subfiles);
 				result = "파일들을 휴지통에 버렸습니다.";
 			}else {
@@ -691,7 +694,6 @@ public class FileBean {
 				}else {
 					TrashHolder trashcan = (TrashHolder)settrash(owner, dto.getNum()).get(1);
 					ziptrash(owner, (Trash)trashcan.getTrashList().get(0));
-					sqlSession.delete("bengineer.deleteover", filenum);
 					sqlSession.update("bengineer.throwtotrashcan", filenum);
 					result = "파일을 휴지통에 버렸습니다.";
 				}
@@ -742,9 +744,6 @@ public class FileBean {
 			List trashlist = trashcan.getTrashList();
 			for(int i = 0; i < trashlist.size(); i++) {
 				ziptrash(owner, (Trash)trashlist.get(i));
-			}
-			for(int i = 0; i < subfiles.size(); i++) {
-				sqlSession.delete("bengineer.deleteover", subfiles.get(i));
 			}
 			sqlSession.update("bengineer.throwalltotrashcan", subfiles);
 			result = "파일들을 휴지통에 버렸습니다.";
@@ -844,20 +843,13 @@ public class FileBean {
 			String fileaddress = trash.getPath();
 			String name = trash.getName();
 			if(name.lastIndexOf(".") > -1) {
-				File check = new File(fileaddress + "/" + name);
-				if(check.exists()) {
-					model.addAttribute("alert", "같은 경로에 동일한 이름의 파일이 존재합니다.");
-					model.addAttribute("location", "history.go(-1)");
-					return "beFiles/alert";
+				String rename = rename(fileaddress, name);
+				if(!rename.equals(name)) {
+					dto.setNum(trash.getNum());
+					dto.setOrgname(rename);
+					sqlSession.update("bengineer.newname", dto);
 				}
-			}
-		}
-		for(int i = trashlist.size() - 1; i >= 0; i--) {
-			Trash trash = (Trash)trashlist.get(i);
-			String fileaddress = trash.getPath();
-			String name = trash.getName();
-			if(name.lastIndexOf(".") > -1) {
-				unzipFile(fileaddress + "/" + name, "d:/PM/BEngineer/" + owner + "/beTrashcan/" + trash.getNum() + ".zip");
+				unzipFile(fileaddress + "/" + rename, "d:/PM/BEngineer/" + owner + "/beTrashcan/" + trash.getNum() + ".zip");
 			}else {
 				File check = new File(fileaddress + "/" + name);
 				if(check.exists()) {
@@ -880,6 +872,7 @@ public class FileBean {
 		ldto.setFolder_ref(folder_ref);
 		ldto.setMoveList(moveList);
 		sqlSession.update("bengineer.repairfiles", repairList);
+		sqlSession.delete("bengineer.deletetrashes", repairList);
 		if(moveList.size() > 0) {
 			sqlSession.update("bengineer.movefiles", ldto);
 		}
@@ -975,6 +968,7 @@ public class FileBean {
 			sqlSession.delete("bengineer.deletetrash", trash.getNum());
 		}
 		sqlSession.update("bengineer.deletefiles", deleteList);
+		sqlSession.delete("bengineer.deletetrashes", deleteList);
 		model.addAttribute("alert", result);
 		model.addAttribute("location", location);
 		return "beFiles/alert";
@@ -1469,5 +1463,20 @@ public class FileBean {
 		}
 		trashfile.delete();
 		sqlSession.insert("bengineer.inserttrash", filenum);
+	}
+	private String rename(String fileaddress, String name) {
+		String path = fileaddress + "/" + name;
+		File check = new File(path);
+		int num = 0;
+		int index = name.lastIndexOf(".");
+		while(check.exists()) {
+			num++;
+			path = fileaddress + "/" + name.substring(0, index) + num + name.substring(index);
+			check = new File(path);
+		}
+		if(num != 0) {
+			name = name.substring(0, index) + num + name.substring(index);
+		}
+		return name;
 	}
 }

@@ -333,11 +333,14 @@ $(function(){
 			</form>
 		</div>
 	</div>
-	<c:if test="${write }"><!-- 쓰기권한이 있을 때 -->
-		<!-- 파일생성 폼 -->
-		<div style="height:5%; width:relative; margin:0; float:left;">
-			<input type="button" value="텍스트 파일 만들기" id="writetextbutton"/>
-		</div>
+	<c:set var="names" value="array(etc, image, music, video)"/>
+	<c:if test="${!basedir || !names.contains(folderaddress.get(1)) }">
+		<c:if test="${write }"><!-- 쓰기권한이 있을 때 -->
+			<!-- 파일생성 폼 -->
+			<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="button" value="텍스트 파일 만들기" id="writetextbutton"/>
+			</div>
+		</c:if>
 	</c:if>
 </div>
 <div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
