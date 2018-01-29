@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 
 public class MemberDTO {
 	private String id;
+	private String pw;
 	private String email;
 	private String nickname;
 	private String birthday;
@@ -16,6 +17,12 @@ public class MemberDTO {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public String getPw() {
+		return pw;
+	}
+	public void setPw(String pw) {
+		this.pw = pw;
 	}
 	public String getEmail() {
 		return email;

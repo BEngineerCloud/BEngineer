@@ -1,7 +1,14 @@
 package bengineer.spring.web;
 
 import java.util.List;
+import java.util.Properties;
 
+import javax.mail.Message;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpSession;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -10,6 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
+
 import bengineer.spring.board.BoardDTO;
 
 @Controller()
@@ -17,11 +26,6 @@ import bengineer.spring.board.BoardDTO;
 public class MemberBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
-	@RequestMapping("beLogin.do")
-	public String beLogin() {return "beMember/beLogin";}
-	
-	@RequestMapping("beRequestprofile.do")
-	public String beRequestprofile() {return "beMember/beRequestprofile";}
 	
 	@RequestMapping("beAddinfo.do")
 	public String beAddinfo(Model model,HttpSession session) {
@@ -60,5 +64,69 @@ public class MemberBean {
 		BoardDTO con = (BoardDTO)sqlSession.selectOne("board.read",num);	
 		model.addAttribute("con",con);
 		return "beMember/beread";
+	}
+	
+	@RequestMapping(value="beCheckemail.do")
+	public String beCheckmailid(Model model, String email ) {
+		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email);
+		model.addAttribute("check",check);
+		model.addAttribute("mailid",email);
+		return "beMember/beCheckemail";
+	}
+	
+	@RequestMapping(value="beAuthemail.do")
+	public String beAuthemail(Model model, String email) {
+		FileBean filebean = new FileBean();
+		filebean.setSqlSession(sqlSession);
+		
+		String authcode="";
+		authcode = filebean.makecode(8);
+		sendEmail(email,authcode);
+		model.addAttribute("mailid",email);
+		model.addAttribute("authcode",authcode);
+		return "beMember/beCheckemail";
+	}
+	
+	public void sendEmail(String email, String authcode) {
+		String username = "loser4kku@gmail.com";
+		String password = "bengineer";
+		String host = "smtp.gmail.com";
+		String subject = "BEngineer 인증번호 전달";
+		String fromName = "BEngineer 관리자";
+		String from = "loser4kku@gmail.com";
+		String to1 = email;
+		String content = "인증번호 ["+authcode+"]";
+		
+		try {
+			Properties props = new Properties();
+			props.put("mail.smtp.starttls.enable","true");
+			props.put("mail.transport.protocol","smtp");
+			props.put("mail.smtp.host",host);
+			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props.put("mail.smtp.port","465");
+			props.put("mail.smtp.user",from);
+			props.put("mail.smtp.auth","true");
+			
+			Session mailSession = Session.getInstance(props,
+					new javax.mail.Authenticator() {
+						protected PasswordAuthentication getPasswordAuthentication() {
+							return new PasswordAuthentication(username, password);
+						}
+			});
+			Message msg = new MimeMessage(mailSession);
+			msg.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromName,"UTF-8","B")));
+			
+			InternetAddress[] address1 = { new InternetAddress(to1)};
+			msg.setRecipients(Message.RecipientType.TO, address1);
+			msg.setSubject(subject);
+			msg.setSentDate(new java.util.Date());
+			msg.setContent(content,"text/html;charset=UTF-8");
+		
+			Transport.send(msg);
+		}catch(javax.mail.MessagingException e) {
+			e.printStackTrace();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

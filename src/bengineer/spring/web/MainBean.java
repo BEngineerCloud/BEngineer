@@ -51,9 +51,19 @@ public class MainBean extends Thread{
 		if(impose==1) {
 			veiw="redirect:/beMember/imposeMember.do";
 		}else {
-		if(check!=1) {
-			sqlSession.insert("bengineer.beInsertmember", dto);
-		}
+			if(check!=1) {
+				sqlSession.insert("bengineer.beInsertmember", dto);
+			}else {
+				String id = sqlSession.selectOne("bengineer.beSelectid",email);
+				if(id!=dto.getId()) {
+					FileBean filebean = new FileBean();
+					filebean.setSqlSession(sqlSession);
+					filebean.changeIdDirName(id, dto.getId());
+					sqlSession.update("begineer.updateowner",dto.getId());
+					sqlSession.update("bengineer.beUpdatemember2",dto);
+				}
+			}
+		
 		session.setAttribute("id", dto.getId()); // 테스트용임시세션등록
 		session.setAttribute("nickname", dto.getNickname());
 		}

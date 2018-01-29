@@ -46,6 +46,7 @@ public class FileBean2 {
 		String fileName=""; //파일이름
 		String fileType=""; //파일확장자
 		String moveFolder=""; //이동할 파일폴더
+		boolean exist_file = false;
 		Integer moveParent = 0;
 		File path = new File("d:/PM/BEngineer/" + owner); //사용자폴더 경로
 		File[] list = path.listFiles(); //사용자폴더 안에 모든 파일/폴더 받아오기
@@ -55,6 +56,7 @@ public class FileBean2 {
 		if(list.length > 0){
 		    for(int i=0; i < list.length; i++){
 		    	if(list[i].isFile()) { //파일인지 판단, 파일이면
+		    		exist_file =true;
 		    		fileName=list[i].getName();
 		    		dto.setOrgname(fileName);
 		    		filePath=list[i].getPath();
@@ -74,7 +76,8 @@ public class FileBean2 {
 			model.addAttribute("alert", "자동정리가 완료되었습니다.");
 		}
 		else {
-			model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
+			if(!exist_file)  model.addAttribute("alert", "자동정리할 파일이 존재하지 않습니다.");
+			else model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
 		}
 			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
 			return "beFiles/alert";	

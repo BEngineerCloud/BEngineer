@@ -646,7 +646,7 @@ public class FileBean {
 		kdto.setRw(rw);
 		String keycheck = (String)sqlSession.selectOne("bengineer.keycheck", kdto);
 		if(keycheck == null) {
-			kdto.setShare_key(makecode());
+			kdto.setShare_key(makecode(20));
 			sqlSession.insert("bengineer.insertkey", kdto);
 			keycheck = kdto.getShare_key();
 		}
@@ -1110,9 +1110,9 @@ public class FileBean {
 		}
 		return "beFiles/alert";
 	}
-	public String makecode() {
+	public String makecode(int num) {
 		String code = "";
-		for(int i = 0; i < 20; i++) {
+		for(int i = 0; i < num; i++) {
 			int k = (int)(Math.random() * 62);
 			char c = '0';
 			if(k < 10) {
@@ -1125,7 +1125,7 @@ public class FileBean {
 			code += c;
 		}
 		int check = sqlSession.selectOne("bengineer.checksharekey", code);
-		if(check > 0) {code = makecode();}
+		if(check > 0) {code = makecode(num);}
 		return code;
 	}
 	private boolean makeBaseDir(String name, List address_ref) { // 기본폴더생성용 메서드 성공시 true

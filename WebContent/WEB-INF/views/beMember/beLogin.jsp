@@ -6,22 +6,45 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js"></script>
 <script type="text/javascript" src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.0.js" charset="utf-8"></script>
 <title>NaverLogin</title>
 </head>
+<script type="text/javascript">
+$(function(){
+	$("#beLogin").submit(function(){
+		if($("#email").val()==""){
+			alert("메일주소를 입력하세요.");
+			return false;
+		}
+		
+		if($("#pw").val()==""){
+			alert("비밀번호를 입력하세요.");
+			return false;
+		}
+		
+		return true;
+	});
+	
+});
+</script>
+
  <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
+ <form id="beLogin" name="beLogin" method="post" action="/BEngineer/beMember/beLoginpro.do">
 <div id="Logo1" style="height:41%; width:100%; float:left; text-align:center">
 	<div id="Logo2" style="width:100%; float:left; text-align:center; margin-top: 11%;">
 		<img src="\BEngineer\image\beCloudLogo.png" style="width: 31%;"/>
 	</div>
 </div>
+
 <div id="Login-input" style="height:20%;width:100%; float:left; ">
 	<div id="Login-input2" style="width:53%; height:100%; float:left;  text-align:center">
 		<div id="Login-input3" style="width:100%; float:left; margin-left:33%; margin-top: 5%">
-			<input type="text" name="mailId" style="border-color:black; width:28%; height:20%"  value="아이디"><br/><br/>
-			<input type="password" name="pw" style="border-color:black; width:28%; height:20%"  value="비밀번호"><br/>
+			<input type="text" name="email" id="email" style="border-color:black; width:28%; height:20%"  value="아이디"><br/><br/>
+			<input type="password" name="pw" id="pw" style="border-color:black; width:28%; height:20%"  value="비밀번호"><br/>
 			<div id="Login-input4" style="width:28%; float:left; margin-left:36%; text-align:left;">
 				<input type=checkbox name="autoLogin" value="T" style="border:none;"/><font size="2">아이디 기억하기</font>
+				<font size="2" style="margin-left: 36%"><a href="/BEngineer/beMember/beJoinmember.do" style="text-decoration:none">회원가입</a></font>
 			</div>
 		</div>
 	</div>
@@ -31,7 +54,9 @@
 		</div>
 	</div>
 </div>
-<div id="naverIdLogin" style="height:24%; width:100%; float:left;text-align:center"></div> 
+</form>
+<div id="naverIdLogin" style="height:24%; width:100%; float:left;text-align:center"></div>
+
 	<!-- 네이버아디디로로그인 초기화 Script -->
 	<script type="text/javascript">
 		var naverLogin = new naver.LoginWithNaverId(

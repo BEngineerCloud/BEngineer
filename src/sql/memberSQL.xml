@@ -14,12 +14,24 @@
 		select * from bemember where id=#{id}
 	</select>
 	
+	<select id="beSelectid" resultType="string" parameterType="string">
+		select id from bemember where email=#{email}
+	</select>
+	
 	<insert id="beInsertmember" parameterType="MemberDTO">
 		insert into bemember(id,email,nickname,birthday,gender,chmod) values(#{id},#{email},#{nickname},#{birthday},#{gender},2)
 	</insert>
 	
+	<insert id="beInsertmember2" parameterType="MemberDTO">
+		insert into bemember(id,pw,email,nickname,birthday,gender) values(#{id},#{pw},#{email},#{nickname},#{birthday},#{gender})
+	</insert>
+	
 	<update id="beUpdatenickname" parameterType="MemberDTO">
 		update bemember set nickname = #{nickname} where id=#{id}
+	</update>
+	
+	<update id="beUpdatemember2" parameterType="MemberDTO">
+		update bemember set id = #{id} where email=#{email}
 	</update>
 
 	<select id="imposeMember" parameterType="String" resultType="int">
@@ -29,11 +41,16 @@
 		and e.email in (select email from beimpose where sysdate < endDay and email = #{email})
 		]]>
 	</select>
+	
+	<select id="beCheckmailid" resultType="int" parameterType="string">
+		select count(*) from bemember where email=#{email}
+	</select>
+	
 	<select id="getnickname" parameterType="string" resultType="string">
 		select nickname from BEmember where id = #{id}
 	</select>
+	
 	<select id="getid" parameterType="string" resultType="string">
 		select id from BEmember where nickname = #{nickname}
 	</select>
-
 </mapper>

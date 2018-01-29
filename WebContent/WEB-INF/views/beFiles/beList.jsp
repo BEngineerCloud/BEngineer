@@ -65,6 +65,7 @@
 				}
 				if(form.file_fref.value=="" ||(form.multimove.value=="이동" && form.multimove.type=="button"))
 					form.file_ref.value = clickedfile.join();
+				
 				if(form.file_fref.value=="" ||(form.multimove.value=="이동" && form.multimove.type=="button")){
 					for(var i=0; i<clickedImportant.length; i++){ // 클릭한 파일/폴더 중에 중요폴더가 포함됐는지 검사
 						if(clickedImportant[i]==-1){

@@ -166,6 +166,8 @@
 	<update id="hot" parameterType="int">
 		update BEfilelist set important = 2 where num = #{num}
 	</update>
-	
+	<update id="updateowner" parameterType="string">
+		update BEfilelist set owner = #{owner} where owner = #{owner}
+	</update>
 	
 </mapper>

@@ -51,8 +51,25 @@ $(function(){
 
 	
 	$("#beAddinfo").submit(function(){
+		var regNewpw = /^(?=.*[a-zA-Z])(?=.*[!@#$%^~*+=-])(?=.*[0-9]).{8,20}$/;
+		
+		if($("#newPw").val()!=""){ // 새 비밀번호 값이 존재할 때
+			if(!regNewpw.test($("#newPw").val())) { // 새 비밀번호 유효성 검사
+		      	alert("영문자,숫자,특수문자 조합으로 8~20자리 사이의 비밀번호를 입력해주세요."); 
+		      	$("#newPw").focus(); 
+		      	return false; 
+		 	}else{
+		 		var newPw1 =$("#newPw").val();
+		 		$("#newPw").val(newPw1);
+		 	}
+		}
+		
+		if($("#newPw").val()==$("#confirmNewpw").val()){
+			alert("새 비밀번호가 일치하지 않습니다.");
+			return false;
+		}
+		
 		if($("#nickname").val()==""){
-			$("#nickname").focus();
 			alert("닉네임을 입력해주세요.");
 			return false;
 		}
@@ -79,41 +96,69 @@ $(function(){
 	</div>
 </div>
 <div align="center" id="Addcontents" style="height:52%; width:100%; float:left;">
-	<div align="left" id="Addcontents2" style="height:50%; width:30%; margin-top: 1%;">
-		<div id="Addcontents3" style="height:25%; width:35%; float:left;">
+	<div align="left" id="Addcontents2" style="height:50%; width:30%;">
+		<div id="Addcontents3" style="height:20%; width:35%; float:left;">
 			<div align="center" style="height:20%; width:100%; float:left; ">
 				<font size="4">이메일 아이디</font>
 			</div>
 		</div>
-		<div id="Addcontents4" style="height:25%; width:65%; float:left;">
+		<div id="Addcontents4" style="height:20%; width:65%; float:left;">
 			<div style="height:20%; width:100%; float:left; ">
 				<font size="4">${memberDTO.email}</font>
 			</div>
 		</div>
+		<div id="Addcontents3" style="height:20%; width:35%; float:left;">
+			<div align="center" style="height:20%; width:100%; float:left; ">
+				<font size="3">새 비밀번호(필수입력 x)</font>
+			</div>
+		</div>
+		<div id="Addcontents4" style="height:20%; width:65%; float:left;">
+			<div style="height:60%; width:100%; float:left; ">
+			<input type="hidden" id="pw" name="pw" value="${memberDTO.pw }"/>
+				<input type="text" id="newPw" name="newPw" style="border-color:black; width:50%; height:100%" required="required"/>
+				<label class="error" for="newPw" generated="true" style="display:none;">에러태그</label>
+			</div>
+		</div>
+		<div id="Addcontents3" style="height:20%; width:35%; float:left;">
+			<div align="center" style="height:20%; width:100%; float:left; ">
+				<font size="3">새 비밀번호 확인</font>
+			</div>
+		</div>
+		<div id="Addcontents4" style="height:20%; width:65%; float:left;">
+			<div style="height:60%; width:100%; float:left; ">
+				<input type="text" id="confirmNewpw" name="confirmNewpw" style="border-color:black; width:50%; height:100%" required="required"/>
+				<label class="error" for="confirmNewpw" generated="true" style="display:none;">에러태그</label>
+			</div>
+		</div>
 		<hr color="black"><br/>
 		<div id="Addcontents3" style="height:70%; width:35%; float:left;">
-			<div align="center" style="height:20%; width:100%; float:left; margin-top: 15%">
+			<div align="center" style="height:20%; width:100%; float:left; margin-top: 5%">
 				<font size="4">닉네임</font>
 			</div>
 			<div align="center" style="height:20%; width:100%; float:left; margin-top: 9.5%">
 				<font size="4">성별</font>
 			</div>
+			<div align="center" style="height:20%; width:100%; float:left; margin-top: 9.5%">
+				<font size="4">생년월일</font>
+			</div>
 		</div>
 		<div id="Addcontents4" style="height:70%; width:65%; float:left;">
-			<div style="height:20%; width:100%; float:left; margin-top: 8.5%">
+			<div style="height:20%; width:100%; float:left; margin-top: 2.3%">
 				<input type="text" id="nickname" name="nickname" style="border-color:black; width:50%; height:90%" required="required"/>
-				<input type="button" id="confirmNickname" style="height:90%; border-color: black; background-color:#FFFFFF;"value="중복검사"><br/>
+				<input type="button" id="confirmNickname" style="height:100%; border-color: black; background-color:#FFFFFF;"value="중복검사"><br/>
 				<label class="error" for="nickname" generated="true" style="display:none;">에러태그</label>
 				<input type="hidden" id="checkConfirmnickname" value="">
 			</div>	
 			<div style="height:20%; width:100%; float:left; margin-top: 6%; margin-left:20%">
-				<font size="4">남성</font>
 				<c:if test="${memberDTO.gender=='M'}">
     				<font size="4">남성</font>
    				</c:if>
    				<c:if test="${memberDTO.gender=='W'}">
     				<font size="4">여성</font>
    				</c:if>
+			</div>
+			<div style="height:20%; width:100%; float:left; margin-top: 6%; margin-left:20%">
+    			<font size="4">${memberDTO.birthday}</font>
 			</div>
 		</div>
 	</div>
