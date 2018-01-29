@@ -33,6 +33,11 @@ $(function(){
 		window.location = "/BEngineer/beLogout.do";
 	});
 });
+$(function(){
+	$("#hotlist").click(function(){
+		window.location = "/BEngineer/beFiles/hotlist.do?num=0";
+	});
+});
 
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
@@ -64,6 +69,7 @@ $(function(){
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
+	<input type="button" id="hotlist" value="즐겨찾기"/>
 	button2
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">

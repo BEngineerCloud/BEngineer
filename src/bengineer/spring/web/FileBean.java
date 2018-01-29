@@ -1,5 +1,7 @@
 package bengineer.spring.web;
 
+import org.rosuda.REngine.*;
+import org.rosuda.REngine.Rserve.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -14,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -22,6 +25,9 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -41,7 +47,7 @@ public class FileBean {
 		this.sqlSession = sqlSession;
 	}
 	@RequestMapping("beMyList.do") // 내 파일 보기
-	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) {
+	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) throws RserveException, REXPMismatchException {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		String owner = (String)session.getAttribute("id");
 		String nickname = (String)session.getAttribute("nickname");
@@ -50,6 +56,9 @@ public class FileBean {
 		dto.setOwner(owner);
 		int folder_ref = 0;
 		List address_ref = null;
+		//	
+		
+		RConnection r = new RConnection();
 		if(file.exists()) {
 			if(folder == 0) {
 				dto.setOrgname(owner);
@@ -114,6 +123,34 @@ public class FileBean {
 		model.addAttribute("write", true);
 		model.addAttribute("movefile_Ref",movefile_Ref);
 		model.addAttribute("movefile_FRef",movefile_FRef);
+		
+		List list = sqlSession.selectList("bengineer.size",folder_ref);
+		if(list.size()!=0) {
+        //r.eval("library(base64enc)");
+		r.eval("png('rjava.png')");
+		
+		String Fsize ="c(";
+		for(int i=0; i<list.size();i++) {
+			FileDTO file1 = (FileDTO)list.get(i);
+			if(i==list.size()-1) {
+				Fsize+=file1.getFilesize()+")";
+			}else {
+				Fsize+=file1.getFilesize()+",";
+			}
+		}
+		r.eval("Fsize<-"+Fsize);
+		r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
+		//System.out.println(Fsize);
+		//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
+		r.eval("dev.off()");
+		REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
+		/*
+		r.eval("encoded_png<-sprintf(\"<img src='data:image/png;base64,%s'/>\", base64encode(\"rjava.png\"))");
+		r.eval("encoded_png");*/
+		model.addAttribute("gra",Base64.getEncoder().encodeToString(image.asBytes())); 
+		}
+		//else {r.eval("dev.off()");}
+		r.close();
 		return "beFiles/beList";
 	}
 	@RequestMapping("beSharedList.do") // 내 공유파일 보기

@@ -1,5 +1,7 @@
 package bengineer.spring.web;
 
+import org.rosuda.REngine.*;
+import org.rosuda.REngine.Rserve.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -26,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
+
+import bengineer.spring.board.BoardDTO;
+import bengineer.spring.manager.ManagerDTO;
 
 @Controller
 @RequestMapping("/beFiles/")
@@ -376,4 +381,26 @@ public class FileBean2 {
 			return true;
 		}	
 	}
+	/*
+	@RequestMapping("size.do")
+	public String size() throws RserveException, REXPMismatchException { 
+		FileDTO file = (FileDTO)sqlSession.selectOne("bengineer.mainSize","test3");
+		RConnection r = new RConnection();
+		r.eval("png('ajava.png')");
+		double Fsize =file.getFilesize();
+		System.out.println(Fsize);
+		r.eval("Fsize<-"+Fsize);
+		r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
+		r.eval("dev.off()");
+		byte [] img = r.eval("r=readBin('ajava.png','raw',700*400)").asBytes();
+		return "beFiles/size";
+	}
+	*/
+	@RequestMapping("hotlist.do")
+	public String hotlist(int num) {
+		System.out.println(num);
+		//sqlSession.update("bengineer.hot",num);
+		return "beFiles/hotlist"; 
+	}
+	
 }

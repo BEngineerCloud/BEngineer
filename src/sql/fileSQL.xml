@@ -143,4 +143,20 @@
 	<select id="getsharedpeople" parameterType="int" resultType="keyDTO">
 		select a.id share_key, b.enddate enddate, b.rw rw from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where b.filenum = #{filenum} and b.enddate >= sysdate
 	</select>
+
+	<!-- num 
+	<select id="number" parameterType="int" resultType="fileDTO">
+		select num from befilelist where folder_ref=#{folder_ref}
+	</select>
+	-->
+	<!-- size -->
+	<select id="size" parameterType="int" resultType="fileDTO">
+		select * from befilelist where folder_ref=#{folder_ref}
+	</select>
+	<!-- 즐찾 -->
+	<update id="hot" parameterType="int">
+		update BEfilelist set important = 2 where num = #{num}
+	</update>
+	
+	
 </mapper>
