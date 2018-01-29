@@ -1,6 +1,6 @@
-<%@ page contentType="text/html;charset=euc-kr" %>
+<%@ page contentType="text/html; charset=UTF-8"%>
 
 <script>
-	alert("¼öÁ¤¿Ï·á...!!!");
+	alert("ìˆ˜ì •ì™„ë£Œ...!!!");
 	window.location="/BEngineer/beMain.do"
 </script>

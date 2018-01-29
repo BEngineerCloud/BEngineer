@@ -1,14 +1,13 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>	
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- ��¥ǥ���ϱ�����.. -->
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- 날짜표현하기위해.. -->
 <h5>${sessionScope.nickname}</h5>
 <table>
 <tr>
-<td align="center" >�۹�ȣ</td>
-<td align="center">����</td>
-<td align="center">�ۼ���</td>
-<td align="center">�ۼ���</td>
+<td align="center" >글번호</td>
+<td align="center">제목</td>
+<td align="center">작성자</td>
+<td align="center">작성일</td>
 </tr>
 <c:forEach var="board" items="${list}">
 <tr>

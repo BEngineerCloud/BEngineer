@@ -1,3 +1,2 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<title>À¯·áÀüÈ¯</title>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<title>ìœ ë£Œì „í™˜</title>

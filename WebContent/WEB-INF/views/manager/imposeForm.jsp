@@ -1,9 +1,8 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>	
-<h2>À¯ÀúÁ¦Á¦</h2>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<h2>ìœ ì €ì œì œ</h2>
 	<form action="/BEngineer/manager/imposePro.do" method="post">
-		Á¦Á¦ÇÒ È¸¿ø<input type="text" name="email"/><br/>
-		Á¦Á¦»çÀ¯<input type="text" name="cause" value="x"/><br/>
-		±â°£ <input type="text" name="term"/>ÀÏ<br/>
-			 <input type="submit" value="È®ÀÎ"/>
+		ì œì œí•  íšŒì›<input type="text" name="email"/><br/>
+		ì œì œì‚¬ìœ <input type="text" name="cause" value="x"/><br/>
+		ê¸°ê°„ <input type="text" name="term"/>ì¼<br/>
+			 <input type="submit" value="í™•ì¸"/>
 	</form>

@@ -1,16 +1,15 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<title>���ǳ���</title>
-<h4>${Id}���� ���ǳ����Դϴ�.</h4>
+<title>문의내역</title>
+<h4>${Id}님의 문의내역입니다.</h4>
 <table>
 <tr>
-<td align="center">�۹�ȣ</td>
-<td align="center">����</td>
-<td align="center">�ۼ���</td>
-<td align="center" width="100">�ۼ���</td>
-<td align="center">�亯</td>
+<td align="center">글번호</td>
+<td align="center">제목</td>
+<td align="center">작성자</td>
+<td align="center" width="100">작성일</td>
+<td align="center">답변</td>
 </tr>
 <c:forEach var="inList" items="${inList}">
 <tr>
@@ -21,16 +20,16 @@
 <td width="200" align="center"><fmt:formatDate value="${inList.reg_date}" pattern="MM-dd HH:mm"/></td><br/>
 <c:choose>
     <c:when test="${empty inList.reply}">
-        <td>�̴亯</td>
+        <td>미답변</td>
     </c:when>
     <c:otherwise>
-        <td>�亯�Ϸ�</td>
+        <td>답변완료</td>
     </c:otherwise>
 </c:choose>
 </tr>
 
 </c:forEach>   
 <tr><td></td><td></td><td></td>
-<td><input name="inList" type="button" value="�����ϱ�" onClick="location.href='inForm.do?id=${Id}'"/>
+<td><input name="inList" type="button" value="문의하기" onClick="location.href='inForm.do?id=${Id}'"/>
 </td></tr>
 </table>

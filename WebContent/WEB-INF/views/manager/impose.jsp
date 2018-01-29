@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<a href="/BEngineer/manager/imposeForm.do">力力</a>
-<a href="/BEngineer/manager/imposeForm.do">力力秒家</a>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<a href="/BEngineer/manager/imposeForm.do">鞝滌牅</a>
+<a href="/BEngineer/manager/imposeForm.do">鞝滌牅旆唽</a>
 

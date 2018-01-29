@@ -23,6 +23,14 @@ public class MainBean extends Thread{
 	public MainBean() {
 		start();
 	}
+	private static long scanrate = 60000L;
+	public static long getScanrate() {
+		return scanrate;
+	}
+
+	public static void setScanrate(long scanrate) {
+		MainBean.scanrate = scanrate;
+	}
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beMain.do") // 메인페이지
@@ -59,7 +67,6 @@ public class MainBean extends Thread{
 		session.invalidate();
 		return "redirect:/beMain.do";
 	}
-	
 	public static boolean loginCheck(HttpSession session) { // 로그인 체크용 메서드, 세션에 nickname 세션이 정상적으로 있지 않을 경우 true  
 		String id = (String)session.getAttribute("id");
 		return id == null || id.equals("null") || id.equals("");
@@ -120,8 +127,9 @@ public class MainBean extends Thread{
 				}
 			}
 			sqlSession.delete("bengineer.deleteoldkey");
+			sqlSession.delete("bengineer.deleteunshared");
 			try {
-				sleep(60000L);
+				sleep(scanrate);
 			}catch(Exception e) {
 				e.printStackTrace();
 			}

@@ -55,11 +55,6 @@
 	<select id="getkey" parameterType="shareDTO" resultType="keyDTO">
 		select b.share_key share_key, b.filenum filenum, b.enddate enddate, b.rw rw from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.id = #{id} and b.filenum = #{num} and b.enddate >= sysdate
 	</select>
-	<delete id="deleteoldkey">
-		<![CDATA[
-			delete from BEkeylist where enddate < sysdate 
-		]]>
-	</delete>
 	<select id="mysharedfile" parameterType="string" resultType="fileDTO">
 		<![CDATA[
 			select * from BEfilelist where num in (select b.filenum from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where a.id = #{id} and b.enddate >= sysdate) and important < 1 order by filetype desc, important asc, filename asc
@@ -143,6 +138,20 @@
 	<select id="getsharedpeople" parameterType="int" resultType="keyDTO">
 		select a.id share_key, b.enddate enddate, b.rw rw from BEsharelist a inner join BEkeylist b on a.share_key = b.share_key where b.filenum = #{filenum} and b.enddate >= sysdate
 	</select>
+	<delete id="deleteoldkey">
+		<![CDATA[
+			delete from BEkeylist where enddate < sysdate or filenum not in (select num from BEfilelist)
+		]]>
+	</delete>
+	<delete id="unshare" parameterType="shareDTO">
+		delete from BEsharelist where id = #{id} and share_key in (select share_key from BEkeylist where filenum = #{num})
+	</delete>
+	<delete id="unshareall" parameterType="int">
+		delete from BEkeylist where filenum = #{num}
+	</delete>
+	<delete id="deleteunshared">
+		delete from BEsharelist where share_key not in (select share_key from BEkeylist)
+	</delete>
 
 	<!-- num 
 	<select id="number" parameterType="int" resultType="fileDTO">

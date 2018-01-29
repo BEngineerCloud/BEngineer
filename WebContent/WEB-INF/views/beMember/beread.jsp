@@ -1,15 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<input name="beboard" type="button" value="¸ñ·Ï" onClick="location.href='beboard.do'"/>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<input name="beboard" type="button" value="ëª©ë¡" onClick="location.href='beboard.do'"/>
 <table>
   <tr>
-    <td  width="90">Á¦¸ñ</td>
+    <td  width="90">ì œëª©</td>
     <td  width="330">
     ${con.title}<br/></td>
   </tr>
   <tr><td></td><td>==============================</td></tr>
   <tr>
-    <td  width="90">³» ¿ë</td>
+    <td  width="90">ë‚´ ìš©</td>
     <td  width="330" >${con.content}
      <br/></td>
   </tr>
@@ -18,7 +17,7 @@
   </tr>
   <!-- 
   <tr>
-  <td width="90">´ñ±Û</td> 
+  <td width="90">ëŒ“ê¸€</td> 
   <td><textarea name="rep" rows="2" cols="40"></textarea></td>
   </tr>
   -->

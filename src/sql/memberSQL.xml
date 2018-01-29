@@ -32,5 +32,8 @@
 	<select id="getnickname" parameterType="string" resultType="string">
 		select nickname from BEmember where id = #{id}
 	</select>
+	<select id="getid" parameterType="string" resultType="string">
+		select id from BEmember where nickname = #{nickname}
+	</select>
 
 </mapper>

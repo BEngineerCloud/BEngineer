@@ -35,7 +35,7 @@
   	
   	<!-- 전체 문의목록 -->
   	<select id="List" resultType="bengineer.spring.board.InquiryDTO">
-		select * from beinquiry
+		select * from beinquiry order by num desc
 	</select>
   	<!-- 읽고 -->
   	<select id="read" resultType="bengineer.spring.board.InquiryDTO" parameterType="int">

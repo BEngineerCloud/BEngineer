@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <script>
-	alert("¼öÁ¤µÇ¾ú½À´Ï´Ù.")
+	alert("ìˆ˜ì •ë˜ì—ˆìŠµë‹ˆë‹¤.")
 </script>

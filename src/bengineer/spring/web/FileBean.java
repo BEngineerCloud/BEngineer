@@ -1,5 +1,7 @@
 package bengineer.spring.web;
 
+import bengineer.spring.filter.*;
+
 import org.rosuda.REngine.*;
 import org.rosuda.REngine.Rserve.*;
 import java.io.BufferedInputStream;
@@ -139,8 +141,8 @@ public class FileBean {
 			}
 		}
 		r.eval("Fsize<-"+Fsize);
-		r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
 		//System.out.println(Fsize);
+		r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
 		//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
 		r.eval("dev.off()");
 		REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
@@ -149,7 +151,6 @@ public class FileBean {
 		r.eval("encoded_png");*/
 		model.addAttribute("gra",Base64.getEncoder().encodeToString(image.asBytes())); 
 		}
-		//else {r.eval("dev.off()");}
 		r.close();
 		return "beFiles/beList";
 	}
@@ -1079,6 +1080,36 @@ public class FileBean {
 		}
 		return "beFiles/alert";
 	}
+	@RequestMapping("unshare.do")
+	public String unshare(HttpSession session, Model model, int file_ref, String nickname, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr");
+		String owner = dto.getOwner();
+		String id = (String)session.getAttribute("id");
+		if(owner.equals(id)){
+			if(nickname == null || nickname.equals("")) {
+				sqlSession.delete("bengineer.unshareall", file_ref);
+				model.addAttribute("alert", "파일의 공유를 해제하였습니다.");
+				model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+			}else {
+				id = sqlSession.selectOne("bengineer.getid", nickname);
+				ShareDTO sdto = new ShareDTO();
+				sdto.setId(id);
+				sdto.setNum(file_ref);
+				sqlSession.delete("bengineer.unshare", sdto);
+				model.addAttribute("alert", "파일의 공유를 해제하였습니다.");
+				model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+			}
+		}else {
+			ShareDTO sdto = new ShareDTO();
+			sdto.setId(id);
+			sdto.setNum(file_ref);
+			sqlSession.delete("bengineer.unshare", sdto);
+			model.addAttribute("alert", "파일의 공유를 해제하였습니다.");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+		}
+		return "beFiles/alert";
+	}
 	public String makecode() {
 		String code = "";
 		for(int i = 0; i < 20; i++) {
@@ -1215,7 +1246,19 @@ public class FileBean {
 		KeyDTO kdto = (KeyDTO)address_ref.get(address_ref.size() - 1);
 		if(kdto.getRw() == 0) {return false;}else {return true;}
 	}
+	public boolean changeIdDirName(String orgId, String newId) {
+		FileDTO dto = new FileDTO();
+		dto.setOwner(orgId);
+		dto.setOrgname(orgId);
+		int num = sqlSession.selectOne("bengineer.getparentnum", dto);
+		List address_ref = getAddr(num);
+		dto = (FileDTO)address_ref.get(0);
+		return changeDirName(dto.getFilename(), newId, address_ref);
+	}
 	private boolean changeDirName(String foldername, List address_ref) { // 폴더명 바꾸기 메서드 성공시 true, address는 폴더경로에 /까지
+		return changeDirName(foldername, foldername, address_ref);
+	}
+	private boolean changeDirName(String foldername, String orgname, List address_ref) { // 폴더명 바꾸기 메서드 성공시 true, address는 폴더경로에 /까지
 		FileDTO dto = new FileDTO();
 		String folderaddress = "";
 		String newaddress = "";
@@ -1230,77 +1273,29 @@ public class FileBean {
 		}
 		newaddress += foldername;
 		dto.setFilename(foldername);
-		dto.setOrgname(foldername);
+		dto.setOrgname(orgname);
 		sqlSession.update("bengineer.changename", dto);
 		File orgfolder = new File("d:/PM/BEngineer/" + folderaddress);
 		File newfolder = new File("d:/PM/BEngineer/" + newaddress);
 		return orgfolder.renameTo(newfolder);
 	}
-	// 파일타입 확인용 리스트들
-	private static List image = new ArrayList();
-	private static List video = new ArrayList();
-	private static List music = new ArrayList();
-	private static List document = new ArrayList();
-	private static List etc = new ArrayList();
-	public FileBean() {
-		image.add(".jpeg");
-		image.add(".jpg");
-		image.add(".png");
-		image.add(".gif");
-		image.add(".bmp");
-		video.add(".webm");
-		video.add(".mpeg4");
-		video.add(".3gpp");
-		video.add(".mov");
-		video.add(".avi");
-		video.add(".mpegps");
-		video.add(".wmv");
-		video.add(".flv");
-		video.add(".ogg");
-		music.add(".mp3");
-		music.add(".mpeg");
-		music.add(".wav");
-		document.add(".txt");
-		document.add(".doc");
-		document.add(".docx");
-		document.add(".xls");
-		document.add(".xlsx");
-		document.add(".ppt");
-		document.add(".pptx");
-		etc.add(".zip");
-		etc.add(".rar");
-		etc.add(".tar");
-		etc.add(".gzip");
-		etc.add(".css");
-		etc.add(".html");
-		etc.add(".php");
-		etc.add(".c");
-		etc.add(".cpp");
-		etc.add(".h");
-		etc.add(".hpp");
-		etc.add(".js");
-		image.add(".dxf");
-		image.add(".ai");
-		image.add(".psd");
-		document.add(".pdf");
-		document.add(".xps");
-		image.add(".eps");
-		etc.add(".ps");
-		image.add(".svg");
-		image.add(".tiff");
-		etc.add(".ttf");
-	}
+	// 파일타입 확인용 메서드
 	public String checkFile(String filetype) { // 파일타입 확인용 메서드
 		String result = null;
-		if(image.contains(filetype)) {
+		ImagetypeFilter image = new ImagetypeFilter();
+		MusictypeFilter music = new MusictypeFilter();
+		VideotypeFilter video = new VideotypeFilter();
+		DocumenttypeFilter document = new DocumenttypeFilter();
+		EtctypeFilter etc = new EtctypeFilter();
+		if(image.typeFilter(filetype)) {
 			result = "image";
-		}else if(music.contains(filetype)) {
+		}else if(music.typeFilter(filetype)) {
 			result = "music";
-		}else if(video.contains(filetype)) {
+		}else if(video.typeFilter(filetype)) {
 			result = "video";
-		}else if(document.contains(filetype)) {
+		}else if(document.typeFilter(filetype)) {
 			result = "document";
-		}else if(etc.contains(filetype)) {
+		}else if(etc.typeFilter(filetype)) {
 			result = "etc";
 		}else {
 			result = "none";

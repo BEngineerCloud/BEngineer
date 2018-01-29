@@ -1,28 +1,27 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<h2>${con.num}¹ø±Û</h2>
+<h2>${con.num}ë²ˆê¸€</h2>
 <form name="updateform" action="update.do" method="post">
 <table border="1">
   <tr>
-    <td  width="90">Á¦¸ñ</td>
+    <td  width="90">ì œëª©</td>
     <td  width="330">
     <input type="text" size="40" maxlength="30" name="title" value="${con.title}"><br/></td>
   </tr>
   
   <tr>
-    <td  width="90">³» ¿ë</td>
+    <td  width="90">ë‚´ ìš©</td>
     <td  width="330" >
      <textarea name="content" rows="13" cols="40" >${con.content}</textarea><br/></td>
   </tr>
   
   <tr>
-  <td  width="90">ÀÛ¼ºÀÚ</td>
+  <td  width="90">ì‘ì„±ì</td>
     <td  width="330">${con.id}<br/></td>
   </tr>
   
   <tr>
-	<td><input type="submit" value="ÀÛ¼º¿Ï·á"/></td>
+	<td><input type="submit" value="ì‘ì„±ì™„ë£Œ"/></td>
   </tr>
   <input type="hidden" name="num" value="${con.num}">
 </table>

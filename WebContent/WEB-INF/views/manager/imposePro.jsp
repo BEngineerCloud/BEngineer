@@ -1,4 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-ÀÌ¸ŞÀÏ : ${model.email}
+<%@ page contentType="text/html; charset=UTF-8"%>
+ì´ë©”ì¼ : ${model.email}
 ch : ${model.chmod}

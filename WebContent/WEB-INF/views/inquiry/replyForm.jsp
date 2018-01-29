@@ -1,19 +1,18 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<h2>${re.num}¹ø±Û</h2>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<h2>${re.num}ë²ˆê¸€</h2>
 <table border="1">
   <tr>
-    <td  width="90">Á¦¸ñ</td>
+    <td  width="90">ì œëª©</td>
     <td  width="330">${re.title}<br/></td>
   </tr>
   
   <tr>
-    <td  width="90">³» ¿ë</td>
+    <td  width="90">ë‚´ ìš©</td>
     <td  width="330" >${re.content}<br/></td>
   </tr>
   
   <tr>
-  <td  width="90">ÀÛ¼ºÀÚ</td>
+  <td  width="90">ì‘ì„±ì</td>
     <td  width="330">${re.id}<br/></td>
   </tr>
   
@@ -25,7 +24,7 @@
   <td><textarea name="reply" rows="13" cols="40" ></textarea></td>
   </tr>
   <tr>	
-	<td><input type="submit" value="´äº¯¿Ï·á"/></td>
+	<td><input type="submit" value="ë‹µë³€ì™„ë£Œ"/></td>
   </tr>
   
 </form>   

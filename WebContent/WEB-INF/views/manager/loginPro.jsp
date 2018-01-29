@@ -1,6 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <script>
-	alert("Àß¸ø ÀÔ·ÂÇÏ¼Ì½À´Ï´Ù")
+	alert("ìž˜ëª» ìž…ë ¥í•˜ì…¨ìŠµë‹ˆë‹¤")
 	window.location="http://localhost:8080/BEngineer/manager/login.do";
 </script>

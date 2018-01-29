@@ -1,4 +1,3 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<h1>�亯�Ϸ�..!!</h1>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<h1>답변완료..!!</h1>
 

@@ -1,6 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <script>
-	alert("Á¦Á¦ µÈ È¸¿øÀÔ´Ï´Ù.")
+	alert("ì œì œ ëœ íšŒì›ì…ë‹ˆë‹¤.")
 	window.location="http://localhost:8080/BEngineer/beMember/imposeMember.do";
 </script>

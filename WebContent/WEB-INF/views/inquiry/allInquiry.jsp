@@ -1,16 +1,15 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- ��¥ǥ���ϱ�����.. -->
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- 날짜표현하기위해.. -->
 
-<h2>${allList.size()}���� ���ǰ� �ֽ��ϴ�.</h2>
+<h2>${allList.size()}개의 문의가 있습니다.</h2>
 <table border="1">
 <tr>
-<td align="center">�۹�ȣ</td>
-<td align="center">����</td>
-<td align="center">�ۼ���</td>
-<td align="center">�ۼ���</td>
-<td align="center">�亯</td>
+<td align="center">글번호</td>
+<td align="center">제목</td>
+<td align="center">작성자</td>
+<td align="center">작성일</td>
+<td align="center">답변</td>
 </tr>
 <c:forEach var="all" items="${allList}">
 <tr>
@@ -23,10 +22,10 @@
 </td><br/>
 <c:choose>
     <c:when test="${empty all.reply}">
-        <td>�̴亯</td>
+        <td>미답변</td>
     </c:when>
     <c:otherwise>
-        <td>�亯�Ϸ�</td>
+        <td>답변완료</td>
     </c:otherwise>
 </c:choose>
 </tr>

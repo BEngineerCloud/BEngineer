@@ -11,7 +11,7 @@
 	</insert>
 	<!-- 공지사항 목록-->
 	<select id="List" resultType="board">
-		select * from beboard
+		select * from beboard order by num desc
 	</select>
  	<!-- 공지사항을 수정하기위해 해당 게시글 불러옴 -->
 	<select id="read" parameterType="int" resultType="board">
@@ -38,7 +38,7 @@
 	<!-- 문의 목록 -->
 	<select id="inList" resultType="bengineer.spring.board.InquiryDTO" parameterType="string">
 		select * from BEinquiry
-		where id=#{id}
+		where id=#{id} order by num desc
 	</select>
 	
 	<!-- 답변보기 -->

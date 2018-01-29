@@ -1,29 +1,28 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <!-- http://localhost:8080/BEngineer/board/writeForm.do -->
-<title>ÀÛ¼º</title>
+<title>ìž‘ì„±</title>
 <form name="writeform" action="writePro.do" method="post">
 <table border="1">
   <tr>
-    <td  width="90">Á¦¸ñ</td>
+    <td  width="90">ì œëª©</td>
     <td  width="300">
     <input type="text" size="40" maxlength="30" name="title"><br/></td>
   </tr>
   
   <tr>
-    <td  width="90">³» ¿ë</td>
+    <td  width="90">ë‚´ ìš©</td>
     <td  width="300" >
      <textarea name="content" rows="13" cols="40"></textarea><br/></td>
   </tr>
   
   <tr>
-  <td  width="90">ÀÛ¼ºÀÚ</td>
+  <td  width="90">ìž‘ì„±ìž</td>
    <!-- <td  width="300"> <input type="text" size="40" maxlength="30" name="title"><br/></td>-->
      <td>${Id}<input type="hidden" value="${Id}" name="id"><br/></td> 
   </tr>
   
   <tr>
-	<td><input type="submit" value="ÀÛ¼º¿Ï·á"/></td>
+	<td><input type="submit" value="ìž‘ì„±ì™„ë£Œ"/></td>
   </tr>
 </table>
 </form>

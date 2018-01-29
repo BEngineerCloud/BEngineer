@@ -1,15 +1,14 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
-<input name="inList" type="button" value="¸ñ·Ï" onClick="http://localhost:8080/BEngineer/inquiry/inList.do'"/>
+<%@ page contentType="text/html; charset=UTF-8"%>
+<input name="inList" type="button" value="ëª©ë¡" onClick="http://localhost:8080/BEngineer/inquiry/inList.do'"/>
 <table>
   <tr>
-    <td  width="90">Á¦¸ñ</td>
+    <td  width="90">ì œëª©</td>
     <td  width="330">
     ${re.title}<br/></td>
   </tr>
   <tr><td></td><td>==============================</td></tr>
   <tr>
-    <td  width="90">³» ¿ë</td>
+    <td  width="90">ë‚´ ìš©</td>
     <td  width="330" >${re.content}
      <br/></td>
   </tr>
@@ -17,7 +16,7 @@
   <tr><td></td><td>==============================</td></tr>
   </tr>
     <tr>
-    <td  width="90">´äº¯</td>
+    <td  width="90">ë‹µë³€</td>
     <td  width="330" >${re.reply}
      <br/></td>
   </tr>

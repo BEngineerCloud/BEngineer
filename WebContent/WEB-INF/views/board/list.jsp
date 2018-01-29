@@ -1,17 +1,16 @@
-<%@ page language="java" contentType="text/html; charset=EUC-KR"
-    pageEncoding="EUC-KR"%>
+<%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- ³¯Â¥Ç¥ÇöÇÏ±âÀ§ÇØ.. -->
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- ë‚ ì§œí‘œí˜„í•˜ê¸°ìœ„í•´.. -->
 
 <h2>${Id}</h2>
 <table border="1">
-<!-- <a href="/BEngineer/board/writeForm.do?id="${ID}">°øÁö»çÇ×ÀÛ¼º</a>  -->
-<input name="write" type="button" value="°øÁö»çÇ×ÀÛ¼º" onClick="location.href='writeForm.do?id=${Id}'"/>
+<!-- <a href="/BEngineer/board/writeForm.do?id="${ID}">ê³µì§€ì‚¬í•­ìž‘ì„±</a>  -->
+<input name="write" type="button" value="ê³µì§€ì‚¬í•­ìž‘ì„±" onClick="location.href='writeForm.do?id=${Id}'"/>
 <tr>
-<td align="center">±Û¹øÈ£</td>
-<td align="center">Á¦¸ñ</td>
-<td align="center">ÀÛ¼ºÀÚ</td>
-<td align="center">ÀÛ¼ºÀÏ</td>
+<td align="center">ê¸€ë²ˆí˜¸</td>
+<td align="center">ì œëª©</td>
+<td align="center">ìž‘ì„±ìž</td>
+<td align="center">ìž‘ì„±ì¼</td>
 </tr>
 <c:forEach var="board" items="${list}">
 <tr>
@@ -23,14 +22,14 @@
 <fmt:formatDate value="${board.reg_date}" pattern="MM-dd HH:mm"/>
 </td><br/>
 <td>
-<input name="delete" type="button" value="»èÁ¦" onClick="location.href='delete.do?num=${board.num}'"/>
+<input name="delete" type="button" value="ì‚­ì œ" onClick="location.href='delete.do?num=${board.num}'"/>
 </td>
 </tr>
 
 </c:forEach>   
 </table>
 
-<!-- <input name="delete" type="button" value="»èÁ¦" onClick="javascript:open_win_noresizable('delete.do?num=${board.num}')"> -->
+<!-- <input name="delete" type="button" value="ì‚­ì œ" onClick="javascript:open_win_noresizable('delete.do?num=${board.num}')"> -->
     
     
    
