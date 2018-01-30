@@ -47,7 +47,7 @@ $(function(){
 </script>
 <body>
 	<c:if test="${check!=0 &&null eq authcode}">
-	<form id="beCheckMailid" name="beCheckMailid" method="post" action="/Bengineer/beMember/beCheckmailid.do">
+	<form id="beCheckMailid" name="beCheckMailid" method="post" action="/Bengineer/beMember/beCheckemail.do">
 		<div align="center" style="margin-top: 6%">
 			<div  style="width:35%;float:left;">
 				<img src="\Bengineer\image\beCloudImage.png" style="width: 35%; margin-left: 45%"/>
