@@ -21,7 +21,7 @@ $(function(){
 	
 	$("#authMailid").click(function(){
 		alert("인증번호를 발송하였습니다.");
-		window.location = "/Bengineer/beMember/beAuthemail.do?email="+"${mailid }";
+		window.location = "/BEngineer/beMember/beAuthemail.do?email="+"${mailid }";
 	});
 	
 	$("#useMailid").click(function(){
@@ -47,10 +47,10 @@ $(function(){
 </script>
 <body>
 	<c:if test="${check!=0 &&null eq authcode}">
-	<form id="beCheckMailid" name="beCheckMailid" method="post" action="/Bengineer/beMember/beCheckemail.do">
+	<form id="beCheckMailid" name="beCheckMailid" method="post" action="/BEngineer/beMember/beCheckemail.do">
 		<div align="center" style="margin-top: 6%">
 			<div  style="width:35%;float:left;">
-				<img src="\Bengineer\image\beCloudImage.png" style="width: 35%; margin-left: 45%"/>
+				<img src="\BEngineer\image\beCloudImage.png" style="width: 35%; margin-left: 45%"/>
 			</div>
 			<div align="left" style="width:65%;float:left;">
 				<font size="5">메일아이디 인증</font>
@@ -72,7 +72,7 @@ $(function(){
 	<c:if test="${check==0 && null eq authcode}">
 		<div align="center" style="margin-top: 6%">
 			<div  style="width:35%;float:left;">
-				<img src="\Bengineer\image\beCloudImage.png" style="width: 35%; margin-left: 45%"/>
+				<img src="\BEngineer\image\beCloudImage.png" style="width: 35%; margin-left: 45%"/>
 			</div>
 			<div align="left" style="width:65%;float:left;">
 				<font size="5">메일아이디 인증</font>
@@ -91,7 +91,7 @@ $(function(){
 	<c:if test="${null ne authcode}">
 		<div align="center" style="margin-top: 6%">
 			<div  style="width:35%;float:left;">
-				<img src="\Bengineer\image\beCloudImage.png" style="width: 35%; margin-left: 45%"/>
+				<img src="\BEngineer\image\beCloudImage.png" style="width: 35%; margin-left: 45%"/>
 			</div>
 			<div align="left" style="width:65%;float:left;">
 				<font size="5">메일아이디 인증</font>

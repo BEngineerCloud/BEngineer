@@ -55,7 +55,7 @@ public class MainBean extends Thread{
 				sqlSession.insert("bengineer.beInsertmember", dto);
 			}else {
 				String id = sqlSession.selectOne("bengineer.beSelectid",email);
-				if(id!=dto.getId()) {
+				if(!id.equals(dto.getId())) {
 					FileBean filebean = new FileBean();
 					filebean.setSqlSession(sqlSession);
 					filebean.changeIdDirName(id, dto.getId());

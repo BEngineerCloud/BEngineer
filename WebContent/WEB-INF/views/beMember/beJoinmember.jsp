@@ -31,7 +31,7 @@ $(function(){
 		      return false; 
 		 } 
 	
-		url = "/Bengineer/beMember/beCheckemail.do?email="+$("#email").val();
+		url = "/BEngineer/beMember/beCheckemail.do?email="+$("#email").val();
 		open(url, "confirm",  "toolbar=no, location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=450, height=250");
 		
 	});
@@ -43,7 +43,7 @@ $(function(){
 				return false;
 			}
 			
-			url = "/Bengineer/beMember/beChecknickname.do?nickname="+$("#nickname").val();
+			url = "/BEngineer/beMember/beChecknickname.do?nickname="+$("#nickname").val();
 			open(url, "confirm",  "toolbar=no, location=no,status=no,menubar=no,scrollbars=no,resizable=no,width=300, height=200");
 			
 	});
@@ -178,10 +178,10 @@ $(function(){
 });
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
-<form id="beJoinmember" name="beJoinmember" method="post" action="/Bengineer/beMember/beJoinmemberpro.do">
+<form id="beJoinmember" name="beJoinmember" method="post" action="/BEngineer/beMember/beJoinmemberpro.do">
 <div  align="center" id="Addtitle" style="height:30%; width:100%; float:left;">
 	<div id="Addtitle2" style="height:12%; width:40%;  margin-top: 3%">
-		<img src="\Bengineer\image\beCloudLogo.png" style="width: 40%;"/><br/><br/><hr color="black"><br/>
+		<img src="\BEngineer\image\beCloudLogo.png" style="width: 40%;"/><br/><br/><hr color="black"><br/>
 		<font size="5">회원 가입</font>
 	</div>
 </div>
