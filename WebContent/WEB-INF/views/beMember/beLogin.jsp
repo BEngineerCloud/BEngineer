@@ -13,12 +13,12 @@
 <script type="text/javascript">
 $(function(){
 	$("#beLogin").submit(function(){
-		if($("#email").val()==""){
+		if($("#email").val()=="" || $("#email").val()=="메일아이디"){
 			alert("메일주소를 입력하세요.");
 			return false;
 		}
 		
-		if($("#pw").val()==""){
+		if($("#pw").val()=="" || $("#pw").val()=="비밀번호"){
 			alert("비밀번호를 입력하세요.");
 			return false;
 		}

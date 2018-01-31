@@ -59,8 +59,11 @@ public class MainBean extends Thread{
 				if(!id.equals(dto.getId())) {
 					FileBean filebean = new FileBean();
 					filebean.setSqlSession(sqlSession);
-					filebean.changeIdDirName(id, dto.getId());
-					sqlSession.update("begineer.updateowner",dto.getId());
+					Integer folderCheck = (Integer)sqlSession.selectOne("bengineer.beCheckfolder",id); // id에 해당하는 폴더가 있는지
+					if(folderCheck==1) { // 아이디에 해당하는 폴더가 있으면 새로운 아이디로 수정
+						filebean.changeIdDirName(id, dto.getId());
+						sqlSession.update("begineer.updateowner",dto.getId());
+					}
 					sqlSession.update("bengineer.beUpdatemember2",dto);
 				}
 			}

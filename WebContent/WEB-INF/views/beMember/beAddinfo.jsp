@@ -38,6 +38,8 @@ $(function(){
 	
 	$("#beAddinfo").validate({
 		rules:{
+			newPw:{required:false},
+			confirmNewpw:{required:false},
 			nickname:{required:true, rangelength:[2,10]}
 		},
 		messages:{
@@ -64,7 +66,7 @@ $(function(){
 		 	}
 		}
 		
-		if($("#newPw").val()==$("#confirmNewpw").val()){
+		if($("#newPw").val()!=$("#confirmNewpw").val()){
 			alert("새 비밀번호가 일치하지 않습니다.");
 			return false;
 		}
@@ -115,7 +117,7 @@ $(function(){
 		<div id="Addcontents4" style="height:20%; width:65%; float:left;">
 			<div style="height:60%; width:100%; float:left; ">
 			<input type="hidden" id="pw" name="pw" value="${memberDTO.pw }"/>
-				<input type="text" id="newPw" name="newPw" style="border-color:black; width:50%; height:100%" required="required"/>
+				<input type="password" id="newPw" name="newPw" style="border-color:black; width:50%; height:100%" required="required"/>
 				<label class="error" for="newPw" generated="true" style="display:none;">에러태그</label>
 			</div>
 		</div>
@@ -126,7 +128,7 @@ $(function(){
 		</div>
 		<div id="Addcontents4" style="height:20%; width:65%; float:left;">
 			<div style="height:60%; width:100%; float:left; ">
-				<input type="text" id="confirmNewpw" name="confirmNewpw" style="border-color:black; width:50%; height:100%" required="required"/>
+				<input type="password" id="confirmNewpw" name="confirmNewpw" style="border-color:black; width:50%; height:100%" required="required"/>
 				<label class="error" for="confirmNewpw" generated="true" style="display:none;">에러태그</label>
 			</div>
 		</div>
