@@ -3,18 +3,32 @@ package bengineer.spring.web;
 import java.util.List;
 
 public class ListDTO {
-	private int folder_ref;
-	private List moveList;
-	public int getFolder_ref() {
-		return folder_ref;
+	private int num;
+	private String string;
+	private List list;
+	private long longnum;
+	public long getLongnum() {
+		return longnum;
 	}
-	public void setFolder_ref(int folder_ref) {
-		this.folder_ref = folder_ref;
+	public void setLongnum(long longnum) {
+		this.longnum = longnum;
 	}
-	public List getMoveList() {
-		return moveList;
+	public int getNum() {
+		return num;
 	}
-	public void setMoveList(List moveList) {
-		this.moveList = moveList;
+	public void setNum(int num) {
+		this.num = num;
+	}
+	public String getString() {
+		return string;
+	}
+	public void setString(String string) {
+		this.string = string;
+	}
+	public List getList() {
+		return list;
+	}
+	public void setList(List list) {
+		this.list = list;
 	}
 }

@@ -353,7 +353,7 @@ public class FileBean2 {
 			return 0;
 	}
 	
-	private boolean nioFilemove(String originFilePath, String moveFilePath) { //파일이동, NIO방식
+	public boolean nioFilemove(String originFilePath, String moveFilePath) { //파일이동, NIO방식
 		File newfile = new File(moveFilePath);
 		
 		Path originPath = Paths.get(originFilePath);

@@ -198,8 +198,8 @@
 			</c:forEach>
 		</div><br />
 		현재 더미 / 임시파일 삭제 주기 : ${scanrate }ms
-        <form id="setscanrateform" action="/Bengineer/manager/setScanrate.do">
-        	더미 / 임시파일 삭제 주기 변경하기 : 
-        	<input type="number" name="scanrate" min="1000" />
+        <form id="setscanrateform" action="/BEngineer/manager/setScanrate.do">
+        	더미 / 임시파일 삭제 주기 변경하기(최소 5000ms) : 
+        	<input type="number" name="scanrate" min="5000" />
         	<input type="submit" value="변경하기" />
         </form>

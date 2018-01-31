@@ -3,6 +3,7 @@ package bengineer.spring.web;
 import java.io.File;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -82,7 +83,7 @@ public class MainBean extends Thread{
 		return id == null || id.equals("null") || id.equals("");
 	}
 	public void run(){
-		File bengineer = new File("d:/PM/BEngineer");
+		//File bengineer = new File("d:/PM/BEngineer");
 		while(true) {
 			if(sqlSession == null) {
 				try {
@@ -93,6 +94,7 @@ public class MainBean extends Thread{
 				continue;
 			}
 			Date date = new Date(System.currentTimeMillis());
+			/*
 			SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
 			long time = Long.parseLong(format.format(date).substring(0, 12));
 			File [] folders = bengineer.listFiles();
@@ -134,6 +136,22 @@ public class MainBean extends Thread{
 							}
 						}
 					}
+				}
+			}*/
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			calendar.add(calendar.MONTH, -1);
+			List trashlist = sqlSession.selectList("bengineer.oldtrash", calendar.getTime());
+			if(trashlist.size() > 0) {
+				for(int i = 0; i < trashlist.size(); i++) {
+					TrashcanDTO trash = (TrashcanDTO)trashlist.get(i);
+					int num = trash.getFilenum();
+					FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", num);
+					String address = "d:/PM/BEngineer/" + dto.getOwner() + "/betrashcan/" + dto.getNum() + ".zip";
+					sqlSession.delete("bengineer.deletetrash", num);
+					sqlSession.delete("bengineer.deletefile", num);
+					File trashfile = new File(address);
+					trashfile.delete();
 				}
 			}
 			sqlSession.delete("bengineer.deleteoldkey");

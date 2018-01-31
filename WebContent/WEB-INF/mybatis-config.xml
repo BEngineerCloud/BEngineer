@@ -11,6 +11,7 @@
 		<typeAlias type="bengineer.spring.web.ListDTO"  alias="listDTO" />
 		<typeAlias type="bengineer.spring.manager.ManagerDTO"  alias="manager"/>
 		<typeAlias type="bengineer.spring.board.BoardDTO"  alias="board"/>
+		<typeAlias type="bengineer.spring.web.TrashcanDTO"  alias="trashcanDTO" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="/sql/fileSQL.xml"/>

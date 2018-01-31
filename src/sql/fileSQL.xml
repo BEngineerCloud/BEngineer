@@ -112,8 +112,8 @@
 		</foreach> 
 	</update>
 	<update id="movefiles" parameterType="listDTO">
-		update BEfilelist set folder_ref = #{folder_ref} where num in 
-		<foreach item="item" collection="moveList" open="(" separator="," close=")">
+		update BEfilelist set folder_ref = #{num} where num in 
+		<foreach item="item" collection="list" open="(" separator="," close=")">
 			#{item}
 		</foreach> 
 	</update>
@@ -152,6 +152,17 @@
 	<delete id="deleteunshared">
 		delete from BEsharelist where share_key not in (select share_key from BEkeylist)
 	</delete>
+	<select id="oldtrash" parameterType="Date" resultType="trashcanDTO">
+		<![CDATA[
+			select * from BEtrashcan where deletedate < #{deletedate}
+		]]> 
+	</select>
+	<update id="uploadsize" parameterType="listDTO">
+		update BEfilelist set filesize = filesize + #{longnum} where num in 
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item.num}
+		</foreach> 
+	</update>
 
 	<!-- num 
 	<select id="number" parameterType="int" resultType="fileDTO">

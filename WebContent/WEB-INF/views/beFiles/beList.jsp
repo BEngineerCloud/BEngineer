@@ -94,6 +94,10 @@
 				form = document.getElementById("sharecheckform");
 				form.file.value = ref;
 				form.submitsharecheck.type = "submit";
+				document.getElementById("unsharediv").style.display = "block";
+				document.getElementById("unshareform").file_ref.value = ref;
+				document.getElementById("changeownerdiv").style.display = "block";
+				document.getElementById("changeownerform").file_ref.value = ref;
 			}
 		});
 	});
@@ -199,6 +203,19 @@
 	$(function(){
 		$("#logoutdiv > #logout").click(function(){
 			window.location = "/BEngineer/beLogout.do";
+		});
+	});
+	$(function(){
+		$("#unshareselect").change(function(){
+			var form = document.getElementById("unshareform"); // 폼 받아오기
+			var select = document.getElementById("unshareselect");
+			if(select.value == 1){
+				document.getElementById("unsharetext").type = "hidden";
+				form.nickname.type = "hidden";
+			}else{
+				document.getElementById("unsharetext").type = "text";
+				form.nickname.type = "text";
+			}
 		});
 	});
 	$(function(){
@@ -433,6 +450,41 @@
 		});
 	});
 	$(function(){
+		$("#unshareform").submit(function(){ // 공유 해제 버튼 클릭시
+			var form = document.getElementById("unshareform"); // 폼 받아오기
+			var select = document.getElementById("unshareselect");
+			if(select.hidden == true){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
+				hinder(); // 다른 폼 닫기
+				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+				document.getElementById("unsharediv").style.display = "block";
+				select.hidden = false;
+				return false;
+			}
+			if(select.value == 2 && !form.nickname.value.trim()){ // 업로드할 파일 미선택시
+				alert('공유 해제할 사람의 닉네임을 입력해주세요');
+				return false;
+			}
+			form.nickname.value = form.nickname.value.trim();
+		});
+	});
+	$(function(){
+		$("#changeownerform").submit(function(){ // 주인 바꾸기 버튼 클릭시
+			var form = document.getElementById("changeownerform"); // 폼 받아오기
+			if(form.nickname.type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
+				hinder(); // 다른 폼 닫기
+				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+				document.getElementById("changeownerdiv").style.display = "block";
+				form.nickname.type = "text";
+				return false;
+			}
+			if(!form.nickname.value.trim() && !form.nickname.value.trim() == ""){ // 업로드할 파일 미선택시
+				alert('파일은 넘겨줄 상대의 닉네임을 입력해주세요');
+				return false;
+			}
+			form.nickname.value = form.nickname.value.trim();
+		});
+	});
+	$(function(){
 		$("input[name='filename']").focus(function(){ // 파일이름 창 클릭시 초기화
 			if($(this).val() == '파일 이름'){
 				$(this).val("")
@@ -485,6 +537,8 @@
 		form.submitsharecheck.type = "hidden";
 		document.getElementById("files").style.height = "75%";
 		document.getElementById("writetextdiv").style.display = "none";
+		document.getElementById("unsharediv").style.display = "none";
+		document.getElementById("changeownerdiv").style.display = "none";
 	}
 	function setForm(type, ref){
 		var form = document.getElementById("changenameform");
@@ -703,10 +757,44 @@
 	</div>
 	<!-- 공유중인 사람 확인 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="sharecheckform" action="lookSharedPeople.do" method="post">
+		<form id="sharecheckform" action="/BEngineer/beFiles/lookSharedPeople.do" method="post">
 			<input type="hidden" name="file" />
 			<input type="hidden" name="submitsharecheck" value="공유 중인 사람 보기"/>
 		</form>
+	</div>
+	<!-- 공유 해제 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left; display:none" id="unsharediv">
+		<div style="height:100%; width:relative; float:left;">
+			<select id="unshareselect" hidden style="height:25px">
+				<option value="1">모든 사람의 공유 해제</option>
+				<option value="2">한 사람의 공유 해제</option>
+			</select>
+		</div>
+		<div style="height:100%; width:relative; float:left;">
+			<input type="hidden" id="unsharetext" style="top:2px; background-color:transparent; border:0px; text-color:black; width:140px; height:25px;" value="해제할 사람의 닉네임 : " disabled/>
+		</div>
+		<div style="height:100%; width:relative; float:left;">
+			<form id="unshareform" action="/BEngineer/beFiles/unshare.do" method="get"> 
+				<input type="hidden" name="nickname" />
+				<input type="hidden" name="file_ref" />
+				<input type="hidden" name="folder" value="${folder_ref }"/>
+				<input type="submit" name="submitunshare" value="공유 해제하기"/>
+			</form>
+		</div>
+	</div>
+	<!-- 주인 바꾸기 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left; display:none" id="changeownerdiv">
+		<div style="height:100%; width:relative; float:left;">
+			<input type="hidden" id="changeownertext" style="top:2px; background-color:transparent; border:0px; text-color:black; width:140px; height:25px;" value="넘겨줄 사람의 닉네임 : " disabled/>
+		</div>
+		<div style="height:100%; width:relative; float:left;">
+			<form id="changeownerform" action="/BEngineer/beFiles/changeowner.do" method="get"> 
+				<input type="hidden" name="nickname" />
+				<input type="hidden" name="file_ref" />
+				<input type="hidden" name="folder" value="${folder_ref }"/>
+				<input type="submit" name="submitchangeowner" value="파일 주인 바꾸기"/>
+			</form>
+		</div>
 	</div>
 </div>
 <div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">

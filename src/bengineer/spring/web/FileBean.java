@@ -128,28 +128,28 @@ public class FileBean {
 		
 		List list = sqlSession.selectList("bengineer.size",folder_ref);
 		if(list.size()!=0) {
-        //r.eval("library(base64enc)");
-		r.eval("png('rjava.png')");
+			//r.eval("library(base64enc)");
+			r.eval("png('rjava.png')");
 		
-		String Fsize ="c(";
-		for(int i=0; i<list.size();i++) {
-			FileDTO file1 = (FileDTO)list.get(i);
-			if(i==list.size()-1) {
-				Fsize+=file1.getFilesize()+")";
-			}else {
-				Fsize+=file1.getFilesize()+",";
+			String Fsize ="c(";
+			for(int i=0; i<list.size();i++) {
+				FileDTO file1 = (FileDTO)list.get(i);
+				if(i==list.size()-1) {
+					Fsize+=file1.getFilesize()+")";
+				}else {
+					Fsize+=file1.getFilesize()+",";
+				}
 			}
-		}
-		r.eval("Fsize<-"+Fsize);
-		//System.out.println(Fsize);
-		r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
-		//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
-		r.eval("dev.off()");
-		REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
-		/*
-		r.eval("encoded_png<-sprintf(\"<img src='data:image/png;base64,%s'/>\", base64encode(\"rjava.png\"))");
-		r.eval("encoded_png");*/
-		model.addAttribute("gra",Base64.getEncoder().encodeToString(image.asBytes())); 
+			r.eval("Fsize<-"+Fsize);
+			//System.out.println(Fsize);
+			r.eval("barplot(Fsize, names='크기', col=rainbow(20))");
+			//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
+			r.eval("dev.off()");
+			REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
+			/*
+			r.eval("encoded_png<-sprintf(\"<img src='data:image/png;base64,%s'/>\", base64encode(\"rjava.png\"))");
+			r.eval("encoded_png");*/
+			model.addAttribute("gra",Base64.getEncoder().encodeToString(image.asBytes())); 
 		}
 		r.close();
 		return "beFiles/beList";
@@ -341,11 +341,16 @@ public class FileBean {
 			dto.setOrgname(orgname);
 			File copy = new File("d:/PM/BEngineer/" + fileaddress + orgname);
 			if(copy.exists()) { // 같은 이름의 파일이 존재할 때 덮어쓰기
+				long orgsize = copy.length();
 				copy.delete();
 				mf.transferTo(copy);
 				long filesize = copy.length();
 				dto.setFilesize(filesize);
 				sqlSession.update("bengineer.updatefile", dto);
+				ListDTO ldto = new ListDTO();
+				ldto.setLongnum(filesize - orgsize);
+				ldto.setList(address_ref);
+				sqlSession.update("bengineer.uploadsize", ldto);
 				model.addAttribute("alert", "파일 덮어쓰기 완료");
 			}else {
 				dto.setFiletype(filetype);
@@ -353,6 +358,10 @@ public class FileBean {
 				long filesize = copy.length();
 				dto.setFilesize(filesize);
 				sqlSession.insert("bengineer.upload", dto);
+				ListDTO ldto = new ListDTO();
+				ldto.setLongnum(filesize);
+				ldto.setList(address_ref);
+				sqlSession.update("bengineer.uploadsize", ldto);
 				model.addAttribute("alert", "파일 업로드 완료");
 			}
 			if(owner.equals(session.getAttribute("id"))) {
@@ -907,8 +916,8 @@ public class FileBean {
 		dto.setOwner(owner);
 		dto.setOrgname(owner);
 		int folder_ref = sqlSession.selectOne("bengineer.getparentnum", dto);
-		ldto.setFolder_ref(folder_ref);
-		ldto.setMoveList(moveList);
+		ldto.setNum(folder_ref);
+		ldto.setList(moveList);
 		sqlSession.update("bengineer.repairfiles", repairList);
 		sqlSession.delete("bengineer.deletetrashes", repairList);
 		if(moveList.size() > 0) {
@@ -1017,7 +1026,11 @@ public class FileBean {
 		String result = "";
 		for(int i = 0; i < idlist.size(); i++) {
 			KeyDTO kdto = (KeyDTO)idlist.get(i);
-			result += sqlSession.selectOne("bengineer.getnickname", kdto.getShare_key());
+			String nickname = sqlSession.selectOne("bengineer.getnickname", kdto.getShare_key());
+			if(nickname == null) {
+				continue;
+			}
+			result += nickname;
 			result += "(" + kdto.getEnddate() + "까지 ";
 			if(kdto.getRw() == 0) {
 				result += "읽기";
@@ -1083,22 +1096,27 @@ public class FileBean {
 	@RequestMapping("unshare.do")
 	public String unshare(HttpSession session, Model model, int file_ref, String nickname, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
-		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr");
+		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", file_ref);
 		String owner = dto.getOwner();
 		String id = (String)session.getAttribute("id");
 		if(owner.equals(id)){
 			if(nickname == null || nickname.equals("")) {
 				sqlSession.delete("bengineer.unshareall", file_ref);
-				model.addAttribute("alert", "파일의 공유를 해제하였습니다.");
-				model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+				model.addAttribute("alert", "파일의 모든 공유를 해제하였습니다.");
+				model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 			}else {
 				id = sqlSession.selectOne("bengineer.getid", nickname);
+				if(id == null) {
+					model.addAttribute("alert", "존재하지 않는 회원입니다.");
+					model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+					return "beFiles/alert";
+				}
 				ShareDTO sdto = new ShareDTO();
 				sdto.setId(id);
 				sdto.setNum(file_ref);
 				sqlSession.delete("bengineer.unshare", sdto);
 				model.addAttribute("alert", "파일의 공유를 해제하였습니다.");
-				model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+				model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 			}
 		}else {
 			ShareDTO sdto = new ShareDTO();
@@ -1107,6 +1125,52 @@ public class FileBean {
 			sqlSession.delete("bengineer.unshare", sdto);
 			model.addAttribute("alert", "파일의 공유를 해제하였습니다.");
 			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+		}
+		return "beFiles/alert";
+	}
+	@RequestMapping("changeowner.do")
+	public String changeowner(HttpSession session, Model model, int file_ref, String nickname, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", file_ref);
+		String owner = dto.getOwner();
+		String id = (String)session.getAttribute("id");
+		if(!owner.equals(id)){
+			model.addAttribute("alert", "본인의 파일만 넘겨줄 수 있습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		String newowner = sqlSession.selectOne("bengineer.getid", nickname);
+		if(newowner == null) {
+			model.addAttribute("alert", "존재하지 않는 회원입니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		List address_ref = getAddr(file_ref);
+		String orgaddress = "d:/PM/BEngineer/";
+		for(int i = address_ref.size() - 1; i >= 0; i--) {
+			dto = (FileDTO)address_ref.get(i);
+			orgaddress += dto.getOrgname();
+			if(i != 0) {
+				orgaddress += "/";
+			}
+		}
+		String newaddress = "d:/PM/BEngineer/" + newowner;
+		FileBean2 fb2 = new FileBean2();
+		System.out.println(orgaddress);
+		System.out.println(newaddress);
+		if(fb2.nioFilemove(orgaddress, newaddress)) {
+			dto.setOwner(newowner);
+			dto.setOrgname(newowner);
+			int folder_ref = sqlSession.selectOne("bengineer.getparentnum", dto);
+			dto.setFolder_ref(folder_ref);
+			//sqlSession.update("bengineer.changeowner", dto);
+			System.out.println(newowner);
+			System.out.println(folder_ref);
+			model.addAttribute("alert", "파일을 " + nickname + "에게 넘겨주었습니다.");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+		}else {
+			model.addAttribute("alert", "파일을  넘겨주는 데에 실패했습니다.");
+			model.addAttribute("location", "history.go(-1)");
 		}
 		return "beFiles/alert";
 	}
