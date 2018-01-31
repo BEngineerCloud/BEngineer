@@ -180,5 +180,11 @@
 	<update id="updateowner" parameterType="string">
 		update BEfilelist set owner = #{owner} where owner = #{owner}
 	</update>
+	<select id="beCheckfolder" resultType="int" parameterType="string">
+		select count(*) from befilelist where owner=#{id}
+	</select>
+	<insert id="copyfile" parameterType="fileDTO">
+		insert into befilelist(num,folder_ref,filename,orgname,filetype,filesize,uploaddate,updatedate,important,owner) values(BEtrashcan_seq.NEXTVAL,#{folder_ref},#{filename},#{orgname},#{filetype},#{filesize},sysdate,sysdate,0,#{owner})
+	</insert>
 	
 </mapper>

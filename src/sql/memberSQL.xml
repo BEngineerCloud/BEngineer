@@ -14,6 +14,10 @@
 		select * from bemember where id=#{id}
 	</select>
 	
+	<select id="beSelectmember2" resultType="MemberDTO" parameterType="string">
+		select * from bemember where email=#{email}
+	</select>
+	
 	<select id="beSelectid" resultType="string" parameterType="string">
 		select id from bemember where email=#{email}
 	</select>
@@ -52,5 +56,9 @@
 	
 	<select id="getid" parameterType="string" resultType="string">
 		select id from BEmember where nickname = #{nickname}
+	</select>
+	
+	<select id="beSelectpw" resultType="string" parameterType="string">
+		select pw from bemember where email=#{email}
 	</select>
 </mapper>
