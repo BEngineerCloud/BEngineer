@@ -8,7 +8,7 @@ public class FileDTO {
 	private String filename;
 	private String orgname;
 	private String filetype;
-	private double filesize;
+	private long filesize;
 	private Timestamp uploaddate;
 	private Timestamp updatedate;
 	private int hitcount;
@@ -44,10 +44,10 @@ public class FileDTO {
 	public void setFiletype(String filetype) {
 		this.filetype = filetype;
 	}
-	public double getFilesize() {
+	public long getFilesize() {
 		return filesize;
 	}
-	public void setFilesize(double filesize) {
+	public void setFilesize(long filesize) {
 		this.filesize = filesize;
 	}
 	public Timestamp getUploaddate() {

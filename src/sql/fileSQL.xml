@@ -63,12 +63,12 @@
 	<delete id="deletefile" parameterType="int">
 		delete from BEfilelist where num = #{num}
 	</delete>
-	<update id="deletefiles" parameterType="list">
+	<delete id="deletefiles" parameterType="list">
 		delete from BEfilelist where num in
 		<foreach item="item" collection="list" open="(" separator="," close=")">
 			#{item}
 		</foreach>
-	</update>
+	</delete>
 	<update id="throwtotrashcan" parameterType="int">
 		update BEfilelist set important = 1 where num = #{filenum}
 	</update>
@@ -186,5 +186,11 @@
 	<insert id="copyfile" parameterType="fileDTO">
 		insert into befilelist(num,folder_ref,filename,orgname,filetype,filesize,uploaddate,updatedate,important,owner) values(BEtrashcan_seq.NEXTVAL,#{folder_ref},#{filename},#{orgname},#{filetype},#{filesize},sysdate,sysdate,0,#{owner})
 	</insert>
+	<update id="changeowners" parameterType="listDTO">
+		update BEfilelist set owner = #{string} where num in 
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach> 
+	</update>
 	
 </mapper>

@@ -13,7 +13,7 @@
 <script type="text/javascript">
 $(function(){
 	$("#beLogin").submit(function(){
-		if($("#email").val()=="" || $("#email").val()=="메일아이디"){
+		if($("#email").val()=="" || $("#email").val()=="아이디"){
 			alert("메일주소를 입력하세요.");
 			return false;
 		}
@@ -26,6 +26,20 @@ $(function(){
 		return true;
 	});
 	
+});
+$(function(){
+	$("#email").focus(function(){
+		if($("#email").val() == "아이디"){
+			$("#email").val("");
+		}
+	});
+});
+$(function(){
+	$("#pw").focus(function(){
+		if($("#pw").val() == "비밀번호"){
+			$("#pw").val("");
+		}
+	});
 });
 </script>
 

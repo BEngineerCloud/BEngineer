@@ -43,7 +43,10 @@ public class DownloadView extends AbstractView{
 			e.printStackTrace();
 		}finally{
 			if(fis != null){try{fis.close();}catch(Exception e2){}}
-			file.delete();
+			String address = file.getAbsolutePath();
+			if(address.startsWith("d:\\PM\\BEngineer\\downtemp")) {
+				file.delete();
+			}
 		}
 		out.flush();
 		

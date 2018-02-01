@@ -82,7 +82,6 @@
 			}else{
 				hinder(); // 업로드 입력, 폴더생성 입력 취소
 				form.file_ref.value = ref;
-				document.getElementById("throwtotrashcan").type = "button";
 				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
 				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
 				setForm(type, ref);
@@ -96,8 +95,16 @@
 				form.submitsharecheck.type = "submit";
 				document.getElementById("unsharediv").style.display = "block";
 				document.getElementById("unshareform").file_ref.value = ref;
-				document.getElementById("changeownerdiv").style.display = "block";
-				document.getElementById("changeownerform").file_ref.value = ref;
+				if(important.value != -1){
+					document.getElementById("throwtotrashcan").type = "button";
+					document.getElementById("changeownerdiv").style.display = "block";
+					document.getElementById("changeownerform").file_ref.value = ref;
+				}
+				if(type.value == ".txt"){
+					form = document.getElementById("rewritetextform");
+					form.filenum.value = ref;
+					form.submitrewritetext.type = "submit";
+				}
 			}
 		});
 	});
@@ -485,6 +492,32 @@
 		});
 	});
 	$(function(){
+		$("#writetextform").submit(function(){ // 텍스트 쓰기 버튼 클릭시
+			var form = document.getElementById("writetextform"); // 폼 받아오기
+			if(!form.filename.value.trim() && !form.filename.value.trim() == ""){ // 업로드할 파일 미선택시
+				alert('파일 별명을 입력해주세요');
+				return false;
+			}
+			if(!form.orgname.value.trim() && !form.orgname.value.trim() == ""){ // 업로드할 파일 미선택시
+				alert('파일명을 입력해주세요');
+				return false;
+			}
+			var orgname = form.orgname.value.trim() + ".txt";
+			var check = document.getElementById(orgname);
+			if(check != null){
+				if(!confirm('파일을 덮어 쓰시겠습니까?')){
+					return false;
+				}
+			}
+			if(!form.content.value.trim() && !form.content.value.trim() == ""){ // 업로드할 파일 미선택시
+				alert('파일명을 입력해주세요');
+				return false;
+			}
+			form.filename.value = form.filename.value.trim();
+			form.orgname.value = form.orgname.value.trim();
+		});
+	});
+	$(function(){
 		$("input[name='filename']").focus(function(){ // 파일이름 창 클릭시 초기화
 			if($(this).val() == '파일 이름'){
 				$(this).val("")
@@ -537,8 +570,20 @@
 		form.submitsharecheck.type = "hidden";
 		document.getElementById("files").style.height = "75%";
 		document.getElementById("writetextdiv").style.display = "none";
+		form = document.getElementById("writetextform");
+		form.filename.value = "";
+		form.orgname.value = "";
+		form.orgname.readOnly = false;
+		form.content.value = "";
 		document.getElementById("unsharediv").style.display = "none";
+		document.getElementById("unshareselect").hidden = true;
+		document.getElementById("unshareselect").value = "1";
+		document.getElementById("unsharetext").type = "hidden";
+		document.getElementById("unshareform").nickname.type = "hidden";
 		document.getElementById("changeownerdiv").style.display = "none";
+		document.getElementById("changeownerform").nickname.type = "hidden";
+		form = document.getElementById("rewritetextform");
+		form.submitrewritetext.type = "hidden";
 	}
 	function setForm(type, ref){
 		var form = document.getElementById("changenameform");
@@ -796,6 +841,13 @@
 			</form>
 		</div>
 	</div>
+	<!-- 텍스트 파일 수정 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<form id="rewritetextform" action="/BEngineer/beFiles/rewriteText.do" method="post">
+			<input type="hidden" name="filenum" />
+			<input type="hidden" name="submitrewritetext" value="내용 수정하기"/>
+		</form>
+	</div>
 </div>
 <div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">
 	<c:set var="num" value="0" />
@@ -854,3 +906,14 @@
 	multiSelect(); // 여러 파일/폴더 선택한 상태에서 넘어왔을 때
 	dotted();
 </script>
+<c:if test="${textcontent != null}">
+	<script>
+		var form = document.getElementById("writetextform");
+		form.filename.value = '${textname}';
+		form.orgname.value = '${textorgname}';
+		form.content.value = '${textcontent}';
+		form.orgname.readOnly = true;
+		document.getElementById("writetextdiv").style.display = "block";
+		document.getElementById("files").style.height = "35%";
+	</script>
+</c:if>

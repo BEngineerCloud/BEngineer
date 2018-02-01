@@ -6,9 +6,11 @@ import org.rosuda.REngine.*;
 import org.rosuda.REngine.Rserve.*;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.net.InetAddress;
@@ -1014,7 +1016,7 @@ public class FileBean {
 			}
 			sqlSession.delete("bengineer.deletetrash", trash.getNum());
 		}
-		sqlSession.update("bengineer.deletefiles", deleteList);
+		sqlSession.delete("bengineer.deletefiles", deleteList);
 		sqlSession.delete("bengineer.deletetrashes", deleteList);
 		model.addAttribute("alert", result);
 		model.addAttribute("location", location);
@@ -1079,19 +1081,70 @@ public class FileBean {
 			address += dto.getOrgname() + "/";
 		}
 		orgname += ".txt";
+		long orgsize = 0;
+		File textfile = new File(address + orgname);
+		if(textfile.exists()) {
+			orgsize = textfile.length();
+			textfile.delete();
+		}
 		dto = writeTextFile(address, orgname, content);
 		dto.setOwner(owner);
 		dto.setFilename(filename);
 		dto.setFiletype(".txt");
 		dto.setFolder_ref(folder);
-		sqlSession.insert("bengineer.upload", dto);
-		model.addAttribute("alert", "텍스트 파일을 생성하였습니다.");
+		if(orgsize == 0) {
+			sqlSession.insert("bengineer.upload", dto);
+			model.addAttribute("alert", "텍스트 파일을 생성하였습니다.");
+		}else {
+			sqlSession.update("bengineer.updatefile", dto);
+			model.addAttribute("alert", "텍스트 파일을 수정하였습니다.");
+		}
 		if(owner.equals((String)session.getAttribute("id"))) {
 			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 		}else {
 			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
 		}
 		return "beFiles/alert";
+	}
+	@RequestMapping("rewriteText.do")
+	public String rewriteText(HttpSession session, Model model, int filenum) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		if(!checkPower((String)session.getAttribute("id"), filenum)) {
+			model.addAttribute("alert", "권한이 없습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		List address_ref = getAddr(filenum);
+		FileDTO dto = (FileDTO)address_ref.get(0);
+		String owner = dto.getOwner();
+		String address = "d:/PM/BEngineer/";
+		for(int i = address_ref.size() - 1; i >= 0; i--) {
+			dto = (FileDTO)address_ref.get(i);
+			address += dto.getOrgname();
+			if(i != 0) {
+				address += "/";
+			}
+		}
+		File text = new File(address);
+		String content = "";
+		FileReader reader = null;
+		BufferedReader buffered = null;
+		try {
+			reader = new FileReader(text);
+			buffered = new BufferedReader(reader);
+			while(buffered.ready()) {
+				content += buffered.readLine() + "\\r\\n";
+			}
+			buffered.close();
+			reader.close();
+		}catch(Exception e) {e.printStackTrace();}finally {
+			if(reader != null) {try {reader.close();}catch(Exception e){}}
+			if(buffered != null) {try {buffered.close();}catch(Exception e){}}
+		}
+		model.addAttribute("textcontent", content);
+		model.addAttribute("textname", dto.getFilename());
+		model.addAttribute("textorgname", dto.getOrgname().substring(0, dto.getOrgname().lastIndexOf(".")));
+		return "forward:/beFiles/beMyList.do?folder=0";
 	}
 	@RequestMapping("unshare.do")
 	public String unshare(HttpSession session, Model model, int file_ref, String nickname, int folder) {
@@ -1132,6 +1185,11 @@ public class FileBean {
 	public String changeowner(HttpSession session, Model model, int file_ref, String nickname, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", file_ref);
+		if(dto.getImportant() == -1){
+			model.addAttribute("alert", "기본 폴더는 넘겨줄 수 없습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		String owner = dto.getOwner();
 		String id = (String)session.getAttribute("id");
 		if(!owner.equals(id)){
@@ -1144,6 +1202,10 @@ public class FileBean {
 			model.addAttribute("alert", "존재하지 않는 회원입니다.");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
+		}else if(newowner.equals(owner)){
+			model.addAttribute("alert", "너입니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
 		}
 		List address_ref = getAddr(file_ref);
 		String orgaddress = "d:/PM/BEngineer/";
@@ -1154,18 +1216,20 @@ public class FileBean {
 				orgaddress += "/";
 			}
 		}
-		String newaddress = "d:/PM/BEngineer/" + newowner;
+		String newaddress = "d:/PM/BEngineer/" + newowner + "/" + dto.getOrgname();
 		FileBean2 fb2 = new FileBean2();
-		System.out.println(orgaddress);
-		System.out.println(newaddress);
 		if(fb2.nioFilemove(orgaddress, newaddress)) {
 			dto.setOwner(newowner);
 			dto.setOrgname(newowner);
+			dto.setNum(file_ref);
 			int folder_ref = sqlSession.selectOne("bengineer.getparentnum", dto);
 			dto.setFolder_ref(folder_ref);
-			//sqlSession.update("bengineer.changeowner", dto);
-			System.out.println(newowner);
-			System.out.println(folder_ref);
+			sqlSession.update("bengineer.changeref", dto);
+			List numlist = subfiles(file_ref);
+			ListDTO ldto = new ListDTO();
+			ldto.setList(numlist);
+			ldto.setString(newowner);
+			sqlSession.update("bengineer.changeowners", ldto);
 			model.addAttribute("alert", "파일을 " + nickname + "에게 넘겨주었습니다.");
 			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 		}else {
@@ -1465,6 +1529,9 @@ public class FileBean {
 			fos.close();
 		}catch(Exception e) {
 			e.printStackTrace();
+		}finally {
+			if(bos != null) {try {bos.close();}catch(Exception e) {}}
+			if(fos != null) {try {fos.close();}catch(Exception e) {}}
 		}
 		File newFile = new File(address + orgname);
 		dto.setFilesize(newFile.length());
@@ -1500,6 +1567,28 @@ public class FileBean {
 			}else {
 				result.add(pre + "/" + names[i]);
 			}
+		}
+		return result;
+	}
+	private List subfiles(int folder) {
+		List result = new ArrayList();
+		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder);
+		if(dto.getFiletype().equals("dir")) {
+			List files = sqlSession.selectList("bengineer.getfiles", folder);
+			int filenum = 0;
+			if(files != null && files.size() > 0) {
+				for(int i = 0; i < files.size(); i++) {
+					dto = (FileDTO)files.get(i);
+					filenum = dto.getNum();
+					List add = subfiles(filenum);
+					if(add != null && add.size() != 0) {
+						result.addAll(add);
+					}
+				}
+			}
+			result.add(folder);
+		}else {
+			result.add(dto.getNum());
 		}
 		return result;
 	}

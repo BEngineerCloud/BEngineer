@@ -20,7 +20,7 @@ public class LoginBean {
 	@RequestMapping("beLoginpro.do")
 	public String beLoginpro(MemberDTO dto,Model model, HttpSession session) {
 		String email = dto.getEmail();
-		Integer check = (Integer)sqlSession.selectOne("bengineer.beChecklogin",email);
+		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email);
 
 		if(check==1) {
 			String pw = sqlSession.selectOne("bengineer.beSelectpw",email);
@@ -29,7 +29,7 @@ public class LoginBean {
 				session.setAttribute("id", dto.getId()); 
 				session.setAttribute("nickname", dto.getNickname());
 				model.addAttribute("alert", "로그인 성공!!");
-				model.addAttribute("location", "\"/BEngineer2/beMain.do\"");
+				model.addAttribute("location", "\"/BEngineer/beMain.do\"");
 			}else {
 				model.addAttribute("alert", "비밀번호가 틀렸습니다!!");
 				model.addAttribute("location", "history.go(-1)");
