@@ -10,6 +10,11 @@
 			select * from BEfilelist where folder_ref = #{folder_ref} and important < 1 order by filetype desc, important asc, filename asc
 		]]>
 	</select>
+	<select id="getfileswithhits" resultType="fileDTO" parameterType="string">
+		<![CDATA[
+			select * from BEfilelist where owner = #{owner} and important < 1 and hitcount > 10 order by filetype desc, important asc, filename asc
+		]]>
+	</select>
 	<select id="gettrashes" resultType="fileDTO" parameterType="int">
 		select * from BEfilelist where folder_ref = #{folder_ref} order by filetype desc, filename asc
 	</select>

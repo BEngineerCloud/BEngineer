@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.mybatis.spring.SqlSessionTemplate;
+import org.rosuda.REngine.Rserve.RConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,6 +40,8 @@ public class MainBean extends Thread{
 		if(loginCheck(session)) {
 			return "redirect:/beMember/beLogin.do";
 		}else {
+			String id = (String)session.getAttribute("id");
+			
 			return "beMain";
 		}
 	}
@@ -84,6 +87,45 @@ public class MainBean extends Thread{
 	public static boolean loginCheck(HttpSession session) { // 로그인 체크용 메서드, 세션에 nickname 세션이 정상적으로 있지 않을 경우 true  
 		String id = (String)session.getAttribute("id");
 		return id == null || id.equals("null") || id.equals("");
+	}
+	private String returnWC2(String id) {
+		RConnection r = null;
+		String retStr = "";
+		List filelist = sqlSession.selectList("bengineer.getfileswithhits", id);
+		String Fname = "c(";
+		String Fhit = "c(";
+		for(int i = 0; i < filelist.size(); i++) {
+			FileDTO dto = (FileDTO)filelist.get(i);
+			Fname += "'" + dto.getFilename() + "'";
+			Fhit += dto.getHitcount();
+			if(i != filelist.size() - 1) {
+				Fname += ",";
+				Fhit += ",";
+			}else {
+				Fname += ")";
+				Fhit += ")";
+			}
+		}
+		try {
+			r = new RConnection();
+			r.eval("library(wordcloud2)");
+			r.eval("library(htmltools)");
+			r.eval("Fname <- " + Fname);
+			r.eval("Fhit <- " + Fhit);
+			r.eval("Ftable <- NULL");
+			r.eval("for(i in 1:length(Fname)){for(j in 1:Fhit[i]){Ftable <- rbind(Ftable, Fname[i])}}");
+			r.eval("table <- table(Ftable)");
+			r.eval("filtered <- Filter(function(x){x >= 2}, table)");
+			r.eval("my_cloud <- wordcloud2(filtered, size = 1.1, color = 'random-light')");
+			r.eval("my_path <- renderTags(my_cloud)");
+			retStr = r.eval("my_path$html").asString();
+		} catch (Exception e) {
+			System.out.println(e);
+			e.printStackTrace();
+		} finally {
+			r.close();
+		}
+		return retStr;
 	}
 	public void run(){
 		//File bengineer = new File("d:/PM/BEngineer");

@@ -282,6 +282,11 @@ public class FileBean {
 	@RequestMapping("beRecentFiles.do") // 내 파일 보기
 	public String recentFile(HttpSession session, Model model, int weeks) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
+		if(weeks > 4) {
+			model.addAttribute("alert", "잘못된 접근입니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		String owner = (String)session.getAttribute("id");
 		FileDTO dto = new FileDTO();
 		dto.setOwner(owner);
@@ -296,11 +301,11 @@ public class FileBean {
 		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
 		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
 		folderaddress.add("내 최근 파일");
-		orgaddress.add(0);
+		orgaddress.add(-weeks);
 		model.addAttribute("folderaddress", folderaddress);
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", -weeks);
-		model.addAttribute("folder",0); // 상위폴더로 이동하기 위해
+		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		model.addAttribute("movefile_Ref",0);
 		model.addAttribute("movefile_FRef",0);
 		return "beFiles/beList";
@@ -716,11 +721,7 @@ public class FileBean {
 	@RequestMapping("throwToTrashcan.do")
 	public String throwToTrashcan(HttpSession session, Model model, String file_ref, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
-		if(!checkPower((String)session.getAttribute("id"), folder)) {
-			model.addAttribute("alert", "권한이 없습니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
-		}
+		String id = (String)session.getAttribute("id");
 		String [] files = file_ref.split(",");
 		String result = "";
 		String owner = "";
@@ -735,6 +736,11 @@ public class FileBean {
 			}
 			FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
 			owner = dto.getOwner();
+			if(!owner.equals(id)) {
+				model.addAttribute("alert", "타인의 파일은 지울 수 없습니다.");
+				model.addAttribute("location", "history.go(-1)");
+				return "beFiles/alert";
+			}
 			if(dto.getFiletype().equals("dir")) {
 				List subfiles = settrash(owner, filenum);
 				TrashHolder trashcan = (TrashHolder)subfiles.remove(subfiles.size() - 1);
@@ -783,6 +789,11 @@ public class FileBean {
 				List address_ref = getAddr(filenum);
 				dto = (FileDTO)address_ref.get(0);
 				owner = dto.getOwner();
+				if(!owner.equals(id)) {
+					model.addAttribute("alert", "타인의 파일은 지울 수 없습니다.");
+					model.addAttribute("location", "history.go(-1)");
+					return "beFiles/alert";
+				}
 				String fileaddress = "d:/PM/BEngineer/";
 				for(int j = address_ref.size() - 1; j > 0; j--) {
 					dto = (FileDTO)address_ref.get(j);
