@@ -62,9 +62,9 @@ public class FileBean {
 		dto.setOwner(owner);
 		int folder_ref = 0;
 		List address_ref = null;
-		//	
-		
-		RConnection r = new RConnection();
+		RConnection r = new RConnection(); // R연결
+		List font = sqlSession.selectList("bengineer.font");	// ,email);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		if(file.exists()) {
 			if(folder == 0) {
 				dto.setOrgname(owner);
