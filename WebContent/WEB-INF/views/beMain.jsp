@@ -70,6 +70,15 @@ $(function(){
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
 	<input type="button" id="hotlist" value="즐겨찾기"/>
+	<form action="/BEngineer/beFiles/beRecentFiles.do" method="post">
+		<select name="weeks">
+			<option value="1">1주 이내</option>
+			<option value="2">2주 이내</option>
+			<option value="3">3주 이내</option>
+			<option value="4">4주 이내</option>
+		</select>
+		<input type="submit" value="최근 파일"/>
+	</form>
 	button2
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">

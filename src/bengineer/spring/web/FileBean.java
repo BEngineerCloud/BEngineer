@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -52,6 +53,7 @@ public class FileBean {
 	}
 	@RequestMapping("beMyList.do") // 내 파일 보기
 	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) throws RserveException, REXPMismatchException {
+		if(folder < 0) {return "redirect:/beFiles/beRecentFiles.do?weeks=" + -folder;}
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		String owner = (String)session.getAttribute("id");
 		String nickname = (String)session.getAttribute("nickname");
@@ -124,7 +126,6 @@ public class FileBean {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
-		model.addAttribute("write", true);
 		model.addAttribute("movefile_Ref",movefile_Ref);
 		model.addAttribute("movefile_FRef",movefile_FRef);
 		
@@ -278,6 +279,32 @@ public class FileBean {
 			return "beFiles/beTrashcan";
 		}
 	}
+	@RequestMapping("beRecentFiles.do") // 내 파일 보기
+	public String recentFile(HttpSession session, Model model, int weeks) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
+		String owner = (String)session.getAttribute("id");
+		FileDTO dto = new FileDTO();
+		dto.setOwner(owner);
+		Date date = new Date(System.currentTimeMillis());
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(calendar.DATE, -(7 * weeks));
+		Timestamp updatedate = new Timestamp(calendar.getTimeInMillis());
+		dto.setUpdatedate(updatedate);
+		List filelist = sqlSession.selectList("bengineer.getrecentfiles", dto);
+		model.addAttribute("list", filelist);
+		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
+		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
+		folderaddress.add("내 최근 파일");
+		orgaddress.add(0);
+		model.addAttribute("folderaddress", folderaddress);
+		model.addAttribute("orgaddress", orgaddress);
+		model.addAttribute("folder_ref", -weeks);
+		model.addAttribute("folder",0); // 상위폴더로 이동하기 위해
+		model.addAttribute("movefile_Ref",0);
+		model.addAttribute("movefile_FRef",0);
+		return "beFiles/beList";
+	}
 	@RequestMapping(value="fileupload.do", method=RequestMethod.POST) // 업로드 페이지
 	public String upload(MultipartHttpServletRequest multi, int folder, String filename, HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 비 로그인 상태시 로그인 창으로 리디렉트
@@ -349,10 +376,7 @@ public class FileBean {
 				long filesize = copy.length();
 				dto.setFilesize(filesize);
 				sqlSession.update("bengineer.updatefile", dto);
-				ListDTO ldto = new ListDTO();
-				ldto.setLongnum(filesize - orgsize);
-				ldto.setList(address_ref);
-				sqlSession.update("bengineer.uploadsize", ldto);
+				uploadsize(filesize - orgsize, address_ref);
 				model.addAttribute("alert", "파일 덮어쓰기 완료");
 			}else {
 				dto.setFiletype(filetype);
@@ -360,10 +384,7 @@ public class FileBean {
 				long filesize = copy.length();
 				dto.setFilesize(filesize);
 				sqlSession.insert("bengineer.upload", dto);
-				ListDTO ldto = new ListDTO();
-				ldto.setLongnum(filesize);
-				ldto.setList(address_ref);
-				sqlSession.update("bengineer.uploadsize", ldto);
+				uploadsize(filesize, address_ref);
 				model.addAttribute("alert", "파일 업로드 완료");
 			}
 			if(owner.equals(session.getAttribute("id"))) {
@@ -1054,7 +1075,15 @@ public class FileBean {
 	@RequestMapping("writeText.do")
 	public String writeText(HttpSession session, Model model, int folder, String filename, String orgname, String content) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
-		if(!checkPower((String)session.getAttribute("id"), folder)) {
+		String id = (String)session.getAttribute("id");
+		FileDTO dto = new FileDTO();
+		int ret = folder;
+		if(folder <= 0) {
+			dto.setOwner(id);
+			dto.setOrgname(id);
+			folder = sqlSession.selectOne("bengineer.getparentnum", dto);
+		}
+		if(!checkPower(id, folder)) {
 			model.addAttribute("alert", "권한이 없습니다.");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
@@ -1065,7 +1094,7 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 		List address_ref = getAddr(folder);
-		FileDTO dto = (FileDTO)address_ref.get(0);
+		dto = (FileDTO)address_ref.get(0);
 		String owner = dto.getOwner();
 		if(dto.getImportant() == -1) {
 			String foldername = dto.getOrgname();
@@ -1100,9 +1129,9 @@ public class FileBean {
 			model.addAttribute("alert", "텍스트 파일을 수정하였습니다.");
 		}
 		if(owner.equals((String)session.getAttribute("id"))) {
-			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + ret + "\"");
 		}else {
-			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + ret + "\"");
 		}
 		return "beFiles/alert";
 	}
@@ -1368,7 +1397,7 @@ public class FileBean {
 	}
 	private boolean checkPower(String id, int folder_ref) {
 		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder_ref);
-		if(id.equals(dto.getOwner())) {return true;}
+		if(dto != null) {if(id.equals(dto.getOwner())) {return true;}}
 		List address_ref = getShareAddr(folder_ref, id);
 		if(address_ref == null) {return false;}
 		KeyDTO kdto = (KeyDTO)address_ref.get(address_ref.size() - 1);
@@ -1663,5 +1692,11 @@ public class FileBean {
 			name = name.substring(0, index) + num + name.substring(index);
 		}
 		return name;
+	}
+	public void uploadsize(long filesize, List address_ref) {
+		ListDTO ldto = new ListDTO();
+		ldto.setLongnum(filesize);
+		ldto.setList(address_ref);
+		sqlSession.update("bengineer.uploadsize", ldto);
 	}
 }

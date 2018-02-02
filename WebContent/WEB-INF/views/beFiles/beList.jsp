@@ -503,8 +503,8 @@
 				return false;
 			}
 			var orgname = form.orgname.value.trim() + ".txt";
-			var check = document.getElementById(orgname);
-			if(check != null){
+			var check = $("input[value='" + orgname + "']").attr("type");
+			if(check == "text"){
 				if(!confirm('파일을 덮어 쓰시겠습니까?')){
 					return false;
 				}
@@ -515,6 +515,7 @@
 			}
 			form.filename.value = form.filename.value.trim();
 			form.orgname.value = form.orgname.value.trim();
+			return false;
 		});
 	});
 	$(function(){
@@ -869,6 +870,15 @@
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
 	<input type="button" id="hotlist" value="즐겨찾기"/>
+	<form action="/BEngineer/beFiles/beRecentFiles.do" method="post">
+		<select name="weeks">
+			<option value="1">1주 이내</option>
+			<option value="2">2주 이내</option>
+			<option value="3">3주 이내</option>
+			<option value="4">4주 이내</option>
+		</select>
+		<input type="submit" value="최근 파일"/>
+	</form>
 	button2
 	<c:if test="${gra != null && gra !=''}">
 		<img src="data:image/png;base64,${gra}" style="height:50%; width:80%;" />

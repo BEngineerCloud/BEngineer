@@ -163,6 +163,9 @@
 			#{item.num}
 		</foreach> 
 	</update>
+	<update id="updatesize" parameterType="fileDTO">
+		update BEfilelist set filesize = filesize + #{filesize} where num = #{num}
+	</update>
 
 	<!-- num 
 	<select id="number" parameterType="int" resultType="fileDTO">
@@ -192,5 +195,8 @@
 			#{item}
 		</foreach> 
 	</update>
+	<select id="getrecentfiles" parameterType="fileDTO" resultType="fileDTO">
+		select * from BEfilelist where owner = #{owner} and updatedate > #{updatedate} and (filetype != 'dir' or filename = orgname) order by filetype desc, important asc, filename asc 
+	</select>
 	
 </mapper>

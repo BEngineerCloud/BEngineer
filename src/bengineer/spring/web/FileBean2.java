@@ -60,12 +60,15 @@ public class FileBean2 {
 		    		fileName=list[i].getName();
 		    		dto.setOrgname(fileName);
 		    		filePath=list[i].getPath();
+		    		long filesize = list[i].length();
 		    		fileType = fileName.substring(fileName.lastIndexOf("."));
 		    		moveFolder = filebean.checkFile(fileType); //파일확장자 범주에 들어가는 폴더이름	
 		    		moveParent = moveFile(filePath, fileName, moveFolder, owner); //파일 이동
 		    		if( moveParent!=0) {
 		    			dto.setNum(moveParent);
 		    			sqlSession.update("bengineer.autoarrange",dto);
+		    			dto.setFilesize(filesize);
+		    			sqlSession.update("bengineer.updatesize",dto);
 		    		}
 		    		else
 		    			break;
@@ -107,6 +110,7 @@ public class FileBean2 {
 		}
 		dto = (FileDTO)originalAddr.get(0);
 		String orgname = dto.getOrgname();
+		long filesize = dto.getFilesize();
 		newPath += orgname;
 		int num = dto.getNum();
 		dto.setNum(num);
@@ -148,6 +152,8 @@ public class FileBean2 {
 				model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
 			}	
 		}
+		filebean.uploadsize(-filesize, originalAddr);
+		filebean.uploadsize(filesize, newAddr);
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
 		return "beFiles/alert";
 	}
@@ -225,6 +231,7 @@ public class FileBean2 {
 			
 				dto = (FileDTO)originalAddr.get(0);
 				String orgname = dto.getOrgname();
+				long filesize = dto.getFilesize();
 				newPath += orgname;
 				int num = dto.getNum();
 				dto.setNum(num);
@@ -233,10 +240,13 @@ public class FileBean2 {
 			
 				is_Move = nioFilemove(originalPath,newPath);
 			
-				if(is_Move)
+				if(is_Move) {
 					sqlSession.update("bengineer.changeref",dto);
-				else 
+					filebean.uploadsize(-filesize, originalAddr);
+					filebean.uploadsize(filesize, newAddr);
+				}else { 
 					break;
+				}
 			}
 		}
 		
