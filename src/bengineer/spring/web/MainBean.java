@@ -3,6 +3,7 @@ package bengineer.spring.web;
 import java.io.File;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -70,9 +71,8 @@ public class MainBean extends Thread{
 					sqlSession.update("bengineer.beUpdatemember2",dto);
 				}
 			}
-		
-		session.setAttribute("id", dto.getId()); // 테스트용임시세션등록
-		session.setAttribute("nickname", dto.getNickname());
+			session.setAttribute("id", dto.getId()); // 테스트용임시세션등록
+			session.setAttribute("nickname", dto.getNickname());
 		}
 		return veiw;
 	}
@@ -83,6 +83,37 @@ public class MainBean extends Thread{
 	public String beLogout(HttpSession session) {
 		session.invalidate();
 		return "redirect:/beMain.do";
+	}
+	@RequestMapping("shortcut.do")
+	public String shortcut(HttpSession session, Model model, String filename, int hitcount) {
+		if(loginCheck(session)) {return "redirect:/beMember/beLogin.do";}
+		String id = (String)session.getAttribute("id");
+		FileDTO dto = new FileDTO();
+		dto.setFilename(filename);
+		dto.setHitcount(hitcount);
+		dto.setOwner(id);
+		List filelist = sqlSession.selectList("bengineer.shortcut", dto);
+		if(filelist.size() == 1) {
+			dto = (FileDTO)filelist.get(0);
+			if(dto.getFiletype().equals("dir")) {
+				return "redirect:/beFiles/beMyList.do?folder=" + dto.getNum();
+			}else {
+				return "redirect:/beFiles/beDownload.do?file_ref=" + dto.getNum();
+			}
+		}else {
+			model.addAttribute("list", filelist);
+		}
+		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
+		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
+		folderaddress.add("조건에 맞는 파일이 다수 있습니다.");
+		orgaddress.add(-5);
+		model.addAttribute("folderaddress", folderaddress);
+		model.addAttribute("orgaddress", orgaddress);
+		model.addAttribute("folder_ref", "...");
+		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
+		model.addAttribute("movefile_Ref",0);
+		model.addAttribute("movefile_FRef",0);
+		return "beFiles/beList";
 	}
 	public static boolean loginCheck(HttpSession session) { // 로그인 체크용 메서드, 세션에 nickname 세션이 정상적으로 있지 않을 경우 true  
 		String id = (String)session.getAttribute("id");
@@ -114,9 +145,11 @@ public class MainBean extends Thread{
 			r.eval("Fhit <- " + Fhit);
 			r.eval("Ftable <- NULL");
 			r.eval("for(i in 1:length(Fname)){for(j in 1:Fhit[i]){Ftable <- rbind(Ftable, Fname[i])}}");
+			r.eval("Sys.sleep(0.3)");
 			r.eval("table <- table(Ftable)");
 			r.eval("filtered <- Filter(function(x){x >= 2}, table)");
 			r.eval("my_cloud <- wordcloud2(filtered, size = 1.1, color = 'random-light')");
+			r.eval("Sys.sleep(0.7)");
 			r.eval("my_path <- renderTags(my_cloud)");
 			retStr = r.eval("my_path$html").asString();
 		} catch (Exception e) {

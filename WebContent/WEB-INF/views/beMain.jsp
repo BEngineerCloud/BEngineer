@@ -4,16 +4,7 @@
 	<script src='/BEngineer/resources/js/jquery-1.8.2.min.js' type='text/javascript'></script>
 	<script src='/BEngineer/resources/js/d3.v3.min.js' type='text/javascript'></script>
     <script src='/BEngineer/resources/js/nv.d3.min-new.js' type='text/javascript'></script>
-    <script src='/BEngineer/resources/js/fisheye.js' type='text/javascript'></script>    
-    <style>
-    .rChart {
-      display: block;
-      margin-left: auto; 
-      margin-right: auto;
-      width: 800px;
-      height: 400px;
-    }
-    </style>
+    <script src='/BEngineer/resources/js/fisheye.js' type='text/javascript'></script>
     <script src="/BEngineer/resources/wordcloud2/htmlwidgets-0.8/htmlwidgets.js?ver=2"></script>
 	<link href="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud.css" rel="stylesheet" />
 	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud2-all.js"></script>
@@ -100,7 +91,7 @@ $(function(){
 	</form>
 	button2
 </div>
-<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
+<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	${ content }
 </div>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">

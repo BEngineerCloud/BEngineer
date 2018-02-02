@@ -12,7 +12,7 @@
 	</select>
 	<select id="getfileswithhits" resultType="fileDTO" parameterType="string">
 		<![CDATA[
-			select * from BEfilelist where owner = #{owner} and important < 1 and hitcount > 10 order by filetype desc, important asc, filename asc
+			select * from BEfilelist where owner = #{owner} and important < 1 and hitcount > 10 and orgname != #{owner} order by filetype desc, important asc, filename asc
 		]]>
 	</select>
 	<select id="gettrashes" resultType="fileDTO" parameterType="int">
@@ -204,6 +204,11 @@
 		<foreach item="item" collection="list" open="(" separator="," close=")">
 			#{item}
 		</foreach>
+	</select>
+	<select id="shortcut" resultType="fileDTO" parameterType="fileDTO">
+		<![CDATA[
+			select * from BEfilelist where owner = #{owner} and important < 1 and filename = #{filename} and hitcount = #{hitcount} order by filetype desc, important asc, filename asc
+		]]>
 	</select>
 	
 </mapper>

@@ -38,7 +38,7 @@ HTMLWidgets.widget({
                       maskColor: x.maskColor,
                       maskGapWidth: x.maskGapWidth,
                       hover: x.hover || cv_handleHover,
-                      click: testclick
+                      click: shortcut
                       });
     }
 
@@ -50,6 +50,6 @@ HTMLWidgets.widget({
 
 
 });
-function testclick(item, dimension, evt){
-	alert("단어 : " + item[0]+ " 조회수 : " + item[1]);
+function shortcut(item, dimension, evt){
+	window.location = "/BEngineer/shortcut.do?filename=" + item[0] + "&hitcount=" + item[1];
 }

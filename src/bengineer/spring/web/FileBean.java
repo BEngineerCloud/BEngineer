@@ -53,7 +53,8 @@ public class FileBean {
 	}
 	@RequestMapping("beMyList.do") // 내 파일 보기
 	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) throws RserveException, REXPMismatchException {
-		if(folder < 0) {return "redirect:/beFiles/beRecentFiles.do?weeks=" + -folder;}
+		if(folder < 0 && folder > -5) {return "redirect:/beFiles/beRecentFiles.do?weeks=" + -folder;}
+		if(folder <= -5) {return "redirect:/beMain.do";}
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		String owner = (String)session.getAttribute("id");
 		String nickname = (String)session.getAttribute("nickname");
@@ -304,7 +305,7 @@ public class FileBean {
 		orgaddress.add(-weeks);
 		model.addAttribute("folderaddress", folderaddress);
 		model.addAttribute("orgaddress", orgaddress);
-		model.addAttribute("folder_ref", -weeks);
+		model.addAttribute("folder_ref", "...");
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		model.addAttribute("movefile_Ref",0);
 		model.addAttribute("movefile_FRef",0);
