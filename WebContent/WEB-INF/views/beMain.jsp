@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
    	<link rel='stylesheet' href='/BEngineer/resources/css/nv.d3.css'>
    	<link rel='stylesheet' href='/BEngineer/resources/css/rNVD3.css'>
+	<script src='/BEngineer/resources/js/jquery-1.8.2.min.js' type='text/javascript'></script>
 	<script src='/BEngineer/resources/js/d3.v3.min.js' type='text/javascript'></script>
     <script src='/BEngineer/resources/js/nv.d3.min-new.js' type='text/javascript'></script>
     <script src='/BEngineer/resources/js/fisheye.js' type='text/javascript'></script>    

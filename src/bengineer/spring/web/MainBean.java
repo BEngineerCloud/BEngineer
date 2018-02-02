@@ -36,12 +36,12 @@ public class MainBean extends Thread{
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beMain.do") // 메인페이지
-	public String main(HttpSession session) {
+	public String main(HttpSession session, Model model) {
 		if(loginCheck(session)) {
 			return "redirect:/beMember/beLogin.do";
 		}else {
 			String id = (String)session.getAttribute("id");
-			
+			model.addAttribute("content", returnWC2(id));
 			return "beMain";
 		}
 	}
