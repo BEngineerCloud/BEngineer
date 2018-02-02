@@ -11,6 +11,7 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.nio.channels.FileChannel;
@@ -22,6 +23,7 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -394,26 +396,40 @@ public class FileBean2 {
 			return true;
 		}	
 	}
-	/*
-	@RequestMapping("size.do")
-	public String size() throws RserveException, REXPMismatchException { 
-		FileDTO file = (FileDTO)sqlSession.selectOne("bengineer.mainSize","test3");
-		RConnection r = new RConnection();
-		r.eval("png('ajava.png')");
-		double Fsize =file.getFilesize();
-		System.out.println(Fsize);
-		r.eval("Fsize<-"+Fsize);
-		r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
-		r.eval("dev.off()");
-		byte [] img = r.eval("r=readBin('ajava.png','raw',700*400)").asBytes();
-		return "beFiles/size";
-	}
-	*/
+
 	@RequestMapping("hotlist.do")
 	public String hotlist(int num) {
 		System.out.println(num);
 		//sqlSession.update("bengineer.hot",num);
 		return "beFiles/hotlist"; 
 	}
-	
+ 	@RequestMapping("searchForm.do")
+    public String searchForm(String result,Model model) {
+       System.out.println(result);
+       int i = 0;
+       int m = 0;
+       int count = StringUtils.countOccurrencesOf(result,",");   // result에 ','갯수
+       int comma[] = new int[count];	// ',' 갯수만큼
+       String[] str = new String[count];
+       if(result.length() > 0){
+          int l = 0 ;
+          for(i=0;i<count;i++) {
+        	  l = result.indexOf(",", l + 1);
+	          comma[i]=l;
+        	  if(i==0) {
+        		  str[i]=result.substring(m,comma[i]);
+        	  }else {
+		          str[i]=result.substring(m+1,comma[i]);
+        	  }
+        	  m=comma[i];
+          }
+       }
+      if(count>0) { // 검색어가 있을때
+ 	  java.util.List<String> list = new ArrayList<String>(Arrays.asList(str));
+ 	  List filelist = sqlSession.selectList("bengineer.searchfiles", list);
+ 	  model.addAttribute("list",filelist);
+      }
+ 	  return "beFiles/searchForm";
+      
+ 	}
 }

@@ -171,18 +171,10 @@
 	<update id="updatesize" parameterType="fileDTO">
 		update BEfilelist set filesize = filesize + #{filesize} where num = #{num}
 	</update>
-
-	<!-- num 
-	<select id="number" parameterType="int" resultType="fileDTO">
-		select num from befilelist where folder_ref=#{folder_ref}
-	</select>
-	-->
-	<!-- size -->
-	<select id="size" parameterType="int" resultType="fileDTO">
+	<select id="size" parameterType="int" resultType="fileDTO"> <!-- 그래프 -->
 		select * from befilelist where folder_ref=#{folder_ref}
 	</select>
-	<!-- 즐찾 -->
-	<update id="hot" parameterType="int">
+	<update id="hot" parameterType="int"> <!-- 중요파일 -->
 		update BEfilelist set important = 2 where num = #{num}
 	</update>
 	<update id="updateowner" parameterType="string">
@@ -202,6 +194,16 @@
 	</update>
 	<select id="getrecentfiles" parameterType="fileDTO" resultType="fileDTO">
 		select * from BEfilelist where owner = #{owner} and updatedate > #{updatedate} and (filetype != 'dir' or filename = orgname) order by filetype desc, important asc, filename asc 
+	</select>
+	<!-- 초성 검색에 필요한 파일 목록들  / parameterType="string" where email=${email}-->
+	<select id="font" resultType="fileDTO">
+		select * from befilelist
+	</select>
+	<select id="searchfiles" parameterType="list" resultType="fileDTO">
+		select * from BEfilelist where filename in
+		<foreach item="item" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
 	</select>
 	
 </mapper>
