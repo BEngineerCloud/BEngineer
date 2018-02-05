@@ -123,13 +123,13 @@ public class MainBean extends Thread{
 		RConnection r = null;
 		String retStr = "";
 		List filelist = sqlSession.selectList("bengineer.getfilesforhits", id);
+		if(filelist.size() == 0) {
+			return "자주 찾는 파일이 없습니다.";
+		}
 		String Fname = "c(";
 		String Fhit = "c(";
 		for(int i = 0; i < filelist.size(); i++) {
 			FileDTO dto = (FileDTO)filelist.get(i);
-			if(id.equals(dto.getOrgname())) {
-				continue;
-			}
 			int hit = dto.getHitcount();
 			String filename = dto.getFilename();
 			Fname += "'" + filename + "'";
@@ -153,8 +153,7 @@ public class MainBean extends Thread{
 			r.eval("Fhit <- " + Fhit);
 			r.eval("table <- as.table(Fhit)");
 			r.eval("names(table) <- Fname");
-			r.eval("filtered <- Filter(function(x){x >= 2}, table)");
-			r.eval("my_cloud <- wordcloud2(filtered, size = 1.1, color = 'random-light')");
+			r.eval("my_cloud <- wordcloud2(table, size = 1.1, color = 'random-light')");
 			r.eval("Sys.sleep(0.7)");
 			r.eval("my_path <- renderTags(my_cloud)");
 			retStr = r.eval("my_path$html").asString();
