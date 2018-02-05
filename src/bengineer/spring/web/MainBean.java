@@ -106,10 +106,10 @@ public class MainBean extends Thread{
 		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
 		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
 		folderaddress.add("조건에 맞는 파일이 다수 있습니다.");
-		orgaddress.add(-5);
+		orgaddress.add(null);
 		model.addAttribute("folderaddress", folderaddress);
 		model.addAttribute("orgaddress", orgaddress);
-		model.addAttribute("folder_ref", "...");
+		model.addAttribute("folder_ref", -5);
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		model.addAttribute("movefile_Ref",0);
 		model.addAttribute("movefile_FRef",0);
@@ -122,13 +122,18 @@ public class MainBean extends Thread{
 	private String returnWC2(String id) {
 		RConnection r = null;
 		String retStr = "";
-		List filelist = sqlSession.selectList("bengineer.getfileswithhits", id);
+		List filelist = sqlSession.selectList("bengineer.getfilesforhits", id);
 		String Fname = "c(";
 		String Fhit = "c(";
 		for(int i = 0; i < filelist.size(); i++) {
 			FileDTO dto = (FileDTO)filelist.get(i);
-			Fname += "'" + dto.getFilename() + "'";
-			Fhit += dto.getHitcount();
+			if(id.equals(dto.getOrgname())) {
+				continue;
+			}
+			int hit = dto.getHitcount();
+			String filename = dto.getFilename();
+			Fname += "'" + filename + "'";
+			Fhit += hit;
 			if(i != filelist.size() - 1) {
 				Fname += ",";
 				Fhit += ",";
@@ -137,16 +142,17 @@ public class MainBean extends Thread{
 				Fhit += ")";
 			}
 		}
+		if(Fhit.equals("c()")) {
+			return "자주 찾는 파일이 없습니다.";
+		}
 		try {
 			r = new RConnection();
 			r.eval("library(wordcloud2)");
 			r.eval("library(htmltools)");
 			r.eval("Fname <- " + Fname);
 			r.eval("Fhit <- " + Fhit);
-			r.eval("Ftable <- NULL");
-			r.eval("for(i in 1:length(Fname)){for(j in 1:Fhit[i]){Ftable <- rbind(Ftable, Fname[i])}}");
-			r.eval("Sys.sleep(0.3)");
-			r.eval("table <- table(Ftable)");
+			r.eval("table <- as.table(Fhit)");
+			r.eval("names(table) <- Fname");
 			r.eval("filtered <- Filter(function(x){x >= 2}, table)");
 			r.eval("my_cloud <- wordcloud2(filtered, size = 1.1, color = 'random-light')");
 			r.eval("Sys.sleep(0.7)");

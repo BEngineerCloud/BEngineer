@@ -950,7 +950,7 @@
 				<input type="hidden" name="nickname" />
 				<input type="hidden" name="file_ref" />
 				<input type="hidden" name="folder" value="${folder_ref }"/>
-				<input type="submit" name="submitchangeowner" value="파일 주인 바꾸기"/>
+				<input type="submit" name="submitchangeowner" value="주인 바꾸기"/>
 			</form>
 		</div>
 	</div>

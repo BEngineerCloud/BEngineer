@@ -203,6 +203,8 @@
   // The return value is either null, or an object with fill, padding,
   // defaultWidth, defaultHeight fields.
   function sizingPolicy(el) {
+	document.getElementById(el.id).style.height = "100%";
+	document.getElementById(el.id).style.width = "100%";
     var sizingEl = document.querySelector("script[data-for='" + el.id + "'][type='application/htmlwidget-sizing']");
     if (!sizingEl)
       return null;

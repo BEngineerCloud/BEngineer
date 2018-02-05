@@ -207,7 +207,9 @@ if (!window.clearImmediate) {
       classes: null,
 
       hover: null,
-      click: null
+      click: null,
+      
+      viewer: {fill: true}
     };
 
     if (options) {

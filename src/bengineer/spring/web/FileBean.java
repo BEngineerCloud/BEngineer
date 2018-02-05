@@ -302,10 +302,10 @@ public class FileBean {
 		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
 		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
 		folderaddress.add("내 최근 파일");
-		orgaddress.add(-weeks);
+		orgaddress.add(null);
 		model.addAttribute("folderaddress", folderaddress);
 		model.addAttribute("orgaddress", orgaddress);
-		model.addAttribute("folder_ref", "...");
+		model.addAttribute("folder_ref", -weeks);
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		model.addAttribute("movefile_Ref",0);
 		model.addAttribute("movefile_FRef",0);
@@ -945,7 +945,7 @@ public class FileBean {
 					check.mkdir();
 				}
 			}
-			sqlSession.delete("bengineer.deletetrash", trash.getNum());
+			//sqlSession.delete("bengineer.deletetrash", trash.getNum());
 		}
 		ListDTO ldto = new ListDTO();
 		dto.setOwner(owner);
