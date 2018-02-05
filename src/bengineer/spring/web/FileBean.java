@@ -945,7 +945,7 @@ public class FileBean {
 					check.mkdir();
 				}
 			}
-			//sqlSession.delete("bengineer.deletetrash", trash.getNum());
+			// sqlSession.delete("bengineer.deletetrash", trash.getNum());
 		}
 		ListDTO ldto = new ListDTO();
 		dto.setOwner(owner);
