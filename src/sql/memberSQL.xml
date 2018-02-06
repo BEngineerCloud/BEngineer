@@ -31,7 +31,7 @@
 	</insert>
 	
 	<update id="beUpdatenickname" parameterType="MemberDTO">
-		update bemember set nickname = #{nickname} where id=#{id}
+		update bemember set nickname = #{nickname}, pw = #{pw} where id=#{id}
 	</update>
 	
 	<update id="beUpdatemember2" parameterType="MemberDTO">
