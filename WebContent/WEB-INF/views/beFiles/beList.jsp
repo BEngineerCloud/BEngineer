@@ -1002,11 +1002,15 @@
 				<input type="hidden" name="file_ref" />
 				<input type="hidden" name="file_fref"/>
 				<input type="hidden" name="multimove_flag" value=0/>
+				<input type="hidden" name="multicopy_flag" value=0/>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
 				</div>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="hidden" id="multimove" value="이동" />
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="multicopy" value="복사" />
 				</div>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="hidden" id="throwtotrashcan" value="지우기" />
