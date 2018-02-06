@@ -1,9 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- 날짜표현하기위해.. -->
-
-<h2>${allList.size()}개의 문의가 있습니다.</h2>
 <table border="1">
+<h3>${allList.size()}개의 문의가 있습니다.</h3>
 <tr>
 <td align="center">글번호</td>
 <td align="center">제목</td>
@@ -13,10 +12,10 @@
 </tr>
 <c:forEach var="all" items="${allList}">
 <tr>
-<td width="30" align="center">${all.num}</td> 
-<td width="100"><a href="/BEngineer/inquiry/replyForm.do?num=${all.num}">${all.title}</a></td> 
+<td width="50" align="center">${all.num}</td> 
+<td width="200"><a href="/BEngineer/inquiry/replyForm.do?num=${all.num}">${all.title}</a></td> 
 <!-- <td>${board.content}</td>  -->
-<td width="50">${all.id}</td> 
+<td width="100">${all.id}</td> 
 <td>
 <fmt:formatDate value="${all.reg_date}" pattern="MM-dd HH:mm"/>
 </td><br/>

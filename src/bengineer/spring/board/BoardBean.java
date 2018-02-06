@@ -29,23 +29,14 @@ public class BoardBean {
 		List list = sqlSession.selectList("board.List");
 		model.addAttribute("list",list);
 		session.setAttribute("Id", dto.getId());
-		String ss = (String)session.getAttribute("Id");	//세션잇는지
-		if(ss==null) {
-			return "redirect:/manager/login.do";
-		}else{
-			return "/board/list";
-		}
+		return "/board/list";
+		
 	}
 	// 공지사항 작성폼
 	@RequestMapping("writeForm.do")
 	public String writeForm(HttpSession session,ManagerDTO dto) { 
 		session.setAttribute("Id", dto.getId());
-		String ss = (String)session.getAttribute("Id");	//세션잇는지
-		if(ss==null) {
-			return "redirect:/manager/login.do";
-		}else{
-			return "/board/writeForm"; 
-		}
+		return "/board/writeForm"; 
 	}
 	// 작성완료
 	@RequestMapping("writePro.do")
@@ -60,12 +51,7 @@ public class BoardBean {
 	public String updateForm(Model model,HttpSession session,int num) { 
 		BoardDTO con = (BoardDTO)sqlSession.selectOne("board.read",num);	
 		model.addAttribute("con",con);
-		String ss = (String)session.getAttribute("Id");	//세션잇는지
-		if(ss==null) {
-			return "redirect:/manager/login.do";
-		}else{
-			return "/board/updateForm";
-		}
+		return "/board/updateForm";
 	}
 	// 수정
 	@RequestMapping("update.do")

@@ -13,7 +13,7 @@
 		$("#files > div").click(function(){ // 파일 클릭시
 			var filename = $(this).text();
 			var ref = $(this).attr("name");
-			var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
+			var orgname = document.getElementById(ref); // 원 파일명 저장되어있는 인풋의 값 가져오기
 			$("font#filename").text(orgname.value); // 주소부분에 표시
 			var important =document.getElementById(ref + "important");
 			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
@@ -340,8 +340,8 @@
 					return false;
 				}
 			}else if(form.submitchangename.value == "파일명 변경"){
-				var check = $("input[value='" + orgname + "']").attr("type");
-				if(check == "text"){
+				var check = document.getElementById(orgname);
+				if(check != null){
 					alert("이미 해당 위치에 같은 이름의 파일이 존재합니다.");
 					return false;
 				}
@@ -644,7 +644,7 @@
 	}
 	$(function(){
 		$("#hotlist").click(function(){
-			window.location = "/BEngineer/beFiles/hotlist.do?num=0";
+			window.location = "/BEngineer/beFiles/hotlist.do";
 		});
 	});
 	//초성검색 @@@@@@@@@@
@@ -950,7 +950,7 @@
 				<input type="hidden" name="nickname" />
 				<input type="hidden" name="file_ref" />
 				<input type="hidden" name="folder" value="${folder_ref }"/>
-				<input type="submit" name="submitchangeowner" value="주인 바꾸기"/>
+				<input type="submit" name="submitchangeowner" value="파일 주인 바꾸기"/>
 			</form>
 		</div>
 	</div>
@@ -999,7 +999,7 @@
 <!-- 파일들 창 -->
 <div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
-		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>

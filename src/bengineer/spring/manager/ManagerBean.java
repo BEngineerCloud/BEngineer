@@ -30,15 +30,13 @@ public class ManagerBean {
 	// 로그인체크
 	@RequestMapping("loginPro.do")
 	public String loginPro(ManagerDTO dto,HttpSession session) {
-	
-		Integer check = (Integer)sqlSession.selectOne("loginCheck",dto); //manager.
+		Integer check = (Integer)sqlSession.selectOne("loginCheck",dto);
 		String view = "redirect:/manager/login.do";
-		//System.out.println(check);
 		if(check==1) {
 			session.setAttribute("Id", dto.getId());
 			view="redirect:/manager/mMain.do";
 		}
-		return view;	
+		return view;
 	}	
 	// 로그아웃
 	@RequestMapping("logout.do")

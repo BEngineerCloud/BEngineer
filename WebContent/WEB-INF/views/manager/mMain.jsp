@@ -95,11 +95,11 @@
 		});
 	});
 </script>
-    	<h2>로그인</h2>    
+		<table>
     	<input name="logout" type="button" value="로그아웃" onClick="location.href='logout.do'"/>	
         <a href="/BEngineer/inquiry/allInquiry.do">문의내역</a>
         <a href="/BEngineer/board/list.do?id=${sessionScope.Id }">공지사항</a>
-        <a href="/BEngineer/manager/impose.do">유저제재</a>
+        <a href="/BEngineer/manager/imposeForm.do">유저제재</a>
         <a href="/BEngineer/manager/">유료전환</a>
         <form id="addnamefilterform" class="filterform" action="/BEngineer/manager/addNameFilter.do">
         	파일명 필터 추가하기 : 
@@ -203,3 +203,4 @@
         	<input type="number" name="scanrate" min="5000" />
         	<input type="submit" value="변경하기" />
         </form>
+</table>
