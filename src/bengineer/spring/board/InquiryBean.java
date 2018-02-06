@@ -26,10 +26,12 @@ public class InquiryBean {
 	private SqlSessionTemplate sqlSession = null;
 	// ���
 	@RequestMapping("inList.do")
-	public String list(Model model,HttpSession session,MemberDTO dto) { 
-		List list = sqlSession.selectList("board.List");
+	public String list(Model model,HttpSession session,MemberDTO dto,String id) { 
+		List list = sqlSession.selectList("board.inList",dto.getId());
 		model.addAttribute("inList",list);
 		session.setAttribute("Id", dto.getId());
+		System.out.println(dto.getId());
+		System.out.println(id);
 		return "/inquiry/inList";
 	}
 	// �ۼ�

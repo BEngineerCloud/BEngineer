@@ -2,6 +2,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script type="text/javascript">
+var clickedfile = new Array();
+var clickedImportant = new Array(); //여러 파일/폴더 선택 시 중요폴더가 포함되어있는지 알기 위해
+var orgList = new Array(); // 파일/폴더 경로 리스트 받아오기
+<c:forEach items="${orgaddress}" var="item">
+	orgList.push("${item}");
+</c:forEach>
 $(function(){
 	 $("#files > div").click(function(){ // 파일 클릭시
 	  var filename = $(this).text();
@@ -654,6 +660,175 @@ function searchCho(str){
 	var Cho = parseInt((( UniValue - Jong ) / 28 ) / 21);
 	return Cho;
 }
+////////////////
+	$(function(){
+		$("#files > div").click(function(){ // 파일 클릭시
+			var filename = $(this).text();
+			var ref = $(this).attr("name");
+			var orgname = document.getElementById(ref); // 원 파일명 저장되어있는 인풋의 값 가져오기
+			$("font#filename").text(orgname.value); // 주소부분에 표시
+			var important =document.getElementById(ref + "important");
+			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			var moveform = document.getElementById("moveform"); // moveform 가져오기
+			var copyform = document.getElementById("copyform"); // copyform 가져오기
+			
+			if(important.value!=-1){ // 기본폴더는 important가 -1이므로 기본폴더가 아닐 시 이동버튼 나타냄
+				if(moveform.submitmove.value=="이동"){ // form.submitmove 값이 이동일 시
+					moveform.submitmove.type = "submit"; // form.submitmove 타입을 submit으로 설정
+				}
+			}
+			else{ //기본 폴더일시 이동버튼 숨기기
+				moveform.submitmove.type="hidden";
+			}
+			
+			
+			if(moveform.submitmove.value == "이동"){ // moveform.submitmove 값이 '이동'일 시
+				moveform.select_flag.value=ref;		// movefrom.select_flag의 값에 클릭된 fileform.ref 대입
+			}else if(moveform.submitmove.value == "이동하기"){ // moveform.submitmove 값이 '이동하기'일 시
+				moveform.folder_ref.value=ref;			  // moveform.folder_ref 값에 클릭된 fileform.ref 대입
+			}
+			
+			//현재 파일 이동하기 클릭 후 다른폴더를 선택했을 때 이동하기 버튼이 나오게하기 위해서
+			if(moveform.folder_ref.value!=0){ 	   // moveform.folder_ref 값이 0이 아닐시
+				if(type.value=="dir"&&(moveform.ref.value!=moveform.folder_ref.value)){
+					moveform.submitmove.type="submit"; // moveform.submitmove 타입을 submit으로 설정
+				}
+				else{ // 클릭한 객체가 폴더가 아니고 파일인 경우 이동하기 버튼을 숨긴다.
+					moveform.submitmove.type="hidden";
+				}
+			}
+			
+			if(copyform.submitcopy.value=="복사"){ // form.submitcopy 값이 복사일 시
+				copyform.submitcopy.type = "submit"; // form.submitcopy 타입을 submit으로 설정
+			}
+			
+			if(copyform.submitcopy.value == "복사"){ // copyform.submitcopy 값이 '이동'일 시
+				copyform.select_flag.value=ref;		// copyfrom.select_flag의 값에 클릭된 fileform.ref 대입
+			}else if(copyform.submitcopy.value == "복사하기"){ // copyform.submitcopy 값이 '이동하기'일 시
+				copyform.folder_ref.value=ref;			  // copyform.folder_ref 값에 클릭된 fileform.ref 대입
+			}
+			
+			//현재 파일 복사하기 클릭 후 다른폴더를 선택했을 때 이동하기 버튼이 나오게하기 위해서
+			if(copyform.folder_ref.value!=0){ 	   // moveform.folder_ref 값이 0이 아닐시
+				if(type.value=="dir"&&(copyform.ref.value!=copyform.folder_ref.value)){
+					copyform.submitcopy.type="submit"; // moveform.submitmove 타입을 submit으로 설정
+				}
+				else{ // 클릭한 객체가 폴더가 아니고 파일인 경우 이동하기 버튼을 숨긴다.
+					copyform.submitcopy.type="hidden";
+				}
+			}
+			
+			form = document.getElementById("multidownform");
+			if(type.value=="dir"&&(form.multimove.value=="이동하기" || form.multicopy.value=="복사하기")){
+				form.file_fref.value=ref;
+			}else{
+				form.file_fref.value="";
+			}
+			if(document.getElementById("multidowntext").type == "text"){
+				var index = clickedfile.indexOf(ref);
+				var flag = 0;
+				moveform.submitmove.type="hidden";
+				copyform.submitcopy.type="hidden";
+				if(index == -1){
+					clickedfile.push(ref);
+					clickedImportant.push(important.value);
+					$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+				}else{
+					clickedfile.splice(index, 1);
+					clickedImportant.splice(index, 1);
+					$(this).css("background-color","#ff6666"); // 클릭파일 색 바꾸기
+				}
+				if(form.file_fref.value=="" ||(form.multimove.value=="이동" && form.multimove.type=="button")){
+					for(var i=0; i<clickedImportant.length; i++){ // 클릭한 파일/폴더 중에 중요폴더가 포함됐는지 검사
+						if(clickedImportant[i]==-1){
+							flag=1;
+						}
+					}
+				}
+				if(flag==1){
+					form.multimove.type="hidden";
+					multimoveflag = 0;
+				}else{
+					form.multicopy.type="button";
+					form.multimove.type="button";
+				}
+			}else{
+				hinder(); // 업로드 입력, 폴더생성 입력 취소
+				form.file_ref.value = ref;
+				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+				setForm(type, ref);
+				if(type.value == "dir"){
+					var form = document.getElementById("folderdownform");
+					form.file_ref.value = ref;
+					form.submitfolderdown.type = "submit";
+				}
+				form = document.getElementById("sharecheckform");
+				form.file.value = ref;
+				form.submitsharecheck.type = "submit";
+				document.getElementById("unsharediv").style.display = "block";
+				document.getElementById("unshareform").file_ref.value = ref;
+				if(important.value != -1){
+					document.getElementById("throwtotrashcan").type = "button";
+					document.getElementById("changeownerdiv").style.display = "block";
+					document.getElementById("changeownerform").file_ref.value = ref;
+				}
+				if(type.value == ".txt"){
+					form = document.getElementById("rewritetextform");
+					form.filenum.value = ref;
+					form.submitrewritetext.type = "submit";
+				}
+			}
+		});
+	});
+	$(function(){
+		$("#files > div").dblclick(function(){ // 파일 더블클릭시
+			var ref = $(this).attr("name");
+			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			var moveform = document.getElementById("moveform");
+			var multidownform = document.getElementById("multidownform");
+			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
+				if(moveform.select_flag.value!=0 && moveform.folder_ref.value!=0){
+					if(moveform.select_flag.value==moveform.folder_ref.value){ // 이동버튼 클릭 후 자기자신을 더블클릭할 때
+						alert("이동할 폴더를 다시 선택해주세요.");
+						return false;
+					}
+					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + ref+"&movefile_Ref="+moveform.select_flag.value+"&movefile_FRef="+moveform.folder_ref.value; 
+					// 파일/폴더를 선택 한 후 다른 폴더 경로로 들어갈 때 movefile_Ref, movefile_FRef에 값을 대입
+				}else if(copyform.select_flag.value!=0 && copyform.folder_ref.value!=0){
+					if(copyform.select_flag.value==copyform.folder_ref.value){ // 이동버튼 클릭 후 자기자신을 더블클릭할 때
+						alert("복사할 폴더를 다시 선택해주세요.");
+						return false;
+					}
+					window.location = "/BEngineer/beFiles/beCopyList.do?folder=" + ref+"&copyfile_Ref="+copyform.select_flag.value+"&copyfile_FRef="+copyform.folder_ref.value; 
+					// 파일/폴더를 선택 한 후 다른 폴더 경로로 들어갈 때 copyfile_Ref, copyfile_FRef에 값을 대입
+				}
+				else if(multidownform.file_ref.value!="" && multidownform.file_fref.value!=0){
+					var multiRef = multidownform.file_ref.value;
+					var multiRefArray = multiRef.split(',');
+					var flag = 0;
+					for(var i = 0; i < multiRefArray.length; i++){
+						if(multiRefArray[i]==multidownform.file_fref.value)
+							flag = 1;
+					}
+					if(flag==1){ // 이동버튼 클릭 후 자기자신을 더블클릭할 때
+						alert("이동할 폴더를 다시 선택해주세요.");
+						return false;
+					}
+					
+					if(multidownform.multimove_flag.value !=0)
+						window.location = "/BEngineer/beFiles/beMultilist.do?folder=" + ref+"&multifile_Ref="+multidownform.file_ref.value+"&multifile_FRef="+multidownform.file_fref.value+"&flag="+1;
+					
+					else if(multidownform.multicopy_flag.value !=0)
+						window.location = "/BEngineer/beFiles/beMultilist.do?folder=" + ref+"&multifile_Ref="+multidownform.file_ref.value+"&multifile_FRef="+multidownform.file_fref.value+"&flag="+2;
+				}
+				else
+					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + ref;
+			}
+			else // 파일일 때 해당 파일 다운로드
+				window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + ref;
+		});
+	});
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;">
@@ -693,6 +868,8 @@ function searchCho(str){
 <div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
  <c:forEach var="file" items="${list}">
   <div class="file" id="${file.num}" name="${file.filename}" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename}<input type="text" id="${file.num}" value="${file.orgname}" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+ 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
+		<input type="hidden" id="${file.num }important" value="${file.important }"/>
  </c:forEach>
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
