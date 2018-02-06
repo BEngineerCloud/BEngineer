@@ -55,11 +55,15 @@ public class LoginBean {
 	public String beJoinmemberpro(MemberDTO dto, HttpSession session) {
 		FileBean filebean = new FileBean();
 		filebean.setSqlSession(sqlSession);
-			
+		
 		String id="";
 		id = filebean.makecode(8);
+		Integer checkId = (Integer)sqlSession.selectOne("bengineer.beChecklogin",id);
+		while(checkId>0) {
+			id = filebean.makecode(8);
+			checkId = (Integer)sqlSession.selectOne("bengineer.beChecklogin",id);
+		}
 		dto.setId(id);
-			
 		sqlSession.insert("bengineer.beInsertmember2", dto);
 		return "beMember/beJoinmemberpro";
 	}	
