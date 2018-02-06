@@ -50,7 +50,7 @@ public class MainBean extends Thread{
 	@RequestMapping(value="beMaintemp.do") // 메인페이지
 	public String beMaintemp(MemberDTO dto, HttpSession session, Model model) {
 		String email = dto.getEmail();
-		Integer check = (Integer)sqlSession.selectOne("bengineer.beChecklogin",dto.getId());
+		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",dto.getId());
 		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember", email);
 		String veiw= "redirect:/beMain.do";
 		if(impose==1) {
