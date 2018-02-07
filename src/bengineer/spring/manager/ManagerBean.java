@@ -296,5 +296,13 @@ public class ManagerBean {
 		model.addAttribute("location", "\"/BEngineer/manager/mMain.do\"");
 		return "beFiles/alert";
 	}
+	
+	@RequestMapping("charge.do")
+	public String charge(Model model) { 
+		List list = sqlSession.selectList("manager.server");
+		int all = sqlSession.selectOne("manager.all");
+		model.addAttribute("list",list);
+		model.addAttribute("all",all);
+		return "/manager/charge"; 
+	}
 }
-

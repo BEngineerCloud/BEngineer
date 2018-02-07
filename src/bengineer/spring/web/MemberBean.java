@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
 
 import bengineer.spring.board.BoardDTO;
+import bengineer.spring.web.MemberDTO;
 
 @Controller()
 @RequestMapping("/beMember/*")
@@ -128,5 +129,19 @@ public class MemberBean {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	@RequestMapping("upgrade.do")
+	public String upgrade(HttpSession session,Model model,String id) { 
+		Integer giga = (Integer)sqlSession.selectOne("bengineer.giga",id);
+		Integer chmod = (Integer)sqlSession.selectOne("bengineer.chmod",id);
+		model.addAttribute("id",id);
+		model.addAttribute("giga",giga);
+		model.addAttribute("giga2",chmod);
+		return "/beMember/upgrade";
+	}
+	@RequestMapping("change.do")
+	public String change(MemberDTO dto) {
+		sqlSession.update("bengineer.change",dto);
+		return "/beMember/change";	
 	}
 }

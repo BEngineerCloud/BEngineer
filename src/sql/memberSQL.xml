@@ -61,4 +61,17 @@
 	<select id="beSelectpw" resultType="string" parameterType="string">
 		select pw from bemember where email=#{email}
 	</select>
+	
+	<!-- 사용중인 Byte -->
+	<select id="giga" resultType="int" parameterType="string"> <!-- **조인?.. -->
+		select sum(filesize) from befilelist where owner=#{owner}
+	</select>
+	<!-- 최대 용량 -->
+	<select id="chmod" resultType="int" parameterType="string">  
+		select chmod from bemember where id=#{id}
+	</select>
+	<!-- 유료전환 -->
+	<update id="change" parameterType="memberDTO">
+  		update  bemember set chmod=#{chmod},term=sysdate+365 where id = #{id}
+  	</update>
 </mapper>

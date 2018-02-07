@@ -46,5 +46,13 @@
 	<update id="reply" parameterType="bengineer.spring.board.InquiryDTO">
   		update  BEinquiry set reply=#{reply} where num = #{num}
   	</update>
+  	<!-- 서버구동현황 -->
+	<select id="server" resultType="fileDTO">
+		select sum(filesize)/1024 as filesize,owner from befilelist group by owner
+	</select>
+	<!-- 모든유저사용량 -->
+	<select id="all" resultType="int">
+		select sum(filesize)/1024/1024 from befilelist
+	</select>
 
 </mapper>

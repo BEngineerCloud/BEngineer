@@ -30,8 +30,6 @@ public class InquiryBean {
 		List list = sqlSession.selectList("board.inList",dto.getId());
 		model.addAttribute("inList",list);
 		session.setAttribute("Id", dto.getId());
-		System.out.println(dto.getId());
-		System.out.println(id);
 		return "/inquiry/inList";
 	}
 	// �ۼ�
@@ -73,13 +71,6 @@ public class InquiryBean {
 	@RequestMapping("reply.do")
 	public String reply(InquiryDTO dto,int num) {
 		sqlSession.update("manager.reply",dto);
-		//System.out.println(dto.getReply()+"dto");
 		return "redirect:/inquiry/allInquiry.do";
 	}
-	/*
-	@RequestMapping("inPro.do")
-	public String writePro(BoardDTO dto,HttpSession session,Model model) { 
-		return "redirect:/inquiry/inList.do";
-	}
-	*/
 }
