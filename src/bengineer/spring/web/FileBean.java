@@ -52,7 +52,7 @@ public class FileBean {
 		this.sqlSession = sqlSession;
 	}
 	@RequestMapping("beMyList.do") // 내 파일 보기
-	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) throws RserveException, REXPMismatchException {
+	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) {
 		if(folder < 0 && folder > -5) {return "redirect:/beFiles/beRecentFiles.do?weeks=" + -folder;}
 		if(folder <= -5) {return "redirect:/beMain.do";}
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
@@ -63,7 +63,7 @@ public class FileBean {
 		dto.setOwner(owner);
 		int folder_ref = 0;
 		List address_ref = null;
-		RConnection r = new RConnection(); // R연결
+		RConnection r = null;
 		List font = sqlSession.selectList("bengineer.font");	// ,email);
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		if(file.exists()) {
@@ -134,30 +134,39 @@ public class FileBean {
 		
 		List list = sqlSession.selectList("bengineer.size",folder_ref);
 		if(list.size()!=0) {
-			//r.eval("library(base64enc)");
-			r.eval("png('rjava.png')");
-		
-			String Fsize ="c(";
-			for(int i=0; i<list.size();i++) {
-				FileDTO file1 = (FileDTO)list.get(i);
-				if(i==list.size()-1) {
-					Fsize+=file1.getFilesize()+")";
-				}else {
-					Fsize+=file1.getFilesize()+",";
+			try {
+				r = new RConnection();
+				//r.eval("library(base64enc)");
+				r.eval("png('rjava.png')");
+			
+				String Fsize ="c(";
+				//String Fname ="c(";
+				for(int i=0; i<list.size();i++) {
+					FileDTO file1 = (FileDTO)list.get(i);
+					if(i==list.size()-1) {
+						Fsize+=file1.getFilesize()+")";
+						//Fname += "'" + file1.getFilename() + "')";
+					}else {
+						Fsize+=file1.getFilesize()+",";
+						//Fname += "'" + file1.getFilename() + "', ";
+					}
 				}
+				r.eval("Fsize<-"+Fsize);
+				//System.out.println(Fsize);
+				//r.eval("Fname <- " + Fname);
+				r.eval("barplot(Fsize, horiz = TRUE, axes = FALSE, col=rainbow(20))");
+				//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");names.arg = Fname, cex.names = 2, 
+				r.eval("dev.off()");
+				REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
+				/*
+				r.eval("encoded_png<-sprintf(\"<img src='data:image/png;base64,%s'/>\", base64encode(\"rjava.png\"))");
+				r.eval("encoded_png");*/
+				model.addAttribute("gra",Base64.getEncoder().encodeToString(image.asBytes()));
+			}catch(Exception e) {e.printStackTrace();}finally {
+				r.close();
 			}
-			r.eval("Fsize<-"+Fsize);
-			//System.out.println(Fsize);
-			r.eval("barplot(Fsize, names='크기', col=rainbow(20))");
-			//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");
-			r.eval("dev.off()");
-			REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
-			/*
-			r.eval("encoded_png<-sprintf(\"<img src='data:image/png;base64,%s'/>\", base64encode(\"rjava.png\"))");
-			r.eval("encoded_png");*/
-			model.addAttribute("gra",Base64.getEncoder().encodeToString(image.asBytes())); 
 		}
-		r.close();
+		model.addAttribute("space", viewSpace(owner));
 		return "beFiles/beList";
 	}
 	@RequestMapping("beSharedList.do") // 내 공유파일 보기
@@ -1712,5 +1721,51 @@ public class FileBean {
 		ldto.setLongnum(filesize);
 		ldto.setList(address_ref);
 		sqlSession.update("bengineer.uploadsize", ldto);
+	}
+	private String viewSpace(String id) {return viewSpace(id, sqlSession);}
+	public String viewSpace(String id, SqlSessionTemplate sqlSession) {
+		String result = "";
+		Integer chmod = (Integer)sqlSession.selectOne("bengineer.checkchmod", id);
+		if(chmod == null) {
+			chmod = 2;
+		}
+		long space = 1024L * 1024L * 1024L;
+		if(chmod == 1) {
+			space *= 10L;
+		}else if(chmod == 3) {
+			space *= 30L;
+		}
+		long usingspace = sqlSession.selectOne("bengineer.getusingspace", id);
+		double angle = (double)usingspace / (double)space;
+		double x = 0.0;
+		if(angle == 0.5) {
+			angle -= 0.000001;
+		}
+		if(angle < 0.5) {
+			angle *= Math.PI;
+			x = 0.6 - 0.2 / (1 + Math.tan(angle));
+		}else {
+			angle *= Math.PI;
+			x = 0.6 - 0.2 / (1 - Math.tan(angle));
+		}
+		RConnection r = null;
+		try {
+			r = new RConnection(); // R연결
+			r.eval("png('pie.png')");
+			r.eval("space <- c(" + usingspace + ", " + (space - usingspace) + ")");
+			r.eval("name <- c('사용중', '사용가능')");
+			r.eval("size <- paste('\\n\\r(', round(space / 1024 / 1024 / 1024, digits = 2), 'GB)', sep = '')");
+			r.eval("pie(space, radius = 1, clockwise = TRUE, labels = c('', ''), col=rainbow(2))");
+			r.eval("text(" + (x * Math.sin(angle)) + ", " + (x * Math.cos(angle) + 0.1) + ", name[1], cex = 5, font = 2)");
+			r.eval("text(" + -(x * Math.sin(angle)) + ", " + -(x * Math.cos(angle) - 0.1) + ", name[2], cex = 4.5, font = 2)");
+			r.eval("text(" + (x * Math.sin(angle)) + ", " + (x * Math.cos(angle) - 0.1) + ", size[1], cex = 3.5, font = 2)");
+			r.eval("text(" + -(x * Math.sin(angle)) + ", " + -(x * Math.cos(angle) + 0.1) + ", size[2], cex = 3.5, font = 2)");
+			r.eval("dev.off()");
+			REXP image = r.eval("r<-readBin('pie.png', 'raw', 100*100)");
+			result = Base64.getEncoder().encodeToString(image.asBytes());
+		}catch(Exception e) {}finally {
+			r.close();
+		}
+		return result;
 	}
 }

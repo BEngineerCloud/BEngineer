@@ -216,4 +216,7 @@
 	<select id="imageList" parameterType="fileDto" resultType="fileDTO">
 		select orgname from BEfilelist where owner = #{owner} and folder_ref=#{folder_ref}
 	</select>
+	<select id="getusingspace" parameterType="string" resultType="long">
+		select filesize from BEfilelist where owner = #{owner} and folder_ref = 0
+	</select>
 </mapper>

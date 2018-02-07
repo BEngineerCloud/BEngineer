@@ -38,13 +38,15 @@ HTMLWidgets.widget({
                       maskColor: x.maskColor,
                       maskGapWidth: x.maskGapWidth,
                       hover: x.hover || cv_handleHover,
-                      click: shortcut
+                      click: shortcut,
+                      resize: true
                       });
     }
 
   },
 
   resize: function(el, width, height) {
+	  window.location.reload();
   }
 
 

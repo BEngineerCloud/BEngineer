@@ -845,9 +845,10 @@ if (!window.clearImmediate) {
        put it on the canvas. */
     var putWord = function putWord(item) {
       var word, weight, attributes;
+      var width = window.outerWidth;
       if (Array.isArray(item)) {
         word = item[0];
-        weight = item[1];
+        weight = item[1] * width / 1500;
       } else {
         word = item.word;
         weight = item.weight;
