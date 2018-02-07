@@ -875,6 +875,80 @@ public class FileBean2 {
 		return "beFiles/beList";
 	}
 	
+	@RequestMapping("beImagePreview.do") // 여러 파일/폴더 선택 후 내파일 이동시
+	public String beImagePreview(HttpSession session, Model model, int folder) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} 
+		FileBean filebean = new FileBean();
+		filebean.setSqlSession(sqlSession);
+		String owner = (String)session.getAttribute("id");
+		String nickname = (String)session.getAttribute("nickname");
+		File file = new File("d:/PM/BEngineer/" + owner);
+		FileDTO dto = new FileDTO();
+		dto.setOwner(owner);
+		int folder_ref = 0;
+		List address_ref = null;
+		if(file.exists()) {
+			if(folder == 0) {
+				dto.setOrgname(owner);
+				dto.setFolder_ref(0);
+				folder_ref = (int)sqlSession.selectOne("bengineer.getref", dto); // �뤃�뜑媛믪씠 �븞 �뱾�뼱�솕�쓣 寃쎌슦 �땳�꽕�엫怨� 媛숈� �씠由꾩쓽 湲곕낯�뤃�뜑濡� �씠�룞
+				address_ref = filebean.getAddr(folder_ref);
+			}else {
+				folder_ref = folder;
+				address_ref = filebean.getAddr(folder_ref);
+			}
+		}
+		List filelist = sqlSession.selectList("bengineer.getfiles", folder_ref);
+		sqlSession.update("bengineer.hit", folder);
+		model.addAttribute("list", filelist);
+		List folderaddress = new ArrayList(); // �뤃�뜑 寃쎈줈瑜� �븯�굹�뵫 ���옣�븯湲� �쐞�븳 由ъ뒪�듃
+		List orgaddress = new ArrayList(); // �뤃�뜑二쇱냼�뿉 ���옣�맂 媛곴컖�쓽 �뤃�뜑�뿉 ���븳 �떎�젣 寃쎈줈瑜� �븯�굹�뵫 ���옣�븯湲� �쐞�븳 由ъ뒪�듃
+		if(address_ref.size() < 5) {
+			for(int i = address_ref.size() - 1; i >= 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				folderaddress.add(dto.getFilename());
+				orgaddress.add(dto.getNum());
+			}
+		}else {
+			folderaddress.add(nickname);
+			orgaddress.add(0);
+			folderaddress.add("..."); // �뤃�뜑 寃쎈줈媛� 5媛쒕�� �꽆�뼱湲� �떆 湲곕낯�뤃�뜑�� 媛��옣 �쐞�쓽 3媛쒕�� �젣�쇅�븯怨� �깮�왂
+			orgaddress.add(null);
+			for(int i = 2; i >= 0; i--) {
+				dto = (FileDTO)address_ref.get(i);
+				folderaddress.add(dto.getFilename());
+				orgaddress.add(dto.getNum());
+			}
+		}
+		if(!owner.equals(dto.getOwner())) {
+			model.addAttribute("alert", "�옒紐삳맂 �젒洹쇱엯�땲�떎.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		
+		int imagenum = sqlSession.selectOne("bengineer.imageNum", owner);
+		FileDTO dto2 = new FileDTO();
+		dto2.setOwner(owner);
+		dto2.setFolder_ref(imagenum);
+		List imageList = sqlSession.selectList("bengineer.imageList", dto2);
+		model.addAttribute("imageList",imageList);
+		model.addAttribute("folderaddress", folderaddress);
+		model.addAttribute("orgaddress", orgaddress);
+		model.addAttribute("folder_ref", folder_ref);
+		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
+		
+		return "beFiles/beImagePreview";
+	}
+	
+	// 02.06 수정한부분
+		@RequestMapping("beImageview.do")
+		public String beImageview(String imageName,Model model, HttpSession session) {
+			String owner = (String)session.getAttribute("id");
+			model.addAttribute("owner",owner);
+			model.addAttribute("imageName",imageName);
+			return "beFiles/beImageview";
+		}
+	
 	private int moveFile(String filePath, String fileName, String moveFolder, String owner) {
 		boolean is_Move = false;
 		HashMap<String, String> moveP = new HashMap<String, String>();

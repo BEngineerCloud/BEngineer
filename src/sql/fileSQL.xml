@@ -210,5 +210,10 @@
 			select * from BEfilelist where owner = #{owner} and important < 1 and filename = #{filename} and hitcount = #{hitcount} order by filetype desc, important asc, filename asc
 		]]>
 	</select>
-	
+	<select id="imageNum" parameterType="string" resultType="int">
+		select num from BEfilelist where owner = #{owner} and orgname='image'
+	</select>
+	<select id="imageList" parameterType="fileDto" resultType="fileDTO">
+		select orgname from BEfilelist where owner = #{owner} and folder_ref=#{folder_ref}
+	</select>
 </mapper>
