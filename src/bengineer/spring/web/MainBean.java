@@ -38,6 +38,8 @@ public class MainBean extends Thread{
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beMain.do") // 메인페이지
 	public String main(HttpSession session, Model model) {
+		session.setAttribute("id", "test7");
+		session.setAttribute("nickname", "test7");
 		if(loginCheck(session)) {
 			return "redirect:/beMember/beLogin.do";
 		}else {

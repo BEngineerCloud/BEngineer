@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-<h2>${re.num}번글</h2>
 <table border="1">
   <tr>
     <td  width="90">제목</td>
@@ -24,7 +23,7 @@
   <td><textarea name="reply" rows="13" cols="40" ></textarea></td>
   </tr>
   <tr>	
-	<td><input type="submit" value="답변완료"/></td>
+	<td><input type="submit" value="작성"/></td>
   </tr>
   
 </form>   

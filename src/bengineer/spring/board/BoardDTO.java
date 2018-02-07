@@ -1,14 +1,15 @@
 package bengineer.spring.board;
 
 import java.sql.Timestamp;
-// °øÁö»çÇ×
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 public class BoardDTO {
-	private int num;		// ±Û¹øÈ£
-	private String title;	// Á¦¸ñ
-	private String content;	// ³»¿ë
-	private String id; 		// ÀÛ¼ºÀÚ
-	//private int hit; 		// Á¶È¸¼ö
-	private Timestamp reg_date; // ÀÛ¼ºÀÏ
+	private int num;		// ï¿½Û¹ï¿½È£
+	private String title;	// ï¿½ï¿½ï¿½ï¿½
+	private String content;	// ï¿½ï¿½ï¿½ï¿½
+	private String id; 		// ï¿½Û¼ï¿½ï¿½ï¿½
+	private String reply; 		// ï¿½Û¼ï¿½ï¿½ï¿½
+	//private int hit; 		// ï¿½ï¿½È¸ï¿½ï¿½
+	private Timestamp reg_date; // ï¿½Û¼ï¿½ï¿½ï¿½
 	
 	public int getNum() {
 		return num;
@@ -47,6 +48,12 @@ public class BoardDTO {
 	}
 	public void setReg_date(Timestamp reg_date) {
 		this.reg_date = reg_date;
+	}
+	public String getReply() {
+		return reply;
+	}
+	public void setReply(String reply) {
+		this.reply = reply;
 	}
 
 

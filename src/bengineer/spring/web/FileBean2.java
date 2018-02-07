@@ -1051,13 +1051,14 @@ public class FileBean2 {
 		return "beFiles/hotlist"; 
 	}
  	@RequestMapping("searchForm.do")
-    public String searchForm(String result,Model model) {
-       System.out.println(result);
+    public String searchForm(String result,Model model,String filename) {
        int i = 0;
-       int m = 0;
+       int m = 0; // 각 검색된 단어들의 시작위치를 표시
        int count = StringUtils.countOccurrencesOf(result,",");   // result에 ','갯수
        int comma[] = new int[count];	// ',' 갯수만큼
        String[] str = new String[count];
+		FileDTO dto = new FileDTO();
+		dto.setFilename(filename);
        if(result.length() > 0){
           int l = 0 ;
           for(i=0;i<count;i++) {
@@ -1074,9 +1075,19 @@ public class FileBean2 {
       if(count>0) { // 검색어가 있을때
  	  java.util.List<String> list = new ArrayList<String>(Arrays.asList(str));
  	  List filelist = sqlSession.selectList("bengineer.searchfiles", list);
+		List folderaddress = new ArrayList();
+		List orgaddress = new ArrayList();
+		folderaddress.add("검색");
+		orgaddress.add(null);
  	  model.addAttribute("list",filelist);
+		model.addAttribute("folderaddress", folderaddress);
+		model.addAttribute("orgaddress", orgaddress);
+		model.addAttribute("folder_ref", -5);
+		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
+		model.addAttribute("movefile_Ref",0);
+		model.addAttribute("movefile_FRef",0);
       }
- 	  return "beFiles/searchForm";
+ 	  return "beFiles/beList";
       
  	}
 }

@@ -25,10 +25,12 @@ public class ImposeDAO {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	
-	@RequestMapping("impose.do")
-	public String impose() { return "/manager/impose";}	
 	@RequestMapping("imposeForm.do")
-	public String imposeForm() { return "/manager/imposeForm";}
+	public String imposeForm(Model model) { 
+		List list = sqlSession.selectList("manager.imposelist");
+		model.addAttribute("list",list);
+		return "/manager/imposeForm";
+	}
 	// 제제
 	@RequestMapping("imposePro.do")
 	public String imposePro(ImposeDTO dto,String email,int term,String cause) { 
@@ -38,7 +40,11 @@ public class ImposeDAO {
 		}else {
 		sqlSession.insert("manager.insert",dto);
 		}
-		return "redirect:/manager/mMain.do";
+		return "redirect:/manager/impose.do";
 	}
-
+	@RequestMapping("imposeCancle.do")
+	public String imposeCancle(String email){
+		sqlSession.delete("manager.imposeCancle",email);
+		return "redirect:/manager/impose.do";
+	}
 }

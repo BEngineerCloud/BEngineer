@@ -30,8 +30,3 @@
 </table>
 
 <!-- <input name="delete" type="button" value="삭제" onClick="javascript:open_win_noresizable('delete.do?num=${board.num}')"> -->
-    
-    
-   
-
-
