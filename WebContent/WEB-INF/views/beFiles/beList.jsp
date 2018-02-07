@@ -19,7 +19,6 @@
 
 
 			$("font#filename").text(orgname.value); // 주소부분에 표시
-			var important =document.getElementById(ref + "important");
 			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			var moveform = document.getElementById("moveform"); // moveform 가져오기
 			var copyform = document.getElementById("copyform"); // copyform 가져오기
@@ -139,6 +138,8 @@
 			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			var moveform = document.getElementById("moveform");
 			var multidownform = document.getElementById("multidownform");
+			var important =document.getElementById(ref + "important");
+			var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
 			if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
 				if(important.value==-1 && orgname.value=="image"){ 
 					window.location = "/BEngineer/beFiles/beImagePreview.do?folder="+ref;	 
@@ -227,6 +228,7 @@
 	$(function(){
 		$("#throwtotrashcan").click(function(){ // 지우기 클릭 시
 			var form = document.getElementById("multidownform");
+			form.file_ref.value = clickedfile.join();
 			window.location = "/BEngineer/beFiles/throwToTrashcan.do?file_ref=" + form.file_ref.value + "&folder=" + ${folder_ref };
 		});
 	});
@@ -295,6 +297,7 @@
 	$(function(){
 		$("#multidownform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
 			var form = document.getElementById("multidownform"); // 폼 받아오기
+			form.file_ref.value = clickedfile.join();
 			var moveform = document.getElementById("moveform")
 			var copyform = document.getElementById("copyform");
 			moveform.submitmove.type="hidden";
@@ -315,6 +318,7 @@
 				return false;
 			}
 			if(!form.file_ref.value){ // 업로드할 파일 미선택시
+				alert(1);
 				alert('업로드할 파일을 선택해주세요');
 				return false;
 			}
