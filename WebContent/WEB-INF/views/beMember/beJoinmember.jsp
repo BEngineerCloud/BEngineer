@@ -264,4 +264,10 @@ $(function(){
 </div>
 </form>
 </body>
+<script>
+if("${email}"!="0" && "${email}"!=null && "${checkConfirmEmail}"!="0" && "${checkConfirmEmail}"!=null){
+	 $("#email").val("${email}"); 
+	 $("#checkConfirmEmail").val("true"); 
+}
+</script>
 </html>

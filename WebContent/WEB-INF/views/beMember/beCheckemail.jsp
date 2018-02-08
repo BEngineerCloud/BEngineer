@@ -25,23 +25,7 @@ $(function(){
 	});
 	
 	$("#useMailid").click(function(){
-		if($("#authcode_2").val()==""){
-			$("#authcode_2").focus();
-			alert("인증문자를 입력해주세요.");
-			return false;
-		}
-		
-		if("${authcode }"==$("#authcode_2").val()){
-			$("#email",opener.document).val("${mailid}"); 
-			$("#checkConfirmEmail",opener.document).val("true"); 
-			alert("메일인증이 완료되었습니다.")
-			self.close();
-		}else{
-			alert("인증문자를 다시입력해주세요.");
-			$("#authcode_2").val()="";
-			$("#authcode_2").focus();
-			return false;
-		}
+		self.close();
 	});
 });
 </script>
@@ -102,8 +86,7 @@ $(function(){
 					<font size="3">"${mailid }"로 <br/>인증 문자를 보냈습니다.<br/>인증 문자를 입력해주세요.</font>
 				</div>
 				<div style="margin-top: 5%">
-					<input type="text" name="authcode_2" id="authcode_2" size="10" style="border-color:black; width:50%; height:15%">
-					<input type="button"  id="useMailid" style="height:16%; border-color: black; background-color:#FFFFFF;"value="메일인증">
+					<input type="button"  id="useMailid" style="height:16%; border-color: black; background-color:#FFFFFF;"value="닫  기">
 				</div>
 			</div>
 		</div>

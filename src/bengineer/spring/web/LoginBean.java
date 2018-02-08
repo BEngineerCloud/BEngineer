@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller()
 @RequestMapping("/beMember/*")
@@ -48,8 +49,14 @@ public class LoginBean {
 	public String beCollback() {return "beMember/beLogin";}
 	
 	//회원가입
-	@RequestMapping("beJoinmember.do")
-	public String beJoinmember() {return "beMember/beJoinmember";}	
+		@RequestMapping("beJoinmember.do")
+		public String beJoinmember(Model model, @RequestParam(value="email", defaultValue="0") String email, @RequestParam(value="checkConfirmEmail", defaultValue="0") String checkConfirmEmail) {
+			if(email.equals("0") && checkConfirmEmail.equals("0")) {
+				model.addAttribute("email",email);
+				model.addAttribute("checkConfirmEmail",checkConfirmEmail);
+			}
+			return "beMember/beJoinmember";
+		}	
 		
 	@RequestMapping("beJoinmemberpro.do")
 	public String beJoinmemberpro(MemberDTO dto, HttpSession session) {

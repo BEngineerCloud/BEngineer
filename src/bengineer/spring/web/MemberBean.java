@@ -68,24 +68,45 @@ public class MemberBean {
 	}
 	
 	@RequestMapping(value="beCheckemail.do")
-	public String beCheckmailid(Model model, String email ) {
+	public String beCheckmailid(Model model, String email, HttpSession session ) {
 		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email);
+		if(session.getAttribute("authcode")!=null) {
+			session.removeAttribute("authcode");
+		}
+		if(session.getAttribute("email")!=null) {
+			session.removeAttribute("email");
+		}
 		model.addAttribute("check",check);
 		model.addAttribute("mailid",email);
 		return "beMember/beCheckemail";
 	}
 	
 	@RequestMapping(value="beAuthemail.do")
-	public String beAuthemail(Model model, String email) {
+	public String beAuthemail(Model model, String email, HttpSession session) {
 		FileBean filebean = new FileBean();
 		filebean.setSqlSession(sqlSession);
 		
 		String authcode="";
 		authcode = filebean.makecode(8);
 		sendEmail(email,authcode);
+		session.setAttribute("authcode", authcode); 
+		session.setAttribute("email", email);
 		model.addAttribute("mailid",email);
 		model.addAttribute("authcode",authcode);
 		return "beMember/beCheckemail";
+	}
+	
+	//메일인증 확인
+	@RequestMapping(value="beConfirmemail.do") 
+	public String beConfirmemail(Model model, String authcode, HttpSession session) {
+		String email = (String)session.getAttribute("email");
+		if(authcode.equals(session.getAttribute("authcode"))) {
+			model.addAttribute("confirmEmail",0);
+			model.addAttribute("email",email);
+		}else {
+			model.addAttribute("confirmEmail",1);
+		}
+		return "beMember/beConfirmemail";
 	}
 	
 	public void sendEmail(String email, String authcode) {
