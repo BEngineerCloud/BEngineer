@@ -112,12 +112,12 @@ public class MemberBean {
 	public void sendEmail(String email, String authcode) {
 		String username = "loser4kku@gmail.com";
 		String password = "bengineer";
-		String host = "smtp.gmail.com";
-		String subject = "BEngineer 인증번호 전달";
-		String fromName = "BEngineer 관리자";
-		String from = "loser4kku@gmail.com";
+		String host = "smtp.gmail.com"; //메일 서버
+		String subject = "BEngineer 메일인증링크";
+		String fromName = "BEngineer 관리자"; // 보낼사람 이름
+		String from = "loser4kku@gmail.com"; //보낼사람 이메일
 		String to1 = email;
-		String content = "인증번호 ["+authcode+"]";
+		String content = "http://192.168.0.153/BEngineer/beMember/beConfirmemail.do?authcode="+authcode; //내용
 		
 		try {
 			Properties props = new Properties();
