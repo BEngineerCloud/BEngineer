@@ -42,6 +42,12 @@ public class FileBean2 {
 	@RequestMapping("autoArrangefile.do") //파일 자동정리
 	public String autoArrangefile(HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 비 로그인 상태시 로그인 창으로 리디렉트
+		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		String owner = (String)session.getAttribute("id");
 		String filePath=""; //파일경로
 		String fileName=""; //파일이름
@@ -51,7 +57,6 @@ public class FileBean2 {
 		Integer moveParent = 0;
 		File path = new File("d:/PM/BEngineer/" + owner); //사용자폴더 경로
 		File[] list = path.listFiles(); //사용자폴더 안에 모든 파일/폴더 받아오기
-		FileBean filebean = new FileBean();
 		FileDTO dto = new FileDTO();
 		dto.setOwner(owner);
 		if(list.length > 0){
@@ -91,6 +96,11 @@ public class FileBean2 {
 	public String beMove(HttpSession session, Model model, int ref, int folder_ref) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 鍮� 濡쒓렇�씤 �긽�깭�떆 濡쒓렇�씤 李쎌쑝濡� 由щ뵒�젆�듃
 		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		filebean.setSqlSession(sqlSession);
 		List originalAddr = null;
 		originalAddr = filebean.getAddr(ref);
@@ -157,6 +167,11 @@ public class FileBean2 {
 	public String beCopy(HttpSession session, Model model, int ref, int folder_ref) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 鍮� 濡쒓렇�씤 �긽�깭�떆 濡쒓렇�씤 李쎌쑝濡� 由щ뵒�젆�듃
 		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		filebean.setSqlSession(sqlSession);
 		List originalAddr = null;
 		originalAddr = filebean.getAddr(ref);
@@ -325,6 +340,11 @@ public class FileBean2 {
 	public String beMultimove(String file_ref,int file_fref, HttpSession session,  Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} 
 		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		filebean.setSqlSession(sqlSession);
 		boolean is_Move = false;
 		String files[] = file_ref.split(",");
@@ -428,6 +448,11 @@ public class FileBean2 {
 	public String beMulticopy(String file_ref,String file_fref, HttpSession session,  Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} 
 		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		filebean.setSqlSession(sqlSession);
 		boolean is_Copy = false;
 		String files[] = file_ref.split(",");
@@ -735,6 +760,11 @@ public class FileBean2 {
 	public String beMultilist(HttpSession session, Model model, int folder,@RequestParam(value="multifile_Ref", defaultValue="0") String multifile_Ref, @RequestParam(value="multifile_FRef", defaultValue="0") int multifile_FRef, int flag) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 濡쒓렇�씤 �꽭�뀡 �뾾�쓣 �떆 由щ뵒�젆�듃
 		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		filebean.setSqlSession(sqlSession);
 		String owner = (String)session.getAttribute("id");
 		String nickname = (String)session.getAttribute("nickname");
@@ -809,6 +839,7 @@ public class FileBean2 {
 		model.addAttribute("movefile_FRef",0);  // 이동될 위치
 		model.addAttribute("copyfile_Ref",0); 	// 이동할 파일/폴더
 		model.addAttribute("copyfile_FRef",0);  // 이동될 위치
+		model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
 		return "beFiles/beList";
 	}
 	
@@ -817,6 +848,11 @@ public class FileBean2 {
 	public String beCopyList(HttpSession session, Model model, int folder,@RequestParam(value="copyfile_Ref", defaultValue="0") int copyfile_Ref, @RequestParam(value="copyfile_FRef", defaultValue="0") int copyfile_FRef) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 濡쒓렇�씤 �꽭�뀡 �뾾�쓣 �떆 由щ뵒�젆�듃
 		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		filebean.setSqlSession(sqlSession);
 		String owner = (String)session.getAttribute("id");
 		String nickname = (String)session.getAttribute("nickname");
@@ -872,6 +908,7 @@ public class FileBean2 {
 		model.addAttribute("copyfile_FRef",copyfile_FRef);
 		model.addAttribute("movefile_Ref",0); 	// 이동할 파일/폴더
 		model.addAttribute("movefile_FRef",0);  // 이동될 위치
+		model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
 		return "beFiles/beList";
 	}
 	
@@ -879,6 +916,11 @@ public class FileBean2 {
 	public String beImagePreview(HttpSession session, Model model, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} 
 		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
 		filebean.setSqlSession(sqlSession);
 		String owner = (String)session.getAttribute("id");
 		String nickname = (String)session.getAttribute("nickname");
@@ -936,7 +978,8 @@ public class FileBean2 {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
-		
+
+		model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
 		return "beFiles/beImagePreview";
 	}
 	
@@ -1051,7 +1094,15 @@ public class FileBean2 {
 		return "beFiles/hotlist"; 
 	}
  	@RequestMapping("searchForm.do")
-    public String searchForm(String result,Model model,String filename) {
+    public String searchForm(HttpSession session, String result,Model model,String filename) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} 
+		FileBean filebean = new FileBean();
+		if(!filebean.checkSpace(session, sqlSession)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		String id = (String)session.getAttribute("id");
        int i = 0;
        int m = 0; // 각 검색된 단어들의 시작위치를 표시
        int count = StringUtils.countOccurrencesOf(result,",");   // result에 ','갯수
@@ -1086,6 +1137,7 @@ public class FileBean2 {
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		model.addAttribute("movefile_Ref",0);
 		model.addAttribute("movefile_FRef",0);
+		model.addAttribute("space", filebean.viewSpace(id, sqlSession));
       }
  	  return "beFiles/beList";
       

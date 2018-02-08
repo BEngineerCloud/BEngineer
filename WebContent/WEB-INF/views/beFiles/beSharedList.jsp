@@ -383,6 +383,9 @@ $(function(){
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
 	button2
+	<c:if test="${space != null && space !=''}">
+		<img src="data:image/png;base64,${space}" style="width:100%;" />
+	</c:if>
 </div>
 <!-- 파일들 창 -->
 <div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">

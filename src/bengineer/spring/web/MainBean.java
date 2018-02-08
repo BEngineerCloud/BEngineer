@@ -43,6 +43,8 @@ public class MainBean extends Thread{
 		}else {
 			String id = (String)session.getAttribute("id");
 			model.addAttribute("content", returnWC2(id));
+			FileBean filebean = new FileBean();
+			model.addAttribute("space", filebean.viewSpace(id, sqlSession));
 			return "beMain";
 		}
 	}
@@ -114,6 +116,8 @@ public class MainBean extends Thread{
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		model.addAttribute("movefile_Ref",0);
 		model.addAttribute("movefile_FRef",0);
+		FileBean filebean = new FileBean();
+		model.addAttribute("space", filebean.viewSpace(id, sqlSession));
 		return "beFiles/beList";
 	}
 	public static boolean loginCheck(HttpSession session) { // 로그인 체크용 메서드, 세션에 nickname 세션이 정상적으로 있지 않을 경우 true  

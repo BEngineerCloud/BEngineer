@@ -903,6 +903,9 @@ div#glayLayer{
 	<c:if test="${gra != null && gra !=''}">
 		<img src="data:image/png;base64,${gra}" style="height:50%; width:80%;" />
 	</c:if>
+	<c:if test="${space != null && space !=''}">
+		<img src="data:image/png;base64,${space}" style="width:100%;" />
+	</c:if>
 </div>
 <!-- 파일들 창 -->
 <div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">

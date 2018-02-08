@@ -675,7 +675,6 @@
 			}
 			form.filename.value = form.filename.value.trim();
 			form.orgname.value = form.orgname.value.trim();
-			return false;
 		});
 	});
 	$(function(){

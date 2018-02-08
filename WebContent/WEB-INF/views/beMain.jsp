@@ -90,6 +90,9 @@ $(function(){
 		<input type="submit" value="최근 파일"/>
 	</form>
 	button2
+	<c:if test="${space != null && space !=''}">
+		<img src="data:image/png;base64,${space}" style="width:100%;" />
+	</c:if>
 </div>
 <div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
 	${ content }
