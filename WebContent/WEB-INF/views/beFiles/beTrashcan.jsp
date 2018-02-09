@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
+<script src='/BEngineer/resources/js/menu.js' type='text/javascript'></script>
 <script type="text/javascript">
 	var clickedfile = new Array();
 	$(function(){
@@ -46,26 +47,6 @@
 		});
 	});
 	$(function(){
-		$("#myfile").click(function(){ // 내 파일보기 버튼 클릭 시 페이지 이동
-			window.location = "/BEngineer/beFiles/beMyList.do?folder=0";
-		});
-	});
-	$(function(){
-		$("#mysharedfile").click(function(){
-			window.location = "/BEngineer/beFiles/beSharedList.do?folder=0";
-		});
-	});
-	$(function(){
-		$("#mytrashcan").click(function(){
-			window.location = "/BEngineer/beFiles/beTrashcan.do?folder=0";
-		});
-	});
-	$(function(){
-		$("#beLogo").click(function(){ // 로고 클릭시 메인으로 이동
-			window.location = "/BEngineer/beMain.do";
-		});
-	});
-	$(function(){
 		$("#cancelmulti").click(function(){ // 다중선택 취소시
 			clickedfile = new Array();
 			var form = document.getElementById("multiform");
@@ -98,17 +79,6 @@
 			document.getElementById("multichoice").type = "hidden";
 			form.submitmultirepair.type = "submit";
 			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
-		});
-	});
-	$(function(){
-		$("#addinfodiv > #addinfo").click(function(){
-			window.location = "/BEngineer/beMember/beAddinfo.do";
-		});
-	});
-	
-	$(function(){
-		$("#logoutdiv > #logout").click(function(){
-			window.location = "/BEngineer/beLogout.do";
 		});
 	});
 	$(function(){
@@ -194,6 +164,16 @@
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
+	<input type="button" id="hotlist" value="즐겨찾기"/>
+	<form action="/BEngineer/beFiles/beRecentFiles.do" method="post">
+		<select name="weeks">
+			<option value="1">1주 이내</option>
+			<option value="2">2주 이내</option>
+			<option value="3">3주 이내</option>
+			<option value="4">4주 이내</option>
+		</select>
+		<input type="submit" value="최근 파일"/>
+	</form>
 	button2
 	<c:if test="${space != null && space !=''}">
 		<img src="data:image/png;base64,${space}" style="width:100%;" />

@@ -10,46 +10,7 @@
 	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud2-all.js"></script>
 	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/hover.js"></script>
 	<script src="/BEngineer/resources/wordcloud2/wordcloud2-binding-0.2.0/wordcloud2.js?ver=2"></script>
-<script type="text/javascript">
-$(function(){
-	$("#myfile").click(function(){
-		window.location = "/BEngineer/beFiles/beMyList.do?folder=0";
-	});
-});
-$(function(){
-	$("#mysharedfile").click(function(){
-		window.location = "/BEngineer/beFiles/beSharedList.do?folder=0";
-	});
-});
-$(function(){
-	$("#mytrashcan").click(function(){
-		window.location = "/BEngineer/beFiles/beTrashcan.do?folder=0";
-	});
-});
-$(function(){
-	$("#beLogo").click(function(){
-		window.location = "/BEngineer/beMain.do";
-	});
-});
-
-$(function(){
-	$("#addinfodiv > #addinfo").click(function(){
-		window.location = "/BEngineer/beMember/beAddinfo.do?";
-	});
-});
-
-$(function(){
-	$("#logoutdiv > #logout").click(function(){
-		window.location = "/BEngineer/beLogout.do";
-	});
-});
-$(function(){
-	$("#hotlist").click(function(){
-		window.location = "/BEngineer/beFiles/hotlist.do?num=0";
-	});
-});
-
-</script>
+<script src='/BEngineer/resources/js/menu.js' type='text/javascript'></script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;">
 	<img id="beLogo" src="/BEngineer/image/beCloudLogo.png" style="width: 100%; height:100%; cursor:pointer"/>

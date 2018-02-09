@@ -54,18 +54,25 @@ public class FileBean {
 	@RequestMapping("beMyList.do") // 내 파일 보기
 	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) {
 		if(folder < 0 && folder > -5) {return "redirect:/beFiles/beRecentFiles.do?weeks=" + -folder;}
-		if(folder <= -5) {return "redirect:/beMain.do";}
+		if(folder <= -5) {
+			model.addAttribute("history", -2);
+			return "/beFiles/goback";
+		}
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		String owner = (String)session.getAttribute("id");
 		String nickname = (String)session.getAttribute("nickname");
 		File file = new File("d:/PM/BEngineer/" + owner);
 		FileDTO dto = new FileDTO();
+		if(folder != 0) {
+			dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder);
+			if(!owner.equals(dto.getOwner())) {
+				return "redirect:/beFiles/beSharedList.do?folder=" + folder + "&movefile_Ref=" + movefile_Ref + "&movefile_FRef=" + movefile_FRef;
+			}
+		}
 		dto.setOwner(owner);
 		int folder_ref = 0;
 		List address_ref = null;
 		RConnection r = null;
-		List font = sqlSession.selectList("bengineer.font");	// ,email);
- 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		if(file.exists()) {
 			if(folder == 0) {
 				dto.setOrgname(owner);
@@ -96,14 +103,25 @@ public class FileBean {
 				return "beFiles/alert";
 			}
 		}
+		List font = sqlSession.selectList("bengineer.font");	// ,email);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		List filelist = sqlSession.selectList("bengineer.getfiles", folder_ref);
 		sqlSession.update("bengineer.hit", folder);
 		model.addAttribute("list", filelist);
 		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
 		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
+		boolean document = true;
+		List check = new ArrayList();
+		check.add("music");
+		check.add("etc");
+		check.add("video");
+		check.add("image");
 		if(address_ref.size() < 5) {
 			for(int i = address_ref.size() - 1; i >= 0; i--) {
 				dto = (FileDTO)address_ref.get(i);
+				if(dto.getImportant() == -1 && check.contains(dto.getOrgname())) {
+					document = false;
+				}
 				folderaddress.add(dto.getFilename());
 				orgaddress.add(dto.getNum());
 			}
@@ -112,17 +130,18 @@ public class FileBean {
 			orgaddress.add(0);
 			folderaddress.add("..."); // 폴더 경로가 5개를 넘어길 시 기본폴더와 가장 위의 3개를 제외하고 생략
 			orgaddress.add(null);
-			for(int i = 2; i >= 0; i--) {
+			for(int i = address_ref.size() - 1; i >= 0; i--) {
 				dto = (FileDTO)address_ref.get(i);
-				folderaddress.add(dto.getFilename());
-				orgaddress.add(dto.getNum());
+				if(dto.getImportant() == -1 && check.contains(dto.getOrgname())) {
+					document = false;
+				}
+				if(i < 3) {
+					folderaddress.add(dto.getFilename());
+					orgaddress.add(dto.getNum());
+				}
 			}
 		}
-		if(!owner.equals(dto.getOwner())) {
-			model.addAttribute("alert", "잘못된 접근입니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
-		}
+		model.addAttribute("document", document);
 		model.addAttribute("folderaddress", folderaddress);
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", folder_ref);
@@ -170,21 +189,37 @@ public class FileBean {
 		return "beFiles/beList";
 	}
 	@RequestMapping("beSharedList.do") // 내 공유파일 보기
-	public String shareFile(HttpSession session, Model model, int folder) {
+	public String shareFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		String id = (String)session.getAttribute("id");
+		FileDTO dto = new FileDTO();
 		if(folder == 0) {
 			List filelist = sqlSession.selectList("bengineer.mysharedfile", id);
+			List writelist = new ArrayList();
+			List datelist = new ArrayList();
+			for(int i = 0; i < filelist.size(); i++) {
+				dto = (FileDTO)filelist.get(i);
+				int num = dto.getNum();
+				List share_ref = getShareAddr(num, id);
+				KeyDTO kdto = (KeyDTO)share_ref.get(share_ref.size() - 1);
+				if(kdto.getRw() == 1) {
+					writelist.add(kdto.getFilenum());
+				}
+				String end = kdto.getEnddate().toString();
+				end = end.substring(0, end.lastIndexOf("."));
+				datelist.add(end);
+			}
 			model.addAttribute("list", filelist);
+			model.addAttribute("writelist", writelist);
+			model.addAttribute("datelist", datelist);
 			List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
 			List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 전체 경로를 하나씩 저장하기 위한 리스트
 			folderaddress.add("내 공유 파일");
 			orgaddress.add(0);
+			model.addAttribute("document", false);
 			model.addAttribute("folderaddress", folderaddress);
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
-			model.addAttribute("write", false);
-			model.addAttribute("basedir", false);
 			model.addAttribute("space", viewSpace(id));
 			return "beFiles/beSharedList";
 		}else {
@@ -196,24 +231,40 @@ public class FileBean {
 			}
 			sqlSession.update("bengineer.hit", folder);
 			KeyDTO kdto = (KeyDTO)address_ref.remove(address_ref.size() - 1);
-			if(kdto.getRw() == 0) {
-				model.addAttribute("write", false);
-			}else {
-				model.addAttribute("write", true);
-			}
-			String end = kdto.getEnddate().toString();
-			end = end.substring(0, end.lastIndexOf("."));
-			model.addAttribute("enddate", end);
 			List filelist = sqlSession.selectList("bengineer.getfiles", folder);
+			List writelist = new ArrayList();
+			List datelist = new ArrayList();
+			for(int i = 0; i < filelist.size(); i++) {
+				dto = (FileDTO)filelist.get(i);
+				int num = dto.getNum();
+				List share_ref = getShareAddr(num, id);
+				kdto = (KeyDTO)share_ref.get(share_ref.size() - 1);
+				if(kdto.getRw() == 1) {
+					writelist.add(kdto.getFilenum());
+				}
+				String end = kdto.getEnddate().toString();
+				end = end.substring(0, end.lastIndexOf("."));
+				datelist.add(end);
+			}
 			model.addAttribute("list", filelist);
+			model.addAttribute("writelist", writelist);
+			model.addAttribute("datelist", datelist);
 			List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
 			List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
-			FileDTO dto = new FileDTO();
+			boolean document = true;
+			List check = new ArrayList();
+			check.add("music");
+			check.add("etc");
+			check.add("video");
+			check.add("image");
 			if(address_ref.size() < 4) {
 				folderaddress.add("내 공유 파일");
 				orgaddress.add(0);
 				for(int i = address_ref.size() - 1; i >= 0; i--) {
 					dto = (FileDTO)address_ref.get(i);
+					if(dto.getImportant() == -1 && check.contains(dto.getOrgname())) {
+						document = false;
+					}
 					folderaddress.add(dto.getFilename());
 					orgaddress.add(dto.getNum());
 				}
@@ -222,20 +273,26 @@ public class FileBean {
 				orgaddress.add(0);
 				folderaddress.add("..."); // 폴더 경로가 5개를 넘어길 시 기본폴더와 가장 위의 3개를 제외하고 생략
 				orgaddress.add(null);
-				for(int i = 2; i >= 0; i--) {
+				for(int i = address_ref.size() - 1; i >= 0; i--) {
 					dto = (FileDTO)address_ref.get(i);
-					folderaddress.add(dto.getFilename());
-					orgaddress.add(dto.getNum());
+					if(dto.getImportant() == -1 && check.contains(dto.getOrgname())) {
+						document = false;
+					}
+					if(i < 3) {
+						folderaddress.add(dto.getFilename());
+						orgaddress.add(dto.getNum());
+					}
 				}
 			}
-			if(dto.getImportant() == -1) {
-				model.addAttribute("basedir", true);
-			}else {
-				model.addAttribute("basedir", false);
-			}
+			model.addAttribute("document", document);
 			model.addAttribute("folderaddress", folderaddress);
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
+			model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
+			model.addAttribute("movefile_Ref",movefile_Ref);
+			model.addAttribute("movefile_FRef",movefile_FRef);
+			model.addAttribute("copyfile_Ref",0);
+			model.addAttribute("copyfile_FRef",0);
 			model.addAttribute("space", viewSpace(id));
 			return "beFiles/beSharedList";
 		}
@@ -1483,18 +1540,26 @@ public class FileBean {
 		sdto.setNum(folder_ref);
 		List keylist = sqlSession.selectList("bengineer.getkey", sdto);
 		KeyDTO kdto = null;
-		if(keylist.size() > 1) {
+		if(keylist.size() > 0) {
 			for(int i = 0; i < keylist.size(); i++) {
 				KeyDTO temp = (KeyDTO)keylist.get(i);
 				if(kdto == null || temp.getRw() > kdto.getRw()) {
 					kdto = temp;
 				}
 			}
-		}else {
-			kdto = (KeyDTO)keylist.get(0);
 		}
 		if(kdto != null) {
-			address.add(kdto);
+			List share = getShareAddr(folder.getFolder_ref(), id);
+			if(share == null) {
+				address.add(kdto);
+			}else {
+				KeyDTO kdto1 = (KeyDTO)share.get(share.size() - 1);
+				if(kdto.getRw() > kdto1.getRw()) {
+					address.add(kdto);
+				}else {
+					address.addAll(share);
+				}
+			}
 			return address;
 		}else {
 			if(folder_ref == 0) {
