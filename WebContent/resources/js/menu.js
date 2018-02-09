@@ -19,13 +19,13 @@ $(function(){
 	});
 });
 $(function(){
-	$("#addinfodiv > #addinfo").click(function(){
+	$("#addinfo").click(function(){
 		window.location = "/BEngineer/beMember/beAddinfo.do";
 	});
 });
 
 $(function(){
-	$("#logoutdiv > #logout").click(function(){
+	$("#logout").click(function(){
 		window.location = "/BEngineer/beLogout.do";
 	});
 });

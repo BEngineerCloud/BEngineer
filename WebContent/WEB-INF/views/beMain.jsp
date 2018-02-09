@@ -12,22 +12,26 @@
 	<script src="/BEngineer/resources/wordcloud2/wordcloud2-binding-0.2.0/wordcloud2.js?ver=2"></script>
 <script src='/BEngineer/resources/js/menu.js' type='text/javascript'></script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
-<div id="logo" style="height:10%; width:15%; float:left;">
-	<img id="beLogo" src="/BEngineer/image/beCloudLogo.png" style="width: 100%; height:100%; cursor:pointer"/>
+<div id="logo" style="height:10%; width:15%; float:left;"> 
+	<img src="/BEngineer2/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
 </div>
-<div id="search" style="height:10%; width:70%; background-color:#99ff99; float:left;">
-	search
+<!-- 검색창 -->
+<div align="center" style="height:10%; width:61%; float:left;">
+	<div style="margin-top:2%">
+	<input type="text" id="searchword"style="height:38%; width:20%; border-color: black; background-color:#FFFFFF;"/>
+	<input type="button" id="search" value="검  색" style="height:41%; border-color: black; background-color:#FFFFFF;"/>
+	</div>
 </div>
-<div align="center" id="logout" style="height:10%; width:15%;float:left;">
-	<div style="height:30%; width:100%;float:left;  margin-top: 3%"> 
+<div style="height:10%; width:12%; float:left;">
+	<div style="height:100%; width:100%;  text-align:center; margin-top:16%"> 
 		<font size="4">'${sessionScope.nickname}' 님 환영합니다.</font>
 	</div>
-	<div align="right" id="addinfodiv" style="height:70%; width:50%;float:left; margin-top: 3%">
-		<input type="button" id="addinfo" style="height:61%; border-color: black; background-color:#FFFFFF; font-size:11pt"value="회원정보 관리"/>
-	</div>
-	<div align="left"id="logoutdiv" style="height:70%; width:50%;float:left; margin-top: 3%">
-		&emsp;
-		<input type="button" id="logout" style="height:61%; border-color: black; background-color:#FFFFFF; font-size:11pt"value="로그아웃"/>
+</div>
+<div style="height:10%; width:12%; float:left;">
+	<div align="left"style="height:100%; width:100%;float:left;  text-align:center; margin-top:13%"> 
+		<input type="button" id="addinfo" style="height:45%; border-color: black; background-color:#FFFFFF; font-size:100%; "value="회원정보 관리"/>
+		&nbsp;
+		<input type="button" id="logout" style="height:45%; border-color: black; background-color:#FFFFFF; font-size:100%;"value="로그아웃"/>
 	</div>
 </div>
 <div id="button1" style="height:5%; width:100%; background-color:#ffff99; float:left;">

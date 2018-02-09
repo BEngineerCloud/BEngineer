@@ -20,7 +20,7 @@ $(function(){
 	});
 	
 	$("#authMailid").click(function(){
-		alert("인증번호를 발송하였습니다.");
+		alert("인증링크를 발송하였습니다."); 
 		window.location = "/BEngineer/beMember/beAuthemail.do?email="+"${mailid }";
 	});
 	
@@ -83,7 +83,7 @@ $(function(){
 			<div style="float:center">
 				<br/><br/><hr color="black">
 				<div style="margin-top: 6%">
-					<font size="3">"${mailid }"로 <br/>인증 문자를 보냈습니다.<br/>인증 문자를 입력해주세요.</font>
+					<font size="3">"${mailid }"로 <br/>인증 링크를 보냈습니다.<br/>인증 링크를 눌러주세요.</font>
 				</div>
 				<div style="margin-top: 5%">
 					<input type="button"  id="useMailid" style="height:16%; border-color: black; background-color:#FFFFFF;"value="닫  기">

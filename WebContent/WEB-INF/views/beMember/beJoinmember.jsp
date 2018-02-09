@@ -24,6 +24,11 @@ $(function(){
 			alert("메일아이디를 입력해주세요.");
 			return false;
 		}
+
+		if($("#checkConfirmEmail").val()=="true" ){
+			alert("메일인증이 완료되었습니다.");
+			return false;
+		}
 		
 		if(!regEmail.test($("#email").val())) { // 이메일주소 유효성 검사
 		      alert("이메일 주소가 유효하지 않습니다"); 
