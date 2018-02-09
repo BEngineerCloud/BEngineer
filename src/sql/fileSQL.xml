@@ -174,8 +174,14 @@
 	<select id="size" parameterType="int" resultType="fileDTO"> <!-- 그래프 -->
 		select * from befilelist where folder_ref=#{folder_ref}
 	</select>
-	<update id="hot" parameterType="int"> <!-- 중요파일 -->
-		update BEfilelist set important = 2 where num = #{num}
+	<update id="hot" parameterType="int"> <!-- 중요파일로 -->
+		update BEfilelist set important = -2 where num = #{num}
+	</update>
+	<select id="hotlist" parameterType="string" resultType="fileDTO"> <!-- 중요파일들  -->
+		select * from befilelist where owner=#{owner} and important=-2
+	</select>
+	<update id="exhot" parameterType="int"> <!-- 중요파일에서 제외 -->
+		update BEfilelist set important = -1 where num = #{num}
 	</update>
 	<update id="updateowner" parameterType="string">
 		update BEfilelist set owner = #{owner} where owner = #{owner}

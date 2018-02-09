@@ -1,5 +1,4 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-    <h2>dd${Id}</h2>
 <form name="inForm" action="inPro.do" method="post">
 <table border="1">
   <tr>

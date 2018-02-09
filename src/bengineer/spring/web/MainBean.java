@@ -38,13 +38,15 @@ public class MainBean extends Thread{
 	private SqlSessionTemplate sqlSession = null;
 	@RequestMapping("beMain.do") // 메인페이지
 	public String main(HttpSession session, Model model) {
+		session.setAttribute("id", "test9");  //@@@
+		session.setAttribute("nickname", "test9");
 		if(loginCheck(session)) {
 			return "redirect:/beMember/beLogin.do";
 		}else {
 			String id = (String)session.getAttribute("id");
-			model.addAttribute("content", returnWC2(id));
+			//@@ model.addAttribute("content", returnWC2(id));
 			FileBean filebean = new FileBean();
-			model.addAttribute("space", filebean.viewSpace(id, sqlSession));
+			//@@ model.addAttribute("space", filebean.viewSpace(id, sqlSession));
 			return "beMain";
 		}
 	}
@@ -117,13 +119,14 @@ public class MainBean extends Thread{
 		model.addAttribute("movefile_Ref",0);
 		model.addAttribute("movefile_FRef",0);
 		FileBean filebean = new FileBean();
-		model.addAttribute("space", filebean.viewSpace(id, sqlSession));
+		//@@ model.addAttribute("space", filebean.viewSpace(id, sqlSession));
 		return "beFiles/beList";
 	}
 	public static boolean loginCheck(HttpSession session) { // 로그인 체크용 메서드, 세션에 nickname 세션이 정상적으로 있지 않을 경우 true  
 		String id = (String)session.getAttribute("id");
 		return id == null || id.equals("null") || id.equals("");
 	}
+	/* @@@
 	private String returnWC2(String id) {
 		RConnection r = null;
 		String retStr = "";
@@ -170,6 +173,7 @@ public class MainBean extends Thread{
 		}
 		return retStr;
 	}
+	@@@ */
 	public void run(){
 		//File bengineer = new File("d:/PM/BEngineer");
 		while(true) {

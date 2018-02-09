@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class InquiryBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
-	// ���
+	// member 문의내역
 	@RequestMapping("inList.do")
 	public String list(Model model,HttpSession session,MemberDTO dto,String id) { 
 		List list = sqlSession.selectList("board.inList",dto.getId());
@@ -32,11 +32,10 @@ public class InquiryBean {
 		session.setAttribute("Id", dto.getId());
 		return "/inquiry/inList";
 	}
-	// �ۼ�
+	// member 문의하기
 	@RequestMapping("inForm.do")
 	public String writeForm(HttpSession session,InquiryDTO dto,String Id) { 
 		session.setAttribute("Id", dto.getId());
-		sqlSession.insert("board.inquiry",dto);
 		return "/inquiry/inForm";
 	}
 	// member 문의완료

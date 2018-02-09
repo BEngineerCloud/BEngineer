@@ -40,11 +40,11 @@ public class ImposeDAO {
 		}else {
 		sqlSession.insert("manager.insert",dto);
 		}
-		return "redirect:/manager/impose.do";
+		return "redirect:/manager/imposeForm.do";
 	}
 	@RequestMapping("imposeCancle.do")
 	public String imposeCancle(String email){
 		sqlSession.delete("manager.imposeCancle",email);
-		return "redirect:/manager/impose.do";
+		return "redirect:/manager/imposeForm.do";
 	}
 }
