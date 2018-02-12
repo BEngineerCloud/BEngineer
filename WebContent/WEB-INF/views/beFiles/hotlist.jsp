@@ -13,8 +13,8 @@
 		$("#files > div").click(function(){ // 파일 클릭시
 			var filename = $(this).text();
 			var ref = $(this).attr("name");
-			var num = $(this).attr("num");
-
+			//var number = $(this).value("filenum");
+			var number = document.getElementById("num"); //@@
 			var important =document.getElementById(ref + "important");
 			var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
 
@@ -25,9 +25,12 @@
 			var copyform = document.getElementById("copyform"); // copyform 가져오기
 			
 			if(important.value==-2){
-				if(exhot.ex.value=="제외"){
-					exhot.ex.type = "button";
-					//exhot.ex.num.value = ${file.num};
+				if(ex.value=="제외"){
+					ex.type = "button";
+					num.value = number.value;
+					alert("num : " + num)
+					alert("number : " + number)
+					alert("value : " + num.value)
 				}
 			}
 			
@@ -956,9 +959,8 @@
 		});
 	});
 	$(function(){
-		$("#exhot").click(function(){
-			var form=document.getElementById("exhot");
-			var num = form.num.value;
+		$("#ex").click(function(){
+			var num = document.getElementById("num").value;
 			alert(3);
 			window.location = "/BEngineer/beFiles/exhot.do?num="+num;
 			alert(num);
@@ -968,7 +970,7 @@
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;">
  <img id="beLogo" src="/BEngineer/image/beCloudLogo.png" style="width: 100%; height:100%; cursor:pointer"/>
-</div>
+</div>	
 <!-- 검색창 -->
 <div style="height:10%; width:70%; background-color:#99ff99; float:left;">
 	<input type="text" id="searchword"/>
@@ -991,9 +993,9 @@
 </div>
 <div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">
  address
- 	<div id="exhot" style="height:5%; width:relative; margin:0; float:left;">
-			<input type="hidden" name="ex" value="제외" />
-			<input type="hidden" name="num" value="823" />
+ 	<div style="height:5%; width:relative; margin:0; float:left;">
+			<input type="hidden" id="ex" value="제외"/>
+			<input type="hidden" id="num" value="0" />
 	</div>
 </div>
 <div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
@@ -1010,6 +1012,7 @@
 <div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
 		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<input type="hidden" id="filenum" value="${file.num}"/>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>

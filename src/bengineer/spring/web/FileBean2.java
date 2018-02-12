@@ -839,7 +839,7 @@ public class FileBean2 {
 		model.addAttribute("movefile_FRef",0);  // 이동될 위치
 		model.addAttribute("copyfile_Ref",0); 	// 이동할 파일/폴더
 		model.addAttribute("copyfile_FRef",0);  // 이동될 위치
-		//@@ model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
+		model.addAttribute("space", filebean.viewSpace(owner, sqlSession)); //@@ 
 		return "beFiles/beList";
 	}
 	
@@ -908,7 +908,7 @@ public class FileBean2 {
 		model.addAttribute("copyfile_FRef",copyfile_FRef);
 		model.addAttribute("movefile_Ref",0); 	// 이동할 파일/폴더
 		model.addAttribute("movefile_FRef",0);  // 이동될 위치
-		//@@ model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
+		model.addAttribute("space", filebean.viewSpace(owner, sqlSession)); //@@ 
 		return "beFiles/beList";
 	}
 	
@@ -979,7 +979,7 @@ public class FileBean2 {
 		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
 
-		//@@ model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
+		model.addAttribute("space", filebean.viewSpace(owner, sqlSession)); //@@ 
 		return "beFiles/beImagePreview";
 	}
 	
@@ -1087,19 +1087,21 @@ public class FileBean2 {
 		}	
 	}
 	@RequestMapping("hot.do")
-	public String hot(int num) {
-		System.out.println("num : " + num);
-		//sqlSession.update("bengineer.hot",num);
-		return "beFiles/hotlist";
+	public String hot(int num,Model model) {
+		int a=-1;
+		model.addAttribute("history",a);
+		sqlSession.update("bengineer.hot",num);
+		return "beFiles/goback";
 	}
 	@RequestMapping("exhot.do")
-	public String exhot(int num) {
-		System.out.println("num : " + num);
+	public String exhot(int num,Model model) {
+		int a=-1;
+		model.addAttribute("history",a);
 		sqlSession.update("bengineer.exhot",num);
-		return "beFiles/hotlist";
+		return "beFiles/goback";
 	}
 	@RequestMapping("hotlist.do")
-	public String hotlist(HttpSession session,String owner,Model model) {
+	public String hotlist(HttpSession session,Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";}
 		FileBean filebean = new FileBean();
 		if(!filebean.checkSpace(session, sqlSession)) {
@@ -1107,6 +1109,7 @@ public class FileBean2 {
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
+		String owner = (String)session.getAttribute("id");
 		List folderaddress = new ArrayList();
 		List orgaddress = new ArrayList();
 		List list = sqlSession.selectList("bengineer.hotlist",owner);
@@ -1165,7 +1168,7 @@ public class FileBean2 {
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		model.addAttribute("movefile_Ref",0);
 		model.addAttribute("movefile_FRef",0);
-		model.addAttribute("space", filebean.viewSpace(id, sqlSession));
+		model.addAttribute("space", filebean.viewSpace(id, sqlSession)); //@@ 
       }
  	  return "beFiles/beList";
 

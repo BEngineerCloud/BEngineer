@@ -99,6 +99,11 @@
 		document.getElementById("submitdelete").type = "hidden";
 		document.getElementById("multichoice").type = "button";
 	}
+	$(function(){
+		$("#hotlist").click(function(){
+			window.location = "/BEngineer/beFiles/hotlist.do";
+		});
+	});
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; background-color:#ff9999; float:left;">

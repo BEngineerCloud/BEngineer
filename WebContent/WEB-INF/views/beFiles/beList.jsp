@@ -690,7 +690,11 @@
 			fileform2.style.border="none";
 		}
 	}
-	
+	$(function(){
+		$("#hotlist").click(function(){
+			window.location = "/BEngineer/beFiles/hotlist.do";
+		});
+	});
 	//초성검색 @@@@@@@@@@
 	var font_cho = Array(
 	'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ',
@@ -801,6 +805,17 @@
 		var Cho = parseInt((( UniValue - Jong ) / 28 ) / 21);
 		return Cho;
 	}
+	function star(num){
+		var boo = $('input:checkbox[id="check"]').is(":checked");	// 체크여부 체크o true , x false
+			if(boo==true){
+				alert("즐겨찾기 추가");
+				window.location = "/BEngineer/beFiles/hot.do?num=" + num;			
+			}
+			if(boo==false){
+				alert("즐겨찾기 헤제");
+				window.location = "/BEngineer/beFiles/exhot.do?num=" + num;			
+			}
+		}
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;"> 
@@ -1082,6 +1097,14 @@
 <!-- 파일들 창 -->
 <div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
 	<c:forEach var="file" items="${list }">
+	<c:choose>
+	<c:when test="${file.important ==-2}">
+		<input type="checkbox" id="check" onclick="star(this.value);" value="${file.num }" style="height:2%; width:2%; float:left;" checked="checked"/>
+	</c:when>
+	<c:otherwise>
+		<input type="checkbox" id="check" onclick="star(this.value);" value="${file.num }" style="height:2%; width:2%; float:left;"/>
+	</c:otherwise>
+	</c:choose>
 		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
