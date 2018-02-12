@@ -52,7 +52,7 @@ public class FileBean {
 		this.sqlSession = sqlSession;
 	}
 	@RequestMapping("beMyList.do") // 내 파일 보기
-	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) {
+	public String myFile(HttpSession session, Model model, int folder) {
 		if(folder < 0 && folder > -5) {return "redirect:/beFiles/beRecentFiles.do?weeks=" + -folder;}
 		if(folder <= -5) {
 			model.addAttribute("location", "history.go(-2)");
@@ -66,7 +66,7 @@ public class FileBean {
 		if(folder != 0) {
 			dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", folder);
 			if(!owner.equals(dto.getOwner())) {
-				return "redirect:/beFiles/beSharedList.do?folder=" + folder + "&movefile_Ref=" + movefile_Ref + "&movefile_FRef=" + movefile_FRef;
+				return "redirect:/beFiles/beSharedList.do?folder=" + folder;
 			}
 		}
 		dto.setOwner(owner);
@@ -146,10 +146,6 @@ public class FileBean {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
-		model.addAttribute("movefile_Ref",movefile_Ref);
-		model.addAttribute("movefile_FRef",movefile_FRef);
-		model.addAttribute("copyfile_Ref",0);
-		model.addAttribute("copyfile_FRef",0);
 		
 		List list = sqlSession.selectList("bengineer.size",folder_ref);
 		if(list.size()!=0) {
@@ -297,10 +293,6 @@ public class FileBean {
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
 			model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
-			model.addAttribute("movefile_Ref",movefile_Ref);
-			model.addAttribute("movefile_FRef",movefile_FRef);
-			model.addAttribute("copyfile_Ref",0);
-			model.addAttribute("copyfile_FRef",0);
 			model.addAttribute("space", viewSpace(id));
 			return "beFiles/beSharedList";
 		}

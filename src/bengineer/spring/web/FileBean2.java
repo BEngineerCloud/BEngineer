@@ -92,8 +92,22 @@ public class FileBean2 {
 			return "beFiles/alert";	
 	}
 	
+	@RequestMapping("beFilesession.do") //�뙆�씪 �옄�룞�젙由�
+	public String beFilesession(HttpSession session, int folder, String ref, String file_flag, Model model) {
+		session.setAttribute("file_flag", file_flag);
+		session.setAttribute("ref", ref);
+		FileDTO filedto = new FileDTO();
+		int folder_ref = folder;
+		filedto = sqlSession.selectOne("bengineer.getaddr",folder_ref);
+		if(filedto.getFilename().equals("image") && filedto.getImportant()==-1)
+			model.addAttribute("location","\"/BEngineer/beFiles/beImagePreview.do?folder="+folder+ "\"");
+		else
+			model.addAttribute("location","\"/BEngineer/beFiles/beMyList.do?folder="+folder+ "\"");
+		return "beFiles/location";	
+	}
+	
 	@RequestMapping("beMove.do") //�뙆�씪/�뤃�뜑 �씠�룞
-	public String beMove(HttpSession session, Model model, int ref, int folder_ref) {
+	public String beMove(HttpSession session, Model model, int folder_ref) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 鍮� 濡쒓렇�씤 �긽�깭�떆 濡쒓렇�씤 李쎌쑝濡� 由щ뵒�젆�듃
 		FileBean filebean = new FileBean();
 		if(!filebean.checkSpace(session, sqlSession)) {
@@ -103,6 +117,8 @@ public class FileBean2 {
 		}
 		filebean.setSqlSession(sqlSession);
 		List originalAddr = null;
+		String refTemp = (String)session.getAttribute("ref");
+		Integer ref = Integer.parseInt(refTemp);
 		originalAddr = filebean.getAddr(ref);
 		String originalPath = "d:/PM/BEngineer/";
 		FileDTO dto = new FileDTO();
@@ -161,10 +177,12 @@ public class FileBean2 {
 			}	
 		}
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		session.removeAttribute("ref");
+		session.removeAttribute("file_flag");
 		return "beFiles/alert";
 	}
 	@RequestMapping("beCopy.do") //�뙆�씪/�뤃�뜑 �씠�룞
-	public String beCopy(HttpSession session, Model model, int ref, int folder_ref) {
+	public String beCopy(HttpSession session, Model model, int folder_ref) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 鍮� 濡쒓렇�씤 �긽�깭�떆 濡쒓렇�씤 李쎌쑝濡� 由щ뵒�젆�듃
 		FileBean filebean = new FileBean();
 		if(!filebean.checkSpace(session, sqlSession)) {
@@ -174,6 +192,8 @@ public class FileBean2 {
 		}
 		filebean.setSqlSession(sqlSession);
 		List originalAddr = null;
+		String refTemp = (String)session.getAttribute("ref");
+		Integer ref = Integer.parseInt(refTemp);
 		originalAddr = filebean.getAddr(ref);
 		String originalPath = "d:/PM/BEngineer/";
 		List newAddr = null;
@@ -333,11 +353,13 @@ public class FileBean2 {
 			}
 		}
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		session.removeAttribute("ref");
+		session.removeAttribute("file_flag");
 		return "beFiles/alert";
 	}
 	
 	@RequestMapping("beMultimove.do") // 여러파일/폴더 선택
-	public String beMultimove(String file_ref,int file_fref, HttpSession session,  Model model) {
+	public String beMultimove(int file_fref, HttpSession session,  Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} 
 		FileBean filebean = new FileBean();
 		if(!filebean.checkSpace(session, sqlSession)) {
@@ -347,7 +369,8 @@ public class FileBean2 {
 		}
 		filebean.setSqlSession(sqlSession);
 		boolean is_Move = false;
-		String files[] = file_ref.split(",");
+		String ref = (String)session.getAttribute("ref");
+		String files[] = ref.split(",");
 		int flag = 0;
 		FileDTO dto = new FileDTO();
 		
@@ -441,11 +464,13 @@ public class FileBean2 {
 		}
 		
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		session.removeAttribute("ref");
+		session.removeAttribute("file_flag");
 		return "beFiles/alert";
 	}
 	
 	@RequestMapping("beMulticopy.do") // 여러파일/폴더 선택
-	public String beMulticopy(String file_ref,String file_fref, HttpSession session,  Model model) {
+	public String beMulticopy(String file_fref, HttpSession session,  Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} 
 		FileBean filebean = new FileBean();
 		if(!filebean.checkSpace(session, sqlSession)) {
@@ -455,7 +480,8 @@ public class FileBean2 {
 		}
 		filebean.setSqlSession(sqlSession);
 		boolean is_Copy = false;
-		String files[] = file_ref.split(",");
+		String ref = (String)session.getAttribute("ref");
+		String files[] = ref.split(",");
 		int flag = 0;
 		int count = 2;
 		FileDTO dto = new FileDTO();
@@ -464,7 +490,7 @@ public class FileBean2 {
 		List newAddr = null;
 		String newPath = "d:/PM/BEngineer/";
 
-		if(file_ref.equals(file_fref)) { // 자기자신의 복사하려할 때
+		if(ref.equals(file_fref)) { // 자기자신의 복사하려할 때
 			for(int i = 0; i < files.length; i++) {
 				int filenum = 0;
 				filenum = Integer.parseInt(files[i]);
@@ -753,6 +779,8 @@ public class FileBean2 {
 		
 		
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		session.removeAttribute("ref");
+		session.removeAttribute("file_flag");
 		return "beFiles/alert";
 	}
 	
@@ -983,14 +1011,28 @@ public class FileBean2 {
 		return "beFiles/beImagePreview";
 	}
 	
-	// 02.06 수정한부분
-		@RequestMapping("beImageview.do")
-		public String beImageview(String imageName,Model model, HttpSession session) {
-			String owner = (String)session.getAttribute("id");
-			model.addAttribute("owner",owner);
-			model.addAttribute("imageName",imageName);
-			return "beFiles/beImageview";
-		}
+	@RequestMapping("beImageview.do")
+	public String beImageview(String imageName,Model model, HttpSession session) {
+		String owner = (String)session.getAttribute("id");
+		model.addAttribute("owner",owner);
+		model.addAttribute("imageName",imageName);
+		return "beFiles/beImageview";
+	}
+	
+	@RequestMapping("beCancel.do")
+	public String beCancel(Model model, int folder, HttpSession session) {
+		session.removeAttribute("ref");
+		session.removeAttribute("file_flag");
+		FileDTO filedto = new FileDTO();
+		int folder_ref = folder;
+		filedto = sqlSession.selectOne("bengineer.getaddr",folder_ref);
+			
+		if(filedto.getFilename().equals("image") && filedto.getImportant()==-1)
+			model.addAttribute("location","\"/BEngineer/beFiles/beImagePreview.do?folder="+folder+ "\"");
+		else
+			model.addAttribute("location","\"/BEngineer/beFiles/beMyList.do?folder="+folder+ "\"");
+		return "beFiles/location";
+	}
 	
 	private int moveFile(String filePath, String fileName, String moveFolder, String owner) {
 		boolean is_Move = false;

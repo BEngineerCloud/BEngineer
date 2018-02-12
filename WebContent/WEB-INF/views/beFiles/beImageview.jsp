@@ -26,5 +26,6 @@
         	bos.write(b,0,read);
    	 	}
 	} 
+	bis.close(); 
 	bos.close();
 %>
