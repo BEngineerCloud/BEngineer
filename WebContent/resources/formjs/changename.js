@@ -48,7 +48,7 @@ function initChangeName(){
 }
 function setChangeName(num, type){
 	var form = document.getElementById("changenameform");
-	var index = writeList.indexOf(num);/
+	var index = writeList.indexOf(num);
 	var important = document.getElementById(num + "important");
 	if(form != null && index != -1 && important.value != -1){
 		if(type.value == "dir"){

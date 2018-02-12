@@ -48,7 +48,7 @@ function initWriteText(){
 		form.orgname.readOnly = false;
 	}
 }
-function initRewriteText(){/
+function initRewriteText(){
 	var form = document.getElementById("rewritetextform");
 	if(form != null){
 		form.submitrewritetext.type = "hidden";
