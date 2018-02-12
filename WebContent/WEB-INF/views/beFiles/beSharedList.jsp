@@ -190,6 +190,7 @@ var writeList = new Array(); // 파일/폴더 경로 리스트 받아오기
 	<c:forEach var="file" items="${list }">
 		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
+		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 		<input type="hidden" id="${file.num }date" value="${datelist.get(fnum) }"/>
 		<c:set var="fnum" value="${fnum + 1 }" />
 	</c:forEach>

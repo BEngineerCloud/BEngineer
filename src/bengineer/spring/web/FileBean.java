@@ -203,7 +203,7 @@ public class FileBean {
 				List share_ref = getShareAddr(num, id);
 				KeyDTO kdto = (KeyDTO)share_ref.get(share_ref.size() - 1);
 				if(kdto.getRw() == 1) {
-					writelist.add(kdto.getFilenum());
+					writelist.add(dto.getNum());
 				}
 				String end = kdto.getEnddate().toString();
 				end = end.substring(0, end.lastIndexOf("."));
@@ -1328,7 +1328,11 @@ public class FileBean {
 		String owner = dto.getOwner();
 		String result = "forward:/beFiles/beMyList.do?folder=" + ref;
 		if(!owner.equals((String)session.getAttribute("id"))) {
-			result = "forward:/beFiles/beSharedList.do?folder=" + ref;
+			if(checkPower((String)session.getAttribute("id"), ref)) {
+				result = "forward:/beFiles/beSharedList.do?folder=" + ref;
+			}else {
+				result = "forward:/beFiles/beSharedList.do?folder=0";
+			}
 		}
 		String address = "d:/PM/BEngineer/";
 		for(int i = address_ref.size() - 1; i >= 0; i--) {

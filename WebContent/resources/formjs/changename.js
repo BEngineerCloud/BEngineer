@@ -48,7 +48,9 @@ function initChangeName(){
 }
 function setChangeName(num, type){
 	var form = document.getElementById("changenameform");
-	if(form != null){
+	var index = writeList.indexOf(num);/
+	var important = document.getElementById(num + "important");
+	if(form != null && index != -1 && important.value != -1){
 		if(type.value == "dir"){
 			form.action = "/BEngineer/beFiles/changeFolderName.do";
 			form.name.value = "폴더 이름";

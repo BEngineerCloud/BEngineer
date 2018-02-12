@@ -48,6 +48,12 @@ function initWriteText(){
 		form.orgname.readOnly = false;
 	}
 }
+function initRewriteText(){/
+	var form = document.getElementById("rewritetextform");
+	if(form != null){
+		form.submitrewritetext.type = "hidden";
+	}
+}
 function setWriteText(){
 	document.getElementById("writetextdiv").style.display = "block";
 	document.getElementById("files").style.height = "35%";

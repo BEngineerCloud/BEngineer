@@ -60,6 +60,8 @@ function hinder(){ // 모든 폼 초기화 함수
 	initMultiSel();
 	initCopy();
 	initMove();
+	initWriteText();
+	initRewriteText();
 	hideWriteText();
 	initChangeName();
 	initFolderDown();
