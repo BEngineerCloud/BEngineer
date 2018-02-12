@@ -12,7 +12,7 @@
 	</select>
 	<select id="getfilesforhits" resultType="fileDTO" parameterType="string">
 		<![CDATA[
-			select * from BEfilelist where owner = #{owner} and important < 1 and orgname != #{owner} and hitcount > 1 order by filetype desc, important asc, filename asc
+			select * from BEfilelist where important < 1 and orgname != #{owner} and hitcount > 1 and (owner = #{owner} or num in (select filenum from BEkeylist where share_key in (select share_key from BEsharelist where id = #{owner}))) order by filetype desc, important asc, filename asc
 		]]>
 	</select>
 	<select id="gettrashes" resultType="fileDTO" parameterType="int">
@@ -148,8 +148,8 @@
 			delete from BEkeylist where enddate < sysdate or filenum not in (select num from BEfilelist)
 		]]>
 	</delete>
-	<delete id="unshare" parameterType="shareDTO">
-		delete from BEsharelist where id = #{id} and share_key in (select share_key from BEkeylist where filenum = #{num})
+	<delete id="unshare" parameterType="keyDTO">
+		delete from BEsharelist where id = #{id} and share_key = #{share_key}
 	</delete>
 	<delete id="unshareall" parameterType="int">
 		delete from BEkeylist where filenum = #{num}
@@ -213,7 +213,7 @@
 	</select>
 	<select id="shortcut" resultType="fileDTO" parameterType="fileDTO">
 		<![CDATA[
-			select * from BEfilelist where owner = #{owner} and important < 1 and filename = #{filename} and hitcount = #{hitcount} order by filetype desc, important asc, filename asc
+			select * from BEfilelist where (owner = #{owner} or num in (select filenum from BEkeylist where share_key in (select share_key from BEsharelist where id = #{owner}))) and important < 1 and filename = #{filename} and hitcount = #{hitcount} and (filename = orgname or filetype != 'dir') order by filetype desc, important asc, filename asc
 		]]>
 	</select>
 	<select id="imageNum" parameterType="string" resultType="int">

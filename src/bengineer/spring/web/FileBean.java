@@ -55,8 +55,8 @@ public class FileBean {
 	public String myFile(HttpSession session, Model model, int folder, @RequestParam(value="movefile_Ref", defaultValue="0") int movefile_Ref, @RequestParam(value="movefile_FRef", defaultValue="0") int movefile_FRef) {
 		if(folder < 0 && folder > -5) {return "redirect:/beFiles/beRecentFiles.do?weeks=" + -folder;}
 		if(folder <= -5) {
-			model.addAttribute("history", -2);
-			return "/beFiles/goback";
+			model.addAttribute("location", "history.go(-2)");
+			return "/beFiles/location";
 		}
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		String owner = (String)session.getAttribute("id");
@@ -221,16 +221,24 @@ public class FileBean {
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
 			model.addAttribute("space", viewSpace(id));
+			List font = sqlSession.selectList("bengineer.font");	// ,email);
+	 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
+	 		model.addAttribute("write", false);
 			return "beFiles/beSharedList";
 		}else {
 			List address_ref = getShareAddr(folder, id);
 			if(address_ref == null) {
 				model.addAttribute("alert", "접근권한이 없습니다.");
-				model.addAttribute("location", "history.go(-1)");
+				model.addAttribute("location", "\"/BEngineer/beMain.do\"");
 				return "beFiles/alert";
 			}
 			sqlSession.update("bengineer.hit", folder);
 			KeyDTO kdto = (KeyDTO)address_ref.remove(address_ref.size() - 1);
+			if(kdto.getRw() == 0) {
+		 		model.addAttribute("write", false);
+			}else {
+		 		model.addAttribute("write", true);
+			}
 			List filelist = sqlSession.selectList("bengineer.getfiles", folder);
 			List writelist = new ArrayList();
 			List datelist = new ArrayList();
@@ -240,7 +248,7 @@ public class FileBean {
 				List share_ref = getShareAddr(num, id);
 				kdto = (KeyDTO)share_ref.get(share_ref.size() - 1);
 				if(kdto.getRw() == 1) {
-					writelist.add(kdto.getFilenum());
+					writelist.add(dto.getNum());
 				}
 				String end = kdto.getEnddate().toString();
 				end = end.substring(0, end.lastIndexOf("."));
@@ -349,6 +357,8 @@ public class FileBean {
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
 			model.addAttribute("space", viewSpace(id));
+			List font = sqlSession.selectList("bengineer.font");	// ,email);
+	 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 			return "beFiles/beTrashcan";
 		}
 	}
@@ -1202,10 +1212,13 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 		List idlist = getSharePeopleAddr(file);
-		String result = "";
+		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", file);
+		String owner = dto.getOwner();
+		String nickname = (String)sqlSession.selectOne("bengineer.getnickname", owner);
+		String result = nickname + "(주인)\\r\\n";
 		for(int i = 0; i < idlist.size(); i++) {
 			KeyDTO kdto = (KeyDTO)idlist.get(i);
-			String nickname = sqlSession.selectOne("bengineer.getnickname", kdto.getShare_key());
+			nickname = sqlSession.selectOne("bengineer.getnickname", kdto.getShare_key());
 			if(nickname == null) {
 				continue;
 			}
@@ -1311,7 +1324,12 @@ public class FileBean {
 		}
 		List address_ref = getAddr(filenum);
 		FileDTO dto = (FileDTO)address_ref.get(0);
+		int ref = dto.getFolder_ref();
 		String owner = dto.getOwner();
+		String result = "forward:/beFiles/beMyList.do?folder=" + ref;
+		if(!owner.equals((String)session.getAttribute("id"))) {
+			result = "forward:/beFiles/beSharedList.do?folder=" + ref;
+		}
 		String address = "d:/PM/BEngineer/";
 		for(int i = address_ref.size() - 1; i >= 0; i--) {
 			dto = (FileDTO)address_ref.get(i);
@@ -1328,7 +1346,25 @@ public class FileBean {
 			reader = new FileReader(text);
 			buffered = new BufferedReader(reader);
 			while(buffered.ready()) {
-				content += buffered.readLine() + "\\r\\n";
+				String add = buffered.readLine();
+				List indexlist = new ArrayList();
+				for(int index = add.indexOf("\\"); index != -1; index = add.indexOf("\\")) {
+					String addtemp = add.substring(0, index);
+					if(index < add.length()) {
+						addtemp += add.substring(index + 1);
+					}
+					add = addtemp;
+					indexlist.add(index);
+				}
+				for(int i = 0; i < indexlist.size(); i++) {
+					int index = (int)indexlist.get(i);
+					String addtemp = add.substring(0, index + (i * 2)) + "\\\\";
+					if(index + (i * 2) < add.length()) {
+						addtemp += add.substring(index + (i * 2));
+					}
+					add = addtemp;
+				}
+				content +=  add + "\\r\\n";
 			}
 			buffered.close();
 			reader.close();
@@ -1339,7 +1375,7 @@ public class FileBean {
 		model.addAttribute("textcontent", content);
 		model.addAttribute("textname", dto.getFilename());
 		model.addAttribute("textorgname", dto.getOrgname().substring(0, dto.getOrgname().lastIndexOf(".")));
-		return "forward:/beFiles/beMyList.do?folder=0";
+		return result;
 	}
 	@RequestMapping("unshare.do")
 	public String unshare(HttpSession session, Model model, int file_ref, String nickname, int folder) {
@@ -1364,20 +1400,24 @@ public class FileBean {
 					model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 					return "beFiles/alert";
 				}
+				List ref = getShareAddr(file_ref, id);
+				KeyDTO kdto = (KeyDTO)ref.get(ref.size() - 1);
 				ShareDTO sdto = new ShareDTO();
 				sdto.setId(id);
-				sdto.setNum(file_ref);
+				sdto.setShare_key(kdto.getShare_key());
 				sqlSession.delete("bengineer.unshare", sdto);
 				model.addAttribute("alert", "파일의 공유를 해제하였습니다.");
 				model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 			}
 		}else {
+			List ref = getShareAddr(file_ref, id);
+			KeyDTO kdto = (KeyDTO)ref.get(ref.size() - 1);
 			ShareDTO sdto = new ShareDTO();
 			sdto.setId(id);
-			sdto.setNum(file_ref);
+			sdto.setShare_key(kdto.getShare_key());
 			sqlSession.delete("bengineer.unshare", sdto);
 			model.addAttribute("alert", "파일의 공유를 해제하였습니다.");
-			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=" + folder + "\"");
+			model.addAttribute("location", "\"/BEngineer/beFiles/beSharedList.do?folder=0\"");
 		}
 		return "beFiles/alert";
 	}

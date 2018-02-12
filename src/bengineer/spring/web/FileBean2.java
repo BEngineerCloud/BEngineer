@@ -1110,6 +1110,7 @@ public class FileBean2 {
 		List folderaddress = new ArrayList();
 		List orgaddress = new ArrayList();
 		List list = sqlSession.selectList("bengineer.hotlist",owner);
+		folderaddress.add("즐겨찾기");
 		orgaddress.add(null);
 		model.addAttribute("list",list);
 		model.addAttribute("folderaddress", folderaddress);

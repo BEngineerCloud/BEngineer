@@ -45,6 +45,8 @@ public class MainBean extends Thread{
 			model.addAttribute("content", returnWC2(id));
 			FileBean filebean = new FileBean();
 			model.addAttribute("space", filebean.viewSpace(id, sqlSession));
+			List font = sqlSession.selectList("bengineer.font");	// ,email);
+	 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 			return "beMain";
 		}
 	}
