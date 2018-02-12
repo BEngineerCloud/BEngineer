@@ -13,7 +13,7 @@
 <script src='/BEngineer/resources/js/menu.js' type='text/javascript'></script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;"> 
-	<img src="/BEngineer2/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
+	<img src="/BEngineer/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
 </div>
 <!-- 검색창 -->
 <div align="center" style="height:10%; width:61%; float:left;">
