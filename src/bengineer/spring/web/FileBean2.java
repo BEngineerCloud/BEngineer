@@ -99,7 +99,9 @@ public class FileBean2 {
 		FileDTO filedto = new FileDTO();
 		int folder_ref = folder;
 		filedto = sqlSession.selectOne("bengineer.getaddr",folder_ref);
-		if(filedto.getFilename().equals("image") && filedto.getImportant()==-1)
+		if(filedto == null) {
+			model.addAttribute("location","\"/BEngineer/beFiles/beSharedList.do?folder=0\"");
+		}else if(filedto.getFilename().equals("image") && filedto.getImportant()==-1)
 			model.addAttribute("location","\"/BEngineer/beFiles/beImagePreview.do?folder="+folder+ "\"");
 		else
 			model.addAttribute("location","\"/BEngineer/beFiles/beMyList.do?folder="+folder+ "\"");

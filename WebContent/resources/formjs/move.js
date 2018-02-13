@@ -22,7 +22,11 @@ function initMove(){
 function setMove(num){
 	var form = document.getElementById("moveform");
 	var important = document.getElementById(num + "important");
-	if(form != null && important.value != -1){
+	var index = 0;
+	if(writeList != null){
+		index = writeList.indexOf(num);
+	}
+	if(form != null && important.value != -1 && index != -1){
 		form.folder_ref.value = folder_ref;
 		form.select_flag.value = num;
 		form.submitmove.type = "submit";

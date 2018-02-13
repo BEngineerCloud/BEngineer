@@ -40,6 +40,8 @@ $(function(){
 		setFolderDown(ref, type);
 		setShareCheck(ref);
 		setUnshare(ref);
+		setCopy(ref);
+		setMove(ref);
 	});
 });
 $(function(){

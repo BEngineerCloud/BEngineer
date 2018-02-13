@@ -190,7 +190,7 @@
 		select count(*) from befilelist where owner=#{id}
 	</select>
 	<insert id="copyfile" parameterType="fileDTO">
-		insert into befilelist(num,folder_ref,filename,orgname,filetype,filesize,uploaddate,updatedate,important,owner) values(BEtrashcan_seq.NEXTVAL,#{folder_ref},#{filename},#{orgname},#{filetype},#{filesize},sysdate,sysdate,0,#{owner})
+		insert into befilelist(num,folder_ref,filename,orgname,filetype,filesize,uploaddate,updatedate,important,owner) values(BEfilelist_seq.NEXTVAL,#{folder_ref},#{filename},#{orgname},#{filetype},#{filesize},sysdate,sysdate,0,#{owner})
 	</insert>
 	<update id="changeowners" parameterType="listDTO">
 		update BEfilelist set owner = #{string} where num in 

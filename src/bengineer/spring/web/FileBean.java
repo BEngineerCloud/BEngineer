@@ -1950,9 +1950,15 @@ public class FileBean {
 		try {
 			r = new RConnection(); // R연결
 			r.eval("png('pie.png')");
-			r.eval("space <- c(" + usingspace + ", " + (space - usingspace) + ")");
 			r.eval("name <- c('사용중', '사용가능')");
-			r.eval("size <- paste('\\n\\r(', round(space / 1024 / 1024 / 1024, digits = 2), 'GB)', sep = '')");
+			if(usingspace < 1024 * 1024 * 1024) {
+				usingspace /= 1024;
+				r.eval("space <- c(" + usingspace + ", " + (space - usingspace) + ")");
+				r.eval("size <- paste('\\n\\r(', round(space / 1024 / 1024, digits = 2), 'MB)', sep = '')");
+			}else {
+				r.eval("space <- c(" + usingspace + ", " + (space - usingspace) + ")");
+				r.eval("size <- paste('\\n\\r(', round(space / 1024 / 1024 / 1024, digits = 2), 'GB)', sep = '')");
+			}
 			r.eval("pie(space, radius = 1, clockwise = TRUE, labels = c('', ''), col=rainbow(2))");
 			r.eval("text(" + (x * Math.sin(angle)) + ", " + (x * Math.cos(angle) + 0.1) + ", name[1], cex = 5, font = 2)");
 			r.eval("text(" + -(x * Math.sin(angle)) + ", " + -(x * Math.cos(angle) - 0.1) + ", name[2], cex = 4.5, font = 2)");

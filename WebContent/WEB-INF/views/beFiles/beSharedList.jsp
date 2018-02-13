@@ -84,7 +84,7 @@ var folder_ref = '${folder_ref}';
 		<div style="height:100%; width:relative; margin:0; float:left;">
 			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
 				<input type="hidden" name="file_ref" />
-				<input type="hidden" name="file_fref"/>
+				<input type="hidden" name="file_fref" value="${folder_ref }"/>
 				<input type="hidden" name="multimove_flag" value=0/>
 				<input type="hidden" name="multicopy_flag" value=0/>
 				<div style="height:100%; width:relative; float:left;">
@@ -95,6 +95,9 @@ var folder_ref = '${folder_ref}';
 				</div>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="hidden" id="multicopy" value="복사" />
+				</div>
+				<div style="height:100%; width:relative; float:left;">
+					<input type="hidden" id="throwtotrashcan" value="지우기" />
 				</div>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="hidden" id="cancelmultidown" value="취소" />
@@ -110,6 +113,58 @@ var folder_ref = '${folder_ref}';
 	</c:if>
 </div>
 <div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
+	<!-- 파일/폴더 이동 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
+			<input type="hidden" name="ref"/>
+			<c:if test="${write && file_flag eq 'move' }">
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="submit"  id="submitmove"name="submitmove" value="이동하기"/>
+				<input type="hidden" name="select_flag" value="${ref }"/>
+				<input type="hidden" name="folder_ref" value="${folder_ref }"/>
+				</div>
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="button"  id="movecancel" name="movecancel" value="이동 취소"/>
+				</div>
+			</c:if>
+			<c:if test="${!write || file_flag ne 'move' }">
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="hidden"  id="submitmove"name="submitmove" value="이동"/>
+				<input type="hidden" name="select_flag"/>
+				<input type="hidden" name="folder_ref"/>
+				</div>
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="hidden"  id="movecancel" name="movecancel" value="이동 취소"/>
+				</div>
+			</c:if>
+		</form>
+	</div>
+	<!-- 파일/폴더 복사 폼 -->
+	<div style="height:5%; width:relative; margin:0; float:left;">
+		<form id="copyform" method="post" action="/BEngineer/beFiles/beCopy.do">
+			<input type="hidden" name="ref"/>
+			<c:if test="${write && file_flag eq 'copy' }">
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="submit"  id="submitcopy"name="submitcopy" value="복사하기"/>
+				<input type="hidden" name="select_flag" value="${ref }"/>
+				<input type="hidden" name="folder_ref" value="${folder_ref }"/>
+				</div>
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="button"  id="copycancel" name="copycancel" value="복사 취소"/>
+				</div>
+			</c:if>
+			<c:if test="${!write || file_flag ne 'copy' }">
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="hidden"  id="submitcopy"name="submitcopy" value="복사"/>
+				<input type="hidden" name="select_flag"/>
+				<input type="hidden" name="folder_ref"/>
+				</div>
+				<div style="height:5%; width:relative; margin:0; float:left;">
+				<input type="hidden"  id="copycancel" name="copycancel" value="복사 취소"/>
+				</div>
+			</c:if>
+		</form>	
+	</div>
 	<!-- 텍스트 파일 수정 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="rewritetextform" action="/BEngineer/beFiles/rewriteText.do" method="post">
@@ -216,6 +271,74 @@ var folder_ref = '${folder_ref}';
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
 	etc
 </div>
+<script>
+if("${file_flag}"=="move"){
+	var fileform = document.getElementById("${ref}"); // 클릭되어있는 fileform 가져오기
+	var moveform = document.getElementById("moveform");
+	 // moveform.ref에 fileform.ref 대입하기
+	fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
+	moveform.ref.value="${ref}";
+	moveform.submitmove.value="이동하기" 		// moveform.submitmove 값을 확인으로 설정
+	moveform.submitmove.type="hidden"; 	// moveform.submitmove 타입을 '숨김'으로 설정
+	moveform.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정
+}else if("${file_flag}"=="copy"){
+	var fileform = document.getElementById("${ref}"); // 클릭되어있는 fileform 가져오기
+	var copyform = document.getElementById("copyform");
+	 // moveform.ref에 fileform.ref 대입하기
+	fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
+	copyform.ref.value="${ref}";
+	copyform.submitcopy.value="복사하기" 		// moveform.submitmove 값을 확인으로 설정
+	copyform.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정	
+}else if("${file_flag}"=="multimove"){
+	var moveform = document.getElementById("moveform");
+	var copyform = document.getElementById("copyform");
+	var ref = "${ref}";
+	var refArray = ref.split(',');
+	var form = document.getElementById("multidownform");
+	
+	moveform.submitmove.type="hidden";
+	copyform.submitcopy.type="hidden";
+	form.file_ref.value="${ref}";
+	
+	form.multimove_flag.value = 1;
+	form.multicopy_flag.value = 0;
+	form.submitmultidown.value = "다운로드";
+	document.getElementById("multidowntext").type = "text";
+	document.getElementById("cancelmultidown").type = "button";
+	document.getElementById("throwtotrashcan").type = "button";
+	document.getElementById("multimove").value = "이동하기";
+	document.getElementById("multimove").type = "button";
+	
+	for(var i = 0; i < refArray.length; i++){
+		var formEx = document.getElementById(refArray[i]);
+		formEx.style.border="dotted";
+	}	
+}else if("${file_flag}"=="multicopy"){
+	var moveform = document.getElementById("moveform");
+	var copyform = document.getElementById("copyform");
+	var ref = "${ref}";
+	var refArray = ref.split(',');
+	var form = document.getElementById("multidownform");
+	
+	moveform.submitmove.type="hidden";
+	copyform.submitcopy.type="hidden";
+	form.multicopy.type="hidden";
+	form.file_ref.value="${ref}";
+	form.submitmultidown.value = "다운로드";
+	form.multimove_flag.value = 1;
+	form.multicopy_flag.value = 0;
+	document.getElementById("multidowntext").type = "text";
+	document.getElementById("cancelmultidown").type = "button";
+	document.getElementById("throwtotrashcan").type = "button";
+	document.getElementById("multicopy").value = "복사하기";
+	document.getElementById("multicopy").type = "button";	
+	
+	for(var i = 0; i < refArray.length; i++){
+		var formEx = document.getElementById(refArray[i]);
+		formEx.style.border="dotted";
+	}
+}
+</script>
 <c:if test="${textcontent != null}">
 	<script>
 		reWriteText('${textname}', '${textorgname}', '${textcontent}');
