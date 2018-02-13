@@ -16,6 +16,7 @@
 			var ref = $(this).attr("name");
 			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			var moveform = document.getElementById("moveform");
+			var copyform = document.getElementById("copyform");
 			var multidownform = document.getElementById("multidownform");
 			var important =document.getElementById(ref + "important");
 			var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
@@ -65,23 +66,7 @@
 	});
 	$(function(){
 		$("#cancelmultidown").click(function(){ // 다중선택 취소시
-			clickedfile = new Array();
-			clickedImportant = new Array();
-			var form = document.getElementById("multidownform");
-			form.file_ref.value = "";
-			form.file_fref.value = "";
-			form.multimove_flag.value = 0;
-			form.multicopy_flag.value = 0;
-			form.submitmultidown.value = "여러 파일 선택하기";
-			document.getElementById("multidowntext").type = "hidden";
-			document.getElementById("cancelmultidown").type = "hidden";
-			document.getElementById("throwtotrashcan").type = "hidden";
-			document.getElementById("multimove").value="이동";
-			document.getElementById("multimove").type="hidden";
-			document.getElementById("multicopy").value="복사";
-			document.getElementById("multicopy").type="hidden";
-			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
-			$("#files > div").css("border","none"); // 모든 파일 선택 취소
+			window.location = "/BEngineer/beFiles/beCancel.do?folder="+${folder_ref};
 		});
 	});
 	$(function(){
@@ -179,32 +164,12 @@
 			var form = document.getElementById("multidownform"); // 폼 받아오기
 			form.multicopy_flag.value = 0;
 			form.multimove_flag.value = 1;
+			form.file_ref.value = clickedfile.join();
+		
 			if($(this).val()=="이동"){
-				form.file_ref.value = clickedfile.join();
-				var ref = form.file_ref.value;
-				if(ref=="") {
-					alert('이동할 파일을 선택해주세요');
-					return false;
-				}
-				var refArray = ref.split(',');
-				
-				for(var i = 0; i < refArray.length; i++){
-					var formEx = document.getElementById(refArray[i]);
-					formEx.style.border="dotted";
-				}
-				form.multicopy.type="hidden";
-			}
-			
-			if($(this).val()=="이동"){
-				$(this).val("이동하기");
-				document.getElementById("multimove").type="hidden";
-				return false;
+				window.location="/BEngineer/beFiles/beFilesession.do?folder="+${folder_ref}+"&ref="+form.file_ref.value+"&file_flag=multimove";
 			}else{
-				if(form.file_fref.value==""){
-					alert("이동할 폴더를 선택해주세요.");
-					return false;
-				}
-				window.location = "/BEngineer/beFiles/beMultimove.do?file_ref="+form.file_ref.value+"&file_fref="+form.file_fref.value;
+				window.location = "/BEngineer/beFiles/beMultimove.do?file_fref="+form.file_fref.value;
 			}
 		});
 	});
@@ -213,28 +178,12 @@
 			var form = document.getElementById("multidownform"); // 폼 받아오기
 			form.multicopy_flag.value = 1;
 			form.multimove_flag.value = 0;
+			form.file_ref.value = clickedfile.join();
+		
 			if($(this).val()=="복사"){
-				form.file_ref.value = clickedfile.join();
-				var ref = form.file_ref.value;
-				if(ref=="") {
-					alert('복사할 파일을 선택해주세요');
-					return false;
-				}
-				var refArray = ref.split(',');
-				
-				for(var i = 0; i < refArray.length; i++){
-					var formEx = document.getElementById(refArray[i]);
-					formEx.style.border="dotted";
-				}
-				form.multimove.type="hidden";
-			}
-			if($(this).val()=="복사"){
-				$(this).val("복사하기");
-				return false;
+				window.location="/BEngineer/beFiles/beFilesession.do?folder="+${folder_ref}+"&ref="+form.file_ref.value+"&file_flag=multicopy";
 			}else{
-				if(form.file_fref.value=="") //이부분부터 복사하면 자기자신에 덮어씌여진다.
-					form.file_fref.value = form.file_ref.value;
-				window.location = "/BEngineer/beFiles/beMulticopy.do?file_ref="+form.file_ref.value+"&file_fref="+form.file_fref.value;
+				window.location = "/BEngineer/beFiles/beMulticopy.do?file_fref="+form.file_fref.value;
 			}
 		});
 	});
@@ -262,6 +211,10 @@
 	});
 	$(function(){
 		$("#changenameform").submit(function(){ // 폴더명/파일명 변경 버튼 클릭시
+			var moveform = document.getElementById("moveform"); // moveform 가져오기
+			var copyform = document.getElementById("copyform"); // copyform 가져오기
+			moveform.submitmove.type="hidden";
+			copyform.submitcopy.type="hidden";
 			var form = document.getElementById("changenameform"); // 폼 받아오기
 			if(form.name.type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
 				hinder(); // 다른 폼 닫기
@@ -293,150 +246,37 @@
 	$(function(){
 		$("#moveform").submit(function(){ // 파일/폴더 이동 버튼 클릭시
 			var form = document.getElementById("moveform"); // moveform 받아오기, *$(this)사용
-			var copyform = document.getElementById("copyform"); // moveform 받아오기, *$(this)사용
-			copyform.submitcopy.type="hidden";
 			if(form.submitmove.value=="이동"){ // submitmove 값이 이동일 시
-				var fileform = document.getElementById(form.select_flag.value); // 클릭되어있는 fileform 가져오기
-				 // moveform.ref에 fileform.ref 대입하기
-				fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
-				form.ref.value=form.select_flag.value;
-				form.submitmove.value="이동하기" 		// moveform.submitmove 값을 확인으로 설정
-				form.submitmove.type="hidden"; 	// moveform.submitmove 타입을 '숨김'으로 설정
-				form.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정				
+				window.location="/BEngineer/beFiles/beFilesession.do?folder="+${folder_ref}+"&ref="+form.select_flag.value+"&file_flag=move";
 				return false;
-			}
-			if(form.submitmove.value=="이동하기"){
-				// 다른 폴더로 이동한 후에 처음에 선택한 파일/폴더의 ref 값이 없을 시
-				if(form.ref.value==0){
-					form.ref.value=form.select_flag.value;
-				}
 			}
 		});
 	});
 	$(function(){
 		$("#copyform").submit(function(){ // 파일/폴더 복사 버튼 클릭시
 			var form = document.getElementById("copyform"); // copyform 받아오기, *$(this)사용
-			var moveform = document.getElementById("moveform"); // moveform 받아오기, *$(this)사용
-			moveform.submitmove.type="hidden";
 			if(form.submitcopy.value=="복사"){ // submitcopy 값이 이동일 시
-				var fileform = document.getElementById(form.select_flag.value); // 클릭되어있는 fileform 가져오기
-				 // copyform.ref에 fileform.ref 대입하기
-				fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
-				form.ref.value=form.select_flag.value;
-				form.submitcopy.value="복사하기" 		// copyform.submitcopy 값을 확인으로 설정
-				//form.submitcopy.type="hidden"; 	// copyform.submitmove 타입을 '숨김'으로 설정
-				form.copycancel.type="button"; 	// copyform.copycancel 타입을 button으로 설정				
+				window.location="/BEngineer/beFiles/beFilesession.do?folder="+${folder_ref}+"&ref="+form.select_flag.value+"&file_flag=copy";				
 				return false;
-			}
-			if(form.submitcopy.value=="복사하기"){
-				// 다른 폴더로 이동한 후에 처음에 선택한 파일/폴더의 ref 값이 없을 시
-				if(form.ref.value==0){
-					form.ref.value=form.select_flag.value;	
-				}
-				if(form.folder_ref.value==0) //이부분부터 복사하면 자기자신에 덮어씌여진다.
-					form.folder_ref.value = form.select_flag.value;
 			}
 		});
 	});
 	$(function(){
 		$("#movecancel").click(function(){ // 파일/폴더 이동 취소 버튼 클릭시
-			var form = document.getElementById("moveform"); // moveform 받아오기, *$(this)사용
-			if(form.ref.value!=0){ 
-				var fileform = document.getElementById(form.ref.value); // 클릭되어있는 fileform 가져오기
-				fileform.style.border="none"; //fileform의 테두리를 '없음'으로 설정
-				fileform.style.backgroundColor="#ff6666";
-				
-				if(form.folder_ref.value!=0){ // 이동버튼을 클릭한 뒤 다른 파일 클릭한 후 취소버튼 클릭 시
-					var fileform2 = document.getElementById(form.folder_ref.value);
-					fileform2.style.backgroundColor="#ff6666";
-				}	
-			}
-			form.select_flag.value="";
-			form.ref.value=""; 				// moveform.ref 값을 빈칸으로 설정
-			form.folder_ref.value=""; 		// moveform.folder_ref 값을 빈칸으로 설정
-			form.submitmove.value="이동" // moveform.submitmove 값을 이동으로 설정 		
-			form.submitmove.type="hidden"; 	// moveform.subitmove 타입을 submit으로 설정
-			form.movecancel.type="hidden"; 	//moveform.movecancel 타입을 '숨김'으로 설정
-			moveDotted();
-			return false;
+			window.location = "/BEngineer/beFiles/beCancel.do?folder="+${folder_ref};
 		});
 	});
 	$(function(){
 		$("#copycancel").click(function(){ // 파일/폴더 이동 취소 버튼 클릭시
-			var form = document.getElementById("copyform"); // moveform 받아오기, *$(this)사용
-			if(form.ref.value!=0){ 
-				var fileform = document.getElementById(form.ref.value); // 클릭되어있는 fileform 가져오기
-				fileform.style.border="none"; //fileform의 테두리를 '없음'으로 설정
-				fileform.style.backgroundColor="#ff6666";
-				
-				if(form.folder_ref.value!=0){ // 이동버튼을 클릭한 뒤 다른 파일 클릭한 후 취소버튼 클릭 시
-					var fileform2 = document.getElementById(form.folder_ref.value);
-					fileform2.style.backgroundColor="#ff6666";
-				}	
-			}
-			form.select_flag.value="";
-			form.ref.value=""; 				// moveform.ref 값을 빈칸으로 설정
-			form.folder_ref.value=""; 		// moveform.folder_ref 값을 빈칸으로 설정
-			form.submitcopy.value="복사" // moveform.submitmove 값을 이동으로 설정 		
-			form.submitcopy.type="hidden"; 	// moveform.subitmove 타입을 submit으로 설정
-			form.copycancel.type="hidden"; 	//moveform.movecancel 타입을 '숨김'으로 설정
-			copyDotted();
-			return false;
-		});
-	});
-	$(function(){
-		$("#uppermovesubmit").click(function(){ // 상위폴더 이동 버큰 클릭시
-			var uppermoveform = document.getElementById('uppermoveform');
-			var moveform = document.getElementById("moveform");
-			var copyform = document.getElementById("copyform");
-			var multidownform = document.getElementById("multidownform")
-			var size = orgList.length;
-			
-			
-			if(moveform.submitmove.value=="이동하기") // 상위폴더버튼을 두번 이상 누를 시 선택했던 파일/폴더 값을 기억하기 위해서
-				moveform.ref.value = moveform.select_flag.value;
-			
-			if(copyform.submitcopy.value=="복사하기") // 상위폴더버튼을 두번 이상 누를 시 선택했던 파일/폴더 값을 기억하기 위해서
-				copyform.ref.value = copyform.select_flag.value;
-			
-			if(moveform.ref.value!=0){ // 파일/폴더 이동 버튼 클릭 후 상위폴더 버튼 클릭 시
-				if(size>=2)
-					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + orgList[size-2]+"&movefile_Ref="+moveform.ref.value;		
-				else{
-					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + 0+"&movefile_Ref="+moveform.ref.value;
-				}
-			}
-			else if(copyform.ref.value!=0){
-				if(size>=2)
-					window.location = "/BEngineer/beFiles/beCopyList.do?folder=" + orgList[size-2]+"&copyfile_Ref="+copyform.ref.value;		
-				else{
-					window.location = "/BEngineer/beFiles/beCopyList.do?folder=" + 0+"&copyfile_Ref="+copyform.ref.value;
-				}
-			}
-			else if(multidownform.file_ref.value!="" && (multidownform.multimove_flag.value == 1 || multidownform.multicopy_flag.value == 1)){ // 여러 파일/폴더 이동 버튼 클릭 후 상위폴더 버튼 클릭 시
-				if(size>=2){
-					if(multidownform.multimove_flag.value == 1)
-						window.location = "/BEngineer/beFiles/beMultilist.do?folder=" + orgList[size-2]+"&multifile_Ref="+multidownform.file_ref.value+"&flag="+1;	
-					else if(multidownform.multicopy_flag.value == 1)
-						window.location = "/BEngineer/beFiles/beMultilist.do?folder=" + orgList[size-2]+"&multifile_Ref="+multidownform.file_ref.value+"&flag="+2;
-				}
-				else{
-					if(multidownform.multimove_flag.value == 1)
-						window.location = "/BEngineer/beFiles/beMultilist.do?folder=" + 0+"&multifile_Ref="+multidownform.file_ref.value+"&flag="+1;
-					else if(multidownform.multicopy_flag.value == 1)
-						window.location = "/BEngineer/beFiles/beMultilist.do?folder=" + 0+"&multifile_Ref="+multidownform.file_ref.value+"&flag="+2;
-				}
-			}
-			else{ // 그냥 상위폴더 버튼 클릭 시
-				if(size>=2)
-					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + orgList[size-2];
-				else
-					window.location = "/BEngineer/beFiles/beMyList.do?folder=" + 0;	
-			}
+			window.location = "/BEngineer/beFiles/beCancel.do?folder="+${folder_ref};
 		});
 	});
 	$(function(){
 		$("#shareform").submit(function(){ // 공유 버튼 클릭시
+			var moveform = document.getElementById("moveform"); // moveform 가져오기
+			var copyform = document.getElementById("copyform"); // copyform 가져오기
+			moveform.submitmove.type="hidden";
+			copyform.submitcopy.type="hidden";
 			var date = new Date();
 			var today = date.getFullYear() + "-";
 			var month = (date.getMonth() + 1);
@@ -469,6 +309,10 @@
 	});
 	$(function(){
 		$("#unshareform").submit(function(){ // 공유 해제 버튼 클릭시
+			var moveform = document.getElementById("moveform"); // moveform 가져오기
+			var copyform = document.getElementById("copyform"); // copyform 가져오기
+			moveform.submitmove.type="hidden";
+			copyform.submitcopy.type="hidden";
 			var form = document.getElementById("unshareform"); // 폼 받아오기
 			var select = document.getElementById("unshareselect");
 			if(select.hidden == true){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
@@ -487,6 +331,10 @@
 	});
 	$(function(){
 		$("#changeownerform").submit(function(){ // 주인 바꾸기 버튼 클릭시
+			var moveform = document.getElementById("moveform"); // moveform 가져오기
+			var copyform = document.getElementById("copyform"); // copyform 가져오기
+			moveform.submitmove.type="hidden";
+			copyform.submitcopy.type="hidden";
 			var form = document.getElementById("changeownerform"); // 폼 받아오기
 			if(form.nickname.type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
 				hinder(); // 다른 폼 닫기
@@ -615,81 +463,7 @@
 		form.ref.value = ref;
 		form.submitshare.type = "submit";
 	}
-	function multiSelect(){
-		var multifile_Ref = "${multifile_Ref}";
-		var multifile_FRef = "${multifile_FRef}";
-		var multifile_CRef = "${multifile_CRef}";
-		var multifile_CFRef = "${multifile_CFRef}"; 
-		multifile_FRef = Number(multifile_FRef);
-		multifile_CFRef = Number(multifile_CFRef);
-		
-		if(multifile_Ref!="" || multifile_FRef!=0){
-			var multiform = document.getElementById("multidownform");
-			multiform.submitmultidown.value = "다운로드";
-			multiform.file_ref.value=multifile_Ref;
-			multiform.file_fref.value=multifile_FRef;
-			multiform.multimove_flag.value = 1;
-			multiform.multicopy_flag.value = 0;
-			document.getElementById("multidowntext").type = "text";
-			document.getElementById("cancelmultidown").type = "button";
-			document.getElementById("throwtotrashcan").type = "button";
-			document.getElementById("multimove").value = "이동하기";
-			document.getElementById("multimove").type = "button";
-		}
-		
-		if(multifile_Ref!=""){
-			var multiArray = multifile_Ref.split(',');
-			for(var i = 0; i < multiArray.length; i++){
-				document.getElementById(multiArray[i]).style.border="dotted";
-			}
-		}
-		
-		if(multifile_CRef!="" || multifile_CFRef!=0){
-			var multiform = document.getElementById("multidownform");
-			multiform.submitmultidown.value = "다운로드";
-			multiform.file_ref.value=multifile_CRef;
-			multiform.file_fref.value=multifile_CFRef;
-			multiform.multicopy_flag.value = 1;
-			multiform.multimove_flag.value = 0;
-			document.getElementById("multidowntext").type = "text";
-			document.getElementById("cancelmultidown").type = "button";
-			document.getElementById("throwtotrashcan").type = "button";
-			document.getElementById("multicopy").value = "복사하기";
-			document.getElementById("multicopy").type = "button";
-		}
-		
-		if(multifile_CRef!=""){
-			var multiArray = multifile_CRef.split(',');
-			for(var i = 0; i < multiArray.length; i++){
-				document.getElementById(multiArray[i]).style.border="dotted";
-			}
-		}
-	}
 	
-	function moveDotted(){ // 클릭한 파일/폴더 점선 유지
-		var movefile_Ref = "${movefile_Ref}";
-		var moveform = document.getElementById("moveform");
-		
-		if(movefile_Ref!=0 && moveform.submitmove.value=="이동하기"){
-			var fileform = document.getElementById(movefile_Ref);
-			fileform.style.border="dotted";
-		}else{
-			var fileform = document.getElementById(movefile_Ref);
-			fileform.style.border="none";
-		}
-	}
-	function copyDotted(){ // 클릭한 파일/폴더 점선 유지
-		var copyfile_Ref = "${copyfile_Ref}";
-		var copyform = document.getElementById("copyform");
-
-		if(copyfile_Ref!=0 && copyform.submitcopy.value=="복사하기"){
-			var fileform2 = document.getElementById(copyfile_Ref);
-			fileform2.style.border="dotted";
-		}else{
-			var fileform2 = document.getElementById(copyfile_Ref);
-			fileform2.style.border="none";
-		}
-	}
 	$(function(){
 		$("#hotlist").click(function(){
 			window.location = "/BEngineer/beFiles/hotlist.do";
@@ -872,7 +646,7 @@
 		<div style="height:100%; width:relative; margin:0; float:left;">
 			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
 				<input type="hidden" name="file_ref" />
-				<input type="hidden" name="file_fref"/>
+				<input type="hidden" name="file_fref" value="${folder_ref }"/>
 				<input type="hidden" name="multimove_flag" value=0/>
 				<input type="hidden" name="multicopy_flag" value=0/>
 				<div style="height:100%; width:relative; float:left;">
@@ -905,22 +679,17 @@
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
 			<input type="hidden" name="ref"/>
-			<c:if test="${movefile_Ref!=0 || movefile_FRef!=0 }">
+			<c:if test="${file_flag eq 'move' }">
 				<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="submit"  id="submitmove"name="submitmove" value="이동하기"/>
-				<input type="hidden" name="select_flag" value="${movefile_Ref }"/>
-				<c:if test="${movefile_FRef!=0 }">
-				<input type="hidden" name="folder_ref" value="${movefile_FRef }"/>
-				</c:if>
-				<c:if test="${movefile_FRef==0 }">
-				<input type="hidden" name="folder_ref" value="${folder }"/>
-				</c:if>
+				<input type="hidden" name="select_flag" value="${ref }"/>
+				<input type="hidden" name="folder_ref" value="${folder_ref }"/>
 				</div>
 				<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="button"  id="movecancel" name="movecancel" value="이동 취소"/>
 				</div>
 			</c:if>
-			<c:if test="${movefile_Ref==0 && movefile_FRef==0 }">
+			<c:if test="${file_flag ne 'move' }">
 				<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="hidden"  id="submitmove"name="submitmove" value="이동"/>
 				<input type="hidden" name="select_flag"/>
@@ -936,22 +705,17 @@
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="copyform" method="post" action="/BEngineer/beFiles/beCopy.do">
 			<input type="hidden" name="ref"/>
-			<c:if test="${copyfile_Ref!=0 || copyfile_FRef!=0 }">
+			<c:if test="${file_flag eq 'copy' }">
 				<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="submit"  id="submitcopy"name="submitcopy" value="복사하기"/>
-				<input type="hidden" name="select_flag" value="${copyfile_Ref }"/>
-				<c:if test="${copyfile_FRef!=0 }">
-				<input type="hidden" name="folder_ref" value="${copyfile_FRef }"/>
-				</c:if>
-				<c:if test="${copyfile_FRef==0 }">
-				<input type="hidden" name="folder_ref" value="${folder }"/>
-				</c:if>
+				<input type="hidden" name="select_flag" value="${ref }"/>
+				<input type="hidden" name="folder_ref" value="${folder_ref }"/>
 				</div>
 				<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="button"  id="copycancel" name="copycancel" value="복사 취소"/>
 				</div>
 			</c:if>
-			<c:if test="${copyfile_Ref==0 && copyfile_FRef==0 }">
+			<c:if test="${file_flag ne 'copy' }">
 				<div style="height:5%; width:relative; margin:0; float:left;">
 				<input type="hidden"  id="submitcopy"name="submitcopy" value="복사"/>
 				<input type="hidden" name="select_flag"/>
@@ -1105,10 +869,11 @@
 		<input type="checkbox" id="check" onclick="star(this.value);" value="${file.num }" style="height:2%; width:2%; float:left;"/>
 	</c:otherwise>
 	</c:choose>
-		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:1%; box-sizing:border-box; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>
+	<input type="hidden" id="file_folderref" value="${list.get(0).folder_ref }"/>
 </div>
 <!-- text파일 쓰기용 창 -->
 <div id="writetextdiv" style="height:40%; width:90%; background-color:#ffff99; float:left; overflow-y:scroll; display:none">
@@ -1131,12 +896,72 @@
 	etc
 </div>
 <script>
-multiSelect();
-var ref ="${movefile_Ref}";
-if(ref!=0)
-	moveDotted();
-else
-	copyDotted();
+if("${file_flag}"=="move"){
+	var fileform = document.getElementById("${ref}"); // 클릭되어있는 fileform 가져오기
+	var moveform = document.getElementById("moveform");
+	 // moveform.ref에 fileform.ref 대입하기
+	fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
+	moveform.ref.value="${ref}";
+	moveform.submitmove.value="이동하기" 		// moveform.submitmove 값을 확인으로 설정
+	moveform.submitmove.type="hidden"; 	// moveform.submitmove 타입을 '숨김'으로 설정
+	moveform.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정
+}else if("${file_flag}"=="copy"){
+	var fileform = document.getElementById("${ref}"); // 클릭되어있는 fileform 가져오기
+	var copyform = document.getElementById("copyform");
+	 // moveform.ref에 fileform.ref 대입하기
+	fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
+	copyform.ref.value="${ref}";
+	copyform.submitcopy.value="복사하기" 		// moveform.submitmove 값을 확인으로 설정
+	copyform.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정	
+}else if("${file_flag}"=="multimove"){
+	var moveform = document.getElementById("moveform");
+	var copyform = document.getElementById("copyform");
+	var ref = "${ref}";
+	var refArray = ref.split(',');
+	var form = document.getElementById("multidownform");
+	
+	moveform.submitmove.type="hidden";
+	copyform.submitcopy.type="hidden";
+	form.file_ref.value="${ref}";
+	
+	form.multimove_flag.value = 1;
+	form.multicopy_flag.value = 0;
+	form.submitmultidown.value = "다운로드";
+	document.getElementById("multidowntext").type = "text";
+	document.getElementById("cancelmultidown").type = "button";
+	document.getElementById("throwtotrashcan").type = "button";
+	document.getElementById("multimove").value = "이동하기";
+	document.getElementById("multimove").type = "button";
+	
+	for(var i = 0; i < refArray.length; i++){
+		var formEx = document.getElementById(refArray[i]);
+		formEx.style.border="dotted";
+	}	
+}else if("${file_flag}"=="multicopy"){
+	var moveform = document.getElementById("moveform");
+	var copyform = document.getElementById("copyform");
+	var ref = "${ref}";
+	var refArray = ref.split(',');
+	var form = document.getElementById("multidownform");
+	
+	moveform.submitmove.type="hidden";
+	copyform.submitcopy.type="hidden";
+	form.multicopy.type="hidden";
+	form.file_ref.value="${ref}";
+	form.submitmultidown.value = "다운로드";
+	form.multimove_flag.value = 1;
+	form.multicopy_flag.value = 0;
+	document.getElementById("multidowntext").type = "text";
+	document.getElementById("cancelmultidown").type = "button";
+	document.getElementById("throwtotrashcan").type = "button";
+	document.getElementById("multicopy").value = "복사하기";
+	document.getElementById("multicopy").type = "button";	
+	
+	for(var i = 0; i < refArray.length; i++){
+		var formEx = document.getElementById(refArray[i]);
+		formEx.style.border="dotted";
+	}
+}
 </script>
 <c:if test="${textcontent != null}">
 	<script>
