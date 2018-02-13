@@ -8,23 +8,19 @@ $(function(){
 	});
 });
 function initThrowToTrashcan(){
-	var form = document.getElementById("writetextform");
-	if(form != null){
-		form.filename.value = "";
-		form.orgname.value = "";
-		form.content.value = "";
-		form.orgname.readOnly = false;
+	var tttc = document.getElementById("throwtotrashcan");
+	if(tttc != null){
+		tttc.type = "hidden";
 	}
 }
 function setThrowToTrashcan(num){
-	var form = document.getElementById("rewritetextform");
-	var index = 0;
-	if(writeList != null){
-		index = writeList.indexOf(num);
-	}
-	var filetype = document.getElementById(num + "type");
-	if(form != null && index != -1 && filetype.value == ".txt"){
-		form.filenum.value = num;
-		form.submitrewritetext.type = "submit";
+	var tttc = document.getElementById("throwtotrashcan");
+	var important = document.getElementById(num + "important");
+	if(tttc != null && important.value != -1){
+		tttc.type = "button";
+		var form = document.getElementById("multidownform");
+		if(form != null){
+			form.file_ref.value = num;
+		}
 	}
 }

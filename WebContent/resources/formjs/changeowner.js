@@ -3,9 +3,8 @@ $(function(){
 		var form = document.getElementById("changeownerform"); // 폼 받아오기
 		if(form.nickname.type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
 			hinder(); // 다른 폼 닫기
-			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
-			document.getElementById("changeownerdiv").style.display = "block";
-			form.nickname.type = "text";
+			initFiles();
+			showChangeOwner();
 			return false;
 		}
 		if(!form.nickname.value.trim() && !form.nickname.value.trim() == ""){ // 업로드할 파일 미선택시
@@ -18,21 +17,23 @@ $(function(){
 function initChangeOwner(){
 	var form = document.getElementById("changeownerform");
 	if(form != null){
-		form.filename.value = "";
-		form.orgname.value = "";
-		form.content.value = "";
-		form.orgname.readOnly = false;
+		form.nickname.type = "hidden";
+		form.submitchangeowner.type = "hidden";
+		form.submitchangeowner.value = "파일 주인 바꾸기";
 	}
 }
 function setChangeOwner(num){
 	var form = document.getElementById("changeownerform");
-	var index = 0;
-	if(writeList != null){
-		index = writeList.indexOf(num);
+	var important = document.getElementById(num + "important");
+	if(form != null && important.value != -1){
+		form.file_ref.value = num;
+		form.submitchangeowner.type = "submit";
 	}
-	var filetype = document.getElementById(num + "type");
-	if(form != null && index != -1 && filetype.value == ".txt"){
-		form.filenum.value = num;
-		form.submitrewritetext.type = "submit";
+}
+function showChangeOwner(){
+	var form = document.getElementById("changeownerform");
+	if(form != null){
+		form.nickname.type = "text";
+		form.submitchangeowner.value = "파일 보내기";
 	}
 }

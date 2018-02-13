@@ -32,6 +32,7 @@
 		''
 	);
 	var folder_ref = '${folder_ref}';
+	var writeList = null;
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;"> 
@@ -210,7 +211,7 @@
 		</form>
 	</div>
 	<!-- 공유 해제 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left; display:none" id="unsharediv">
+	<div style="height:5%; width:relative; margin:0; float:left;">
 		<div style="height:100%; width:relative; float:left;">
 			<select id="unshareselect" hidden style="height:25px">
 				<option value="1">모든 사람의 공유 해제</option>
@@ -225,12 +226,12 @@
 				<input type="hidden" name="nickname" />
 				<input type="hidden" name="file_ref" />
 				<input type="hidden" name="folder" value="${folder_ref }"/>
-				<input type="submit" name="submitunshare" value="공유 해제하기"/>
+				<input type="hidden" name="submitunshare" value="공유 해제하기"/>
 			</form>
 		</div>
 	</div>
 	<!-- 주인 바꾸기 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left; display:none" id="changeownerdiv">
+	<div style="height:5%; width:relative; margin:0; float:left;" id="changeownerdiv">
 		<div style="height:100%; width:relative; float:left;">
 			<input type="hidden" id="changeownertext" style="top:2px; background-color:transparent; border:0px; text-color:black; width:140px; height:25px;" value="넘겨줄 사람의 닉네임 : " disabled/>
 		</div>
@@ -239,7 +240,7 @@
 				<input type="hidden" name="nickname" />
 				<input type="hidden" name="file_ref" />
 				<input type="hidden" name="folder" value="${folder_ref }"/>
-				<input type="submit" name="submitchangeowner" value="파일 주인 바꾸기"/>
+				<input type="hidden" name="submitchangeowner" value="파일 주인 바꾸기"/>
 			</form>
 		</div>
 	</div>

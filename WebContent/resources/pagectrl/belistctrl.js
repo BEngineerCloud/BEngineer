@@ -39,6 +39,7 @@ $(function(){
 		setChangeName(ref, type);
 		setFolderDown(ref, type);
 		setShareCheck(ref);
+		setShare(ref);
 		setUnshare(ref);
 		setCopy(ref);
 		setMove(ref);

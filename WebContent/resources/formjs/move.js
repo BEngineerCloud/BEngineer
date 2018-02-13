@@ -19,8 +19,12 @@ function initMove(){
 		form.movecancel.type="hidden";
 	}
 }
-function setMove(){
+function setMove(num){
 	var form = document.getElementById("moveform");
-	if(form != null){
+	var important = document.getElementById(num + "important");
+	if(form != null && important.value != -1){
+		form.folder_ref.value = folder_ref;
+		form.select_flag.value = num;
+		form.submitmove.type = "submit";
 	}
 }
