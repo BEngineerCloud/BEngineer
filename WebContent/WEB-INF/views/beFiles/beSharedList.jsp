@@ -31,6 +31,7 @@ var writeList = new Array(); // 파일/폴더 경로 리스트 받아오기
 <c:forEach items="${writelist}" var="item">
 	writeList.push("${item}");
 </c:forEach>
+var folder_ref = '${folder_ref}';
 </script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; background-color:#ff9999; float:left;">

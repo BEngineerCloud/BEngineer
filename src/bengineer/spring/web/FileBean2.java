@@ -968,9 +968,7 @@ public class FileBean2 {
 				address_ref = filebean.getAddr(folder_ref);
 			}
 		}
-		System.out.println(folder_ref);
 		List filelist = sqlSession.selectList("bengineer.getfiles", folder_ref);
-		System.out.println(filelist.size());
 		sqlSession.update("bengineer.hit", folder);
 		model.addAttribute("list", filelist);
 		List folderaddress = new ArrayList(); // �뤃�뜑 寃쎈줈瑜� �븯�굹�뵫 ���옣�븯湲� �쐞�븳 由ъ뒪�듃
@@ -1203,7 +1201,7 @@ public class FileBean2 {
  	  List filelist = sqlSession.selectList("bengineer.searchfiles", list);
 		List folderaddress = new ArrayList();
 		List orgaddress = new ArrayList();
-		folderaddress.add("검색");
+		folderaddress.add("검색결과");
 		orgaddress.add(null);
  	  model.addAttribute("list",filelist);
 		model.addAttribute("folderaddress", folderaddress);

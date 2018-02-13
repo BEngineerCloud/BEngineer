@@ -18,9 +18,7 @@ $(function(){
 });
 $(function(){
 	$("#cancelmultidown").click(function(){ // 다중선택 취소시
-		initMultiSel();
-		initFiles();
-		initFileSel();
+		window.location = "/BEngineer/beFiles/beCancel.do?folder=" + folder_ref;
 	});
 });
 function initMultiSel(){

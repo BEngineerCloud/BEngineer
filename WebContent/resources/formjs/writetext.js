@@ -60,7 +60,10 @@ function setWriteText(){
 }
 function setRewriteText(num){
 	var form = document.getElementById("rewritetextform");
-	var index = writeList.indexOf(num);
+	var index = 0;
+	if(writeList != null){
+		index = writeList.indexOf(num);
+	}
 	var filetype = document.getElementById(num + "type");
 	if(form != null && index != -1 && filetype.value == ".txt"){
 		form.filenum.value = num;
