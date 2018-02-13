@@ -968,7 +968,9 @@ public class FileBean2 {
 				address_ref = filebean.getAddr(folder_ref);
 			}
 		}
+		System.out.println(folder_ref);
 		List filelist = sqlSession.selectList("bengineer.getfiles", folder_ref);
+		System.out.println(filelist.size());
 		sqlSession.update("bengineer.hit", folder);
 		model.addAttribute("list", filelist);
 		List folderaddress = new ArrayList(); // �뤃�뜑 寃쎈줈瑜� �븯�굹�뵫 ���옣�븯湲� �쐞�븳 由ъ뒪�듃
@@ -1130,17 +1132,17 @@ public class FileBean2 {
 	}
 	@RequestMapping("hot.do")
 	public String hot(int num,Model model) {
-		int a=-1;
-		model.addAttribute("history",a);
+		String a = "history.go(-1)";
+		model.addAttribute("location",a);
 		sqlSession.update("bengineer.hot",num);
-		return "beFiles/goback";
+		return "beFiles/location";
 	}
 	@RequestMapping("exhot.do")
 	public String exhot(int num,Model model) {
-		int a=-1;
-		model.addAttribute("history",a);
+		String a = "history.go(-1)";
+		model.addAttribute("location",a);
 		sqlSession.update("bengineer.exhot",num);
-		return "beFiles/goback";
+		return "beFiles/location";
 	}
 	@RequestMapping("hotlist.do")
 	public String hotlist(HttpSession session,Model model) {

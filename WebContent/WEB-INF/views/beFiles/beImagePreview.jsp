@@ -778,14 +778,16 @@ div#glayLayer{
 	<c:forEach var="file" items="${list }">
 		<div class="file" id="${file.num }" name="${file.num }" style="height:20%; width:10%; margin:1%;  box-sizing:border-box;   boxbackground-color #ff6666; float:left; overflow:hidden; "><input type="hidden" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default;" disabled/>
 			<div id="navi" style="height:100%; width:100%;">		
-				<a href="http://192.168.0.143/BEngineer/beFiles/beImageview.do?imageName=${file.orgname }" class="modal" onclick="return false;"><img src="http://192.168.0.143/BEngineer/beFiles/beImageview.do?imageName=${file.orgname }" style="width: 100%; height:85%;" /></a><br/>
+				<a href="http://192.168.0.153/BEngineer/beFiles/beImageview.do?imageName=${file.orgname }" class="modal" onclick="return false;"><img src="http://192.168.0.153/BEngineer/beFiles/beImageview.do?imageName=${file.orgname }" style="width: 100%; height:85%;" /></a><br/>
 				${file.filename }
 			</div>
 		</div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>
-	<input type="hidden" id="file_folderref" value="${list.get(0).folder_ref }"/>
+	<c:if test="${list.size() > 0 }">
+		<input type="hidden" id="file_folderref" value="${list.get(0).folder_ref }"/>
+	</c:if>
 </div>
 <div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
 	etc

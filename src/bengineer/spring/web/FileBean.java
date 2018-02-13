@@ -1589,11 +1589,12 @@ public class FileBean {
 			if(share == null) {
 				address.add(kdto);
 			}else {
-				KeyDTO kdto1 = (KeyDTO)share.get(share.size() - 1);
+				KeyDTO kdto1 = (KeyDTO)share.remove(share.size() - 1); //////
+				address.addAll(share); //////
 				if(kdto.getRw() > kdto1.getRw()) {
 					address.add(kdto);
 				}else {
-					address.addAll(share);
+					address.add(kdto1);
 				}
 			}
 			return address;

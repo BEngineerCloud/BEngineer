@@ -16,7 +16,7 @@
 <script src='/BEngineer/resources/formjs/folderdown.js' type='text/javascript'></script>
 <script src='/BEngineer/resources/formjs/share.js' type='text/javascript'></script>
 <script type="text/javascript">
-var clickedfile = new Array();
+var clickedFile = new Array();
 var clickedImportant = new Array(); //여러 파일/폴더 선택 시 중요폴더가 포함되어있는지 알기 위해
 var orgList = new Array(); // 파일/폴더 경로 리스트 받아오기
 <c:forEach items="${orgaddress}" var="item">

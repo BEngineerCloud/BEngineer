@@ -9,7 +9,7 @@ $(function(){
 			showMultiSel();
 			return false;
 		}
-		form.file_ref.value = clickedfile.join();
+		form.file_ref.value = clickedFile.join();
 		if(!form.file_ref.value){ // 업로드할 파일 미선택시
 			alert('업로드할 파일을 선택해주세요');
 			return false;

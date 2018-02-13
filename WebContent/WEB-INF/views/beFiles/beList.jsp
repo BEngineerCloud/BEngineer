@@ -760,18 +760,6 @@
 			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
 		</form>
 	</div>
-	<!-- 상위폴더 이동 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="uppermoveform" method="post">
-			<input type="hidden" id="folder_ref" value="${folder_ref }"/>
-			<c:if test="${folder!=0 && orgaddress.size()>1}">
-				<input type="button" id="uppermovesubmit" name="uppermovesubmit" value="상위 폴더 이동"/>
-			</c:if>
-			<c:if test="${folder==0 || orgaddress.size()==1}">
-				<input type="hidden" id="uppermovesubmit" name="uppermovesubmit" value="상위 폴더 이동"/>
-			</c:if>
-		</form>
-	</div>
 	<!-- 공유중인 사람 확인 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="sharecheckform" action="/BEngineer/beFiles/lookSharedPeople.do" method="post">
@@ -873,7 +861,9 @@
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>
-	<input type="hidden" id="file_folderref" value="${list.get(0).folder_ref }"/>
+	<c:if test="${list.size() > 0 }">
+		<input type="hidden" id="file_folderref" value="${list.get(0).folder_ref }"/>
+	</c:if>
 </div>
 <!-- text파일 쓰기용 창 -->
 <div id="writetextdiv" style="height:40%; width:90%; background-color:#ffff99; float:left; overflow-y:scroll; display:none">
