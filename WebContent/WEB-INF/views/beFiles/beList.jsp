@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script src='/BEngineer/resources/pagectrl/menu.js' type='text/javascript'></script>
 <script src='/BEngineer/resources/pagectrl/search.js' type='text/javascript'></script>
@@ -57,32 +58,32 @@
 		<input type="button" id="logout" style="height:45%; border-color: black; background-color:#FFFFFF; font-size:100%;"value="로그아웃"/>
 	</div>
 </div>
-<div id="button1" style="height:5%; width:100%; background-color:#ffff99; float:left;">
+<div id="button1" style="height:4.5%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black">
 	<!-- 파일업로드 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
+	<div style="width:relative; margin:0; float:left;">
 		<form action="/BEngineer/beFiles/fileupload.do" id="uploadform" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="folder" value="${folder_ref }" />
 			<input type="hidden" name="save" />
-			<input type="hidden" name="filename" value="파일 이름"/>
+			<input type="hidden" name="filename" value="파일 이름" />
 			<input type="submit" value="업로드" />
 		</form>
 	</div>
 	<!-- 폴더생성 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
+	<div style="width:relative; margin:0; float:left;">
 		<form action="/BEngineer/beFiles/createFolder.do" id="folderform" method="post">
 			<input type="hidden" name="folder" value="${folder_ref }" />
-			<input type="hidden" name="foldername" value="폴더 이름"/>
+			<input type="hidden" name="foldername" value="폴더 이름" />
 			<input type="submit" value="폴더 생성" />
 		</form>
 	</div>
 	<!-- 파일/폴더 자동정리 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
+	<div style="width:relative; margin:0; float:left;">
 		<form action="/BEngineer/beFiles/autoArrangefile.do" id="autoarrangeform" method="post">
 			<input type="submit" value="파일 자동정리" />
 		</form>
 	</div>
 	<!-- 다수 파일 다운로드 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
+	<div style="width:relative; margin:0; float:left;">
 		<div style="height:100%; width:relative; margin-top:5; float:left;">
 			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
 		</div>
@@ -93,7 +94,7 @@
 				<input type="hidden" name="multimove_flag" value=0/>
 				<input type="hidden" name="multicopy_flag" value=0/>
 				<div style="height:100%; width:relative; float:left;">
-					<input type="submit" name="submitmultidown" value="여러 파일 선택하기"/>
+					<input type="submit" name="submitmultidown" value="여러 파일 선택하기" />
 				</div>
 				<div style="height:100%; width:relative; float:left;">
 					<input type="hidden" id="multimove" value="이동" />
@@ -112,12 +113,12 @@
 	</div>
 	<c:if test="${document }">
 		<!-- 파일생성 폼 -->
-		<div style="height:5%; width:relative; margin:0; float:left;">
-			<input type="button" value="텍스트 파일 만들기" id="writetextbutton"/>
+		<div style="width:relative; margin:0; float:left;">
+			<input type="button" value="텍스트 파일 만들기" id="writetextbutton" />
 		</div>
 	</c:if>
 </div>
-<div id="button1_1" style="height:5%; width:100%; background-color:#eeee88; float:left;">
+<div id="button1_1" style="height:4.5%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black">
 	<!-- 파일/폴더 이동 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
@@ -252,7 +253,7 @@
 		</form>
 	</div>
 </div>
-<div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">
+<div id="address" style="height:4.5%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black">
 	<c:set var="num" value="0" />
 	<!-- 폴더경로 보여주기 -->
 	<c:forEach var="addr" items="${folderaddress }">
@@ -267,7 +268,7 @@
 	<!-- 선택파일 보여주기용 -->
 	<font id="filename"></font>
 </div>
-<div id="button2" style="height:75%; width:10%; background-color:#ff99ff; float:left;">
+<div id="button2" style="height:75%; width:10%; float:left; padding:0.5% 0% 0% 0%; border-top:1px solid black; border-right:1 solid black; ">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>

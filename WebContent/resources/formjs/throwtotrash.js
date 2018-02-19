@@ -16,7 +16,7 @@ function initThrowToTrashcan(){
 function setThrowToTrashcan(num){
 	var tttc = document.getElementById("throwtotrashcan");
 	var important = document.getElementById(num + "important");
-	if(tttc != null && important.value != -1){
+	if(tttc != null && important.value > -1){
 		tttc.type = "button";
 		var form = document.getElementById("multidownform");
 		if(form != null){

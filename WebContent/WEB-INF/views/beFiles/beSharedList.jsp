@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script src='/BEngineer/resources/pagectrl/menu.js' type='text/javascript'></script>
 <script src='/BEngineer/resources/pagectrl/search.js' type='text/javascript'></script>

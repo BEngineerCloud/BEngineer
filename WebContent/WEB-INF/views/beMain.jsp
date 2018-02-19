@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8"%> 
+<link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
    	<link rel='stylesheet' href='/BEngineer/resources/css/nv.d3.css'>
    	<link rel='stylesheet' href='/BEngineer/resources/css/rNVD3.css'>
 	<script src='/BEngineer/resources/js/jquery-1.8.2.min.js' type='text/javascript'></script>

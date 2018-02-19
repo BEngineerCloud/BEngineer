@@ -9,27 +9,25 @@ $(function(){
 		var multiCheck = document.getElementById("multidowntext");
 		if(multiCheck != null && multiCheck.type == "text"){
 			var index = clickedFile.indexOf(ref);
-			var checkwrite = writeList.indexOf(ref);
 			if(index == -1){
 				clickedFile.push(ref);
-				if(important.value == -1 || checkwrite == -1){
+				if(important.value <= -1){
 					clickedImportant.push(1)
 				}
 				selectFile(ref);
 			}else{
 				clickedFile.splice(index, 1);
-				if(important.value == -1 || checkwrite != -1){
+				if(important.value <= -1){
 					clickedImportant.splice(0, 1);
 				}
 				disselectFile(ref);
 			}
-			if(clickedImportant.size() < clickedFile.size()){
-				hideMultiMove();
+			if(clickedImportant.length > 0){
+				initMultiMove();
 			}else{
 				setMultiMove();
 				setMultiCopy();
 			}
-			selectFile(ref);
 			return;
 		}
 		hinder();

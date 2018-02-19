@@ -26,7 +26,7 @@ function setMove(num){
 	if(writeList != null){
 		index = writeList.indexOf(num);
 	}
-	if(form != null && important.value != -1 && index != -1){
+	if(form != null && important.value > -1 && index != -1){
 		form.folder_ref.value = folder_ref;
 		form.select_flag.value = num;
 		form.submitmove.type = "submit";

@@ -25,7 +25,7 @@ function initChangeOwner(){
 function setChangeOwner(num){
 	var form = document.getElementById("changeownerform");
 	var important = document.getElementById(num + "important");
-	if(form != null && important.value != -1){
+	if(form != null && important.value > -1){
 		form.file_ref.value = num;
 		form.submitchangeowner.type = "submit";
 	}

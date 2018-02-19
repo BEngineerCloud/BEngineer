@@ -1,0 +1,4 @@
+input[type='button']{border-color: black; background-color:#FFFFFF;}
+input[type='submit']{border-color: black; background-color:#FFFFFF;}
+input[type='file']{border-color: black; background-color:#FFFFFF;}
+input:active{background:aqua;}
