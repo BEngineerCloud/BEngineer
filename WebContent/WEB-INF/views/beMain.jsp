@@ -55,8 +55,8 @@
 		</select>
 		<input type="submit" value="최근 파일"/>
 	</form>
-	전체 사용량
 	<c:if test="${space != null && space !=''}">
+		전체 사용량
 		<img src="data:image/png;base64,${space}" style="width:100%;" />
 	</c:if>
 </div>

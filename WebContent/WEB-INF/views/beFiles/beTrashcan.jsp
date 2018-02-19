@@ -29,7 +29,7 @@
 				form.submitmultirepair.type = "submit";
 				document.getElementById("submitdelete").type = "button";
 				$("#files > div").css("background-color","#ffffff"); // 모든 파일 선택 취소
-				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+				$(this).css("background-color","aqua"); // 클릭파일 색 바꾸기
 			}
 		});
 	});

@@ -85,7 +85,7 @@
 	<!-- 다수 파일 다운로드 폼 -->
 	<div style="width:relative; margin:0; float:left;">
 		<div style="height:100%; width:relative; margin-top:5; float:left;">
-			<input type="hidden" id="multidowntext" style="background-color:transparent; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
+			<input type="hidden" id="multidowntext" style="background-color:write; border:0px; text-color:black; width:230px;" value="다운로드할 파일/폴더를 선택해주세요" disabled/>
 		</div>
 		<div style="height:100%; width:relative; margin:0; float:left;">
 			<form action="/BEngineer/beFiles/beDownload.do" id="multidownform" method="post">
@@ -290,12 +290,12 @@
 		</select>
 		<input type="submit" value="최근 파일"/>
 	</form>
-	각 파일/폴더 용량
 	<c:if test="${gra != null && gra !=''}">
+		각 파일/폴더 용량
 		<img src="data:image/png;base64,${gra}" style="height:50%; width:80%;" />
 	</c:if>
-	전체 사용량
 	<c:if test="${space != null && space !=''}">
+		전체 사용량
 		<img src="data:image/png;base64,${space}" style="width:100%;" />
 	</c:if>
 </div>
@@ -319,7 +319,7 @@
 	</c:if>
 </div>
 <!-- text파일 쓰기용 창 -->
-<div id="writetextdiv" style="height:40%; width:90%; background-color:#ffff99; float:left; overflow-y:scroll; display:none">
+<div id="writetextdiv">
 	<form action="/BEngineer/beFiles/writeText.do" id="writetextform" method="post">
 		<input type="hidden" name="folder" value="${folder_ref }"/>
 		<div style="height:8%; width:100%; float:left; text-align:left;">

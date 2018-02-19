@@ -23,7 +23,7 @@ $(function(){
 				}
 				disselectFile(ref);
 			}
-			if(clickedImportant.size() < clickedFile.size()){
+			if(clickedImportant.length > 0){
 				hideMultiMove();
 			}else{
 				setMultiMove();

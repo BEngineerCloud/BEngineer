@@ -2,10 +2,11 @@ input[type='button']{border-color: black; background-color:#FFFFFF;}
 input[type='submit']{border-color: black; background-color:#FFFFFF;}
 input[type='file']{border-color: black; background-color:#FFFFFF;}
 input:active{background:aqua;}
-#button1{height:4%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black; background:#3d56b1;}
-#address{height:4%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black; background:#5f75c3;}
+#button1{height:4%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black; background:#5577dd;}
+#address{height:4%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black; background:#7799ee;}
 #button2{height:80%; width:8%; top:20%; left:0%; position:absolute; padding:0.5% 0% 0% 2%; border-top:1px solid black; border-right:1px solid black;}
 #files{height:80%; width:90%; top:20%; left:10%; position:absolute; overflow-y:scroll; border-top:1px solid black;}
 #etc{height:10%; width:100%; background-color:#5f7f89; top:100%; left:0%; position:absolute; padding:0.5% 0% 0% 0%; border-top:1px solid black;}
 .file{height:100; width:100; margin:2%; box-sizing:border-box; background-color:#ffffff; float:left; overflow:hidden; border:3px solid black;}
 #button1_1{height:relative; display:none; width:relative; top:20%; left:10%; position:absolute; padding:2% 2% 2% 2%; border:1px solid black; background:#3d56b1; z-index:10;}
+#writetextdiv{height:40%; width:90%; background-color:#7095e3; top:60%; left:10%; position:absolute; overflow-y:scroll; display:none;}

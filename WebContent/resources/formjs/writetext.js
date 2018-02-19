@@ -56,7 +56,7 @@ function initRewriteText(){
 }
 function setWriteText(){
 	document.getElementById("writetextdiv").style.display = "block";
-	document.getElementById("files").style.height = "35%";
+	document.getElementById("files").style.height = "40%";
 }
 function setRewriteText(num){
 	var form = document.getElementById("rewritetextform");
@@ -72,7 +72,7 @@ function setRewriteText(num){
 }
 function hideWriteText(){
 	document.getElementById("writetextdiv").style.display = "none";
-	document.getElementById("files").style.height = "75%";
+	document.getElementById("files").style.height = "80%";
 }
 function reWriteText(name, orgname, content){
 	var form = document.getElementById("writetextform");
