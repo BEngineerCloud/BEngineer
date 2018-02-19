@@ -225,4 +225,10 @@
 	<select id="getusingspace" parameterType="string" resultType="long">
 		select filesize from BEfilelist where owner = #{owner} and folder_ref = 0
 	</select>
+	<select id="subCopyfiles" parameterType="int" resultType="fileDTO">
+		select * from BEfilelist where folder_ref=#{num}
+	</select>
+	<select id="newCopyfiles" parameterType="fileDto" resultType="fileDTO">
+		select * from BEfilelist where folder_ref=#{folder_ref} and orgname=#{orgname}
+	</select>
 </mapper>

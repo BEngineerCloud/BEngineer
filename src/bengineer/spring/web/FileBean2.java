@@ -3,6 +3,8 @@ package bengineer.spring.web;
 import org.rosuda.REngine.*;
 import org.rosuda.REngine.Rserve.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -321,6 +323,10 @@ public class FileBean2 {
 				folderref = ((FileDTO)newAddr.get(0)).getNum();
 			
 			dto.setFolder_ref(folderref);
+			
+			int orginsub = 0; //복사할 디렉터리의 넘버
+			orginsub = ((FileDTO)originalAddr.get(0)).getNum();
+			
 			int flag = 0;
 		
 			if(file.isFile()) { // 복사하려는 파일/폴더가 파일일 경우
@@ -346,6 +352,8 @@ public class FileBean2 {
 		
 			if(is_Copy) {
 				sqlSession.insert("bengineer.copyfile",dto);
+				FileDTO copydto = (FileDTO)sqlSession.selectOne("bengineer.newCopyfiles",dto);
+				sqlCopy(orginsub,copydto);
 				model.addAttribute("alert", "파일/폴더 복사가 완료되었습니다.");
 			}
 			else {
@@ -647,10 +655,15 @@ public class FileBean2 {
 					folderref = ((FileDTO)newAddr.get(0)).getFolder_ref();
 					dto.setFolder_ref(folderref);
 				
+					int orginsub = 0; //복사할 디렉터리의 넘버
+					orginsub = ((FileDTO)originalAddr.get(0)).getNum();
+					
 					is_Copy = nioFilecopy(originalPath,newPath);
-					if(is_Copy) 
+					if(is_Copy) {
 						sqlSession.insert("bengineer.copyfile",dto);
-						
+						FileDTO copydto = (FileDTO)sqlSession.selectOne("bengineer.newCopyfiles",dto);
+						sqlCopy(orginsub,copydto);
+					}
 					else {
 						newPath = newPath.substring(0,(newPath.lastIndexOf("/")+1));
 						if(file.isFile()) { // 파일인 경우
@@ -799,13 +812,17 @@ public class FileBean2 {
 					while(!is_Copy) {
 						int folderref=0;
 						folderref = ((FileDTO)newAddr.get(0)).getNum();
+						int orginsub = 0; //복사할 디렉터리의 넘버
+						orginsub = ((FileDTO)originalAddr.get(0)).getNum();
 						
 						dto.setFolder_ref(folderref);
 						is_Copy = nioFilecopy(originalPath,newPath);
 					
-						if(is_Copy) 
+						if(is_Copy) {
 							sqlSession.insert("bengineer.copyfile",dto);
-					
+							FileDTO copydto = (FileDTO)sqlSession.selectOne("bengineer.newCopyfiles",dto);
+							sqlCopy(orginsub,copydto);
+						}
 						else {
 							newPath = newPath.substring(0,(newPath.lastIndexOf("/")+1));
 							
@@ -963,100 +980,7 @@ public class FileBean2 {
 		return "beFiles/location";
 	}
 	
-	private int moveFile(String filePath, String fileName, String moveFolder, String owner) {
-		boolean is_Move = false;
-		HashMap<String, String> moveP = new HashMap<String, String>();
-		moveP.put("owner", owner);
-		String filePathtemp=filePath.substring(0, filePath.lastIndexOf(fileName));
-		if(moveFolder.equals("image")) {
-			is_Move = nioFilemove(filePath, filePathtemp+"image/"+fileName);
-			if(is_Move)
-				moveP.put("orgname","image");
-		}else if(moveFolder.equals("music")) {
-			is_Move = nioFilemove(filePath, filePathtemp+"music/"+fileName);
-			if(is_Move)
-				moveP.put("orgname","music");
-		}else if(moveFolder.equals("video")) {
-			is_Move = nioFilemove(filePath, filePathtemp+"video/"+fileName);
-			if(is_Move)
-				moveP.put("orgname","video");
-		}else if(moveFolder.equals("document")) {
-			is_Move = nioFilemove(filePath, filePathtemp+"document/"+fileName);
-			if(is_Move)
-				moveP.put("orgname","document");
-		}else {
-			is_Move = nioFilemove(filePath, filePathtemp+"etc/"+fileName);
-			if(is_Move)
-				moveP.put("orgname","etc");
-		}
-		if(is_Move)
-			return  (Integer)sqlSession.selectOne("bengineer.getparentnum",moveP);
-		else
-			return 0;
-	}
 	
-	public boolean nioFilemove(String originFilePath, String moveFilePath) { //파일이동, NIO방식
-		File newfile = new File(moveFilePath);
-		
-		Path originPath = Paths.get(originFilePath);
-		Path movePath = Paths.get(moveFilePath);
-		if(newfile.exists()) {
-			System.out.println("이미 존재하는 파일입니다.");
-			return false;
-		}
-		if(originPath==null) {
-			throw new IllegalArgumentException("orginPath에 맞는 데이터 형식을 넣어주세요.");
-		}
-		if(movePath==null) {
-			throw new IllegalArgumentException("orginPath에 맞는 데이터 형식을 넣어주세요.");
-		}
-		if(!Files.exists(originPath, new LinkOption[] {})) {
-			throw new IllegalArgumentException("orginFile이 존재하지 않습니다."+originPath.toString());
-		}
-		try {
-			Files.move(originPath, movePath, StandardCopyOption.REPLACE_EXISTING);
-		}catch(IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if(Files.exists(movePath,new LinkOption[] {})) {
-			return true;
-		}else {
-			System.out.println("파일이동에 실패했습니다.");
-			return true;
-		}	
-	}
-	public boolean nioFilecopy(String originFilePath, String moveFilePath) { //�뙆�씪�씠�룞, NIO諛⑹떇
-		File newfile = new File(moveFilePath);
-		
-		Path originPath = Paths.get(originFilePath);
-		Path movePath = Paths.get(moveFilePath);
-		if(newfile.exists()) {
-			return false;
-		}
-		if(originPath==null) {
-			throw new IllegalArgumentException("orginPath�뿉 留욌뒗 �뜲�씠�꽣 �삎�떇�쓣 �꽔�뼱二쇱꽭�슂.");
-		}
-		if(movePath==null) {
-			throw new IllegalArgumentException("orginPath�뿉 留욌뒗 �뜲�씠�꽣 �삎�떇�쓣 �꽔�뼱二쇱꽭�슂.");
-		}
-		if(!Files.exists(originPath, new LinkOption[] {})) {
-			throw new IllegalArgumentException("orginFile�씠 議댁옱�븯吏� �븡�뒿�땲�떎."+originPath.toString());
-			
-		}
-		try {
-			Files.copy(originPath, movePath, StandardCopyOption.REPLACE_EXISTING);
-		}catch(IOException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if(Files.exists(movePath,new LinkOption[] {})) {
-			return true;
-		}else {
-			System.out.println("�뙆�씪�씠�룞�뿉 �떎�뙣�뻽�뒿�땲�떎.");
-			return false;
-		}	
-	}
 	@RequestMapping("hot.do")
 	public String hot(int num,Model model) {
 		String a = "history.go(-1)";
@@ -1144,4 +1068,144 @@ public class FileBean2 {
  	  return "beFiles/beList";
 
  	}
+ 	private int moveFile(String filePath, String fileName, String moveFolder, String owner) {
+		boolean is_Move = false;
+		HashMap<String, String> moveP = new HashMap<String, String>();
+		moveP.put("owner", owner);
+		String filePathtemp=filePath.substring(0, filePath.lastIndexOf(fileName));
+		if(moveFolder.equals("image")) {
+			is_Move = nioFilemove(filePath, filePathtemp+"image/"+fileName);
+			if(is_Move)
+				moveP.put("orgname","image");
+		}else if(moveFolder.equals("music")) {
+			is_Move = nioFilemove(filePath, filePathtemp+"music/"+fileName);
+			if(is_Move)
+				moveP.put("orgname","music");
+		}else if(moveFolder.equals("video")) {
+			is_Move = nioFilemove(filePath, filePathtemp+"video/"+fileName);
+			if(is_Move)
+				moveP.put("orgname","video");
+		}else if(moveFolder.equals("document")) {
+			is_Move = nioFilemove(filePath, filePathtemp+"document/"+fileName);
+			if(is_Move)
+				moveP.put("orgname","document");
+		}else {
+			is_Move = nioFilemove(filePath, filePathtemp+"etc/"+fileName);
+			if(is_Move)
+				moveP.put("orgname","etc");
+		}
+		if(is_Move)
+			return  (Integer)sqlSession.selectOne("bengineer.getparentnum",moveP);
+		else
+			return 0;
+	}
+	
+	public boolean nioFilemove(String originFilePath, String moveFilePath) { //파일이동, NIO방식
+		File newfile = new File(moveFilePath);
+		
+		Path originPath = Paths.get(originFilePath);
+		Path movePath = Paths.get(moveFilePath);
+		if(newfile.exists()) {
+			System.out.println("이미 존재하는 파일입니다.");
+			return false;
+		}
+		if(originPath==null) {
+			throw new IllegalArgumentException("orginPath에 맞는 데이터 형식을 넣어주세요.");
+		}
+		if(movePath==null) {
+			throw new IllegalArgumentException("orginPath에 맞는 데이터 형식을 넣어주세요.");
+		}
+		if(!Files.exists(originPath, new LinkOption[] {})) {
+			throw new IllegalArgumentException("orginFile이 존재하지 않습니다."+originPath.toString());
+		}
+		try {
+			Files.move(originPath, movePath, StandardCopyOption.REPLACE_EXISTING);
+		}catch(IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		if(Files.exists(movePath,new LinkOption[] {})) {
+			return true;
+		}else {
+			System.out.println("파일이동에 실패했습니다.");
+			return true;
+		}	
+	}
+	public boolean nioFilecopy(String originFilePath, String moveFilePath) { //�뙆�씪�씠�룞, NIO諛⑹떇
+		File newfile = new File(moveFilePath);
+		File orginfile = new File(originFilePath);
+		Path originPath = Paths.get(originFilePath);
+		Path movePath = Paths.get(moveFilePath);
+		if(newfile.exists()) {
+			return false;
+		}
+		if(originPath==null) {
+			throw new IllegalArgumentException("orginPath�뿉 留욌뒗 �뜲�씠�꽣 �삎�떇�쓣 �꽔�뼱二쇱꽭�슂.");
+		}
+		if(movePath==null) {
+			throw new IllegalArgumentException("orginPath�뿉 留욌뒗 �뜲�씠�꽣 �삎�떇�쓣 �꽔�뼱二쇱꽭�슂.");
+		}
+		if(!Files.exists(originPath, new LinkOption[] {})) {
+			throw new IllegalArgumentException("orginFile�씠 議댁옱�븯吏� �븡�뒿�땲�떎."+originPath.toString());
+			
+		}
+		try {
+			Files.copy(originPath, movePath, StandardCopyOption.REPLACE_EXISTING);
+			copys(orginfile,newfile);
+		}catch(IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		if(Files.exists(movePath,new LinkOption[] {})) {
+			return true;
+		}else {
+			System.out.println("�뙆�씪�씠�룞�뿉 �떎�뙣�뻽�뒿�땲�떎.");
+			return false;
+		}	
+	}
+	public  void copys(File selectFile, File copyFile) { //복사할 디렉토리, 복사될 디렉토리
+        File[] ff = selectFile.listFiles();  //복사할 디렉토리안의 폴더와 파일들을 불러옴
+        for (File file : ff) {
+        	File temp = new File(copyFile.getAbsolutePath() +"\\"+ file.getName()); 
+        	//temp - 본격적으로 디렉토리 내에서 복사할 폴더,파일들을 순차적으로 선택해 진행 
+
+          
+        	if (file.isDirectory()){ //만약 파일이 아니고 디렉토리(폴더)라면
+        		temp.mkdirs();          //복사될 위치에 똑같이 폴더를 생성하고,
+        		copys(file, temp);      //폴더의 내부를 다시 살펴봄
+        	}else{                   //만약 파일이면 복사작업을 진행
+        		FileInputStream fis = null;
+        		FileOutputStream fos = null;
+        		
+        		try {
+        			fis = new FileInputStream(file);
+        			fos = new FileOutputStream(temp);
+        			byte[] b = new byte[4096];   //4kbyte단위로 복사를 진행
+        			int cnt = 0;
+            
+        			while ((cnt = fis.read(b)) != -1) {  //복사할 파일에서 데이터를 읽고,
+        				fos.write(b, 0, cnt);               //복사될 위치의 파일에 데이터를 씀
+        			}
+        		}catch (Exception e) {
+        			e.printStackTrace();
+        		} finally {
+        			try {
+        				fis.close();
+        				fos.close();
+        			} catch (IOException e) {
+        				e.printStackTrace();
+        			}
+        		}
+        	}
+        }
+   }
+	
+	public void sqlCopy(int num, FileDTO dto) {
+		List<FileDTO> list = sqlSession.selectList("bengineer.subCopyfiles", num);
+		for(FileDTO copydto : list) {
+			copydto.setFolder_ref(dto.getNum());
+			sqlSession.insert("bengineer.copyfile",copydto);
+			sqlCopy(copydto.getNum(),copydto);
+		}
+	}
 }
