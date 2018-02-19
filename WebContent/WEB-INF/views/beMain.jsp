@@ -35,13 +35,13 @@
 		<input type="button" id="logout" style="height:45%; border-color: black; background-color:#FFFFFF; font-size:100%;"value="로그아웃"/>
 	</div>
 </div>
-<div id="button1" style="height:5%; width:100%; background-color:#ffff99; float:left;">
+<div id="button1">
 	button1
 </div>
-<div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">
+<div id="address">
 	address
 </div>
-<div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
+<div id="button2">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
@@ -55,15 +55,15 @@
 		</select>
 		<input type="submit" value="최근 파일"/>
 	</form>
-	button2
+	전체 사용량
 	<c:if test="${space != null && space !=''}">
 		<img src="data:image/png;base64,${space}" style="width:100%;" />
 	</c:if>
 </div>
-<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow:scroll;">
+<div id="files">
 	${ content }
 </div>
-<div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
+<div id="etc">
 	etc
 		<a href="/BEngineer/inquiry/inList.do?id=${sessionScope.id}">문의내역</a>
         <a href="/BEngineer/beMember/beboard.do?id=${sessionScope.id}">공지사항</a>

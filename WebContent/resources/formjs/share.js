@@ -4,6 +4,7 @@ $(function(){
 		if(form.enddate.type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
 			hinder(); // 다른 폼 닫기
 			showShare();
+			reopen();
 			return false;
 		}
 		if(!form.enddate.value){ // 공유기한 미입력시
@@ -26,6 +27,7 @@ $(function(){
 				hinder(); // 다른 폼 닫기
 				initFiles();
 				select.hidden = false;
+				reopen();
 				return false;
 			}
 			if(select.value == 2 && !form.nickname.value.trim()){ // 업로드할 파일 미선택시

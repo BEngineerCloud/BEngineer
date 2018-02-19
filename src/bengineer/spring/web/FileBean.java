@@ -1933,7 +1933,10 @@ public class FileBean {
 		}else if(chmod == 3) {
 			space *= 30L;
 		}
-		long usingspace = sqlSession.selectOne("bengineer.getusingspace", id);
+		Long usingspace = (Long)sqlSession.selectOne("bengineer.getusingspace", id);
+		if(usingspace == null) {
+			usingspace = 0L;
+		}
 		double angle = (double)usingspace / (double)space;
 		double x = 0.0;
 		if(angle == 0.5) {

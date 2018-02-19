@@ -16,7 +16,6 @@ function initMove(){
 	var form = document.getElementById("moveform");
 	if(form != null){
 		form.submitmove.type="hidden";
-		form.movecancel.type="hidden";
 	}
 }
 function setMove(num){

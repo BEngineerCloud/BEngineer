@@ -1,5 +1,5 @@
 $(function(){
-	$("#files > div").click(function(){ // 파일 클릭시
+	$("#files > div").click(function(e){ // 파일 클릭시
 		var filename = $(this).text();
 		var ref = $(this).attr("name");
 		var important =document.getElementById(ref + "important");
@@ -42,6 +42,7 @@ $(function(){
 		setUnshare(ref);
 		setCopy(ref);
 		setMove(ref);
+		open(e.clientX, e.clientY);
 	});
 });
 $(function(){
@@ -74,18 +75,19 @@ function hinder(){ // 모든 폼 초기화 함수
 	initFolderDown();
 	initShareCheck();
 	initUnshare();
+	close();
 }
 function initFiles(){
-	$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+	$("#files > div").css("background-color","#ffffff"); // 모든 파일 선택 취소
 }
 function initFileSel(){
 	$("#files > div").css("border","none"); // 모든 파일 선택 취소
 }
 function selectFile(num){
-	$("div[name='" + num + "']").css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+	$("div[name='" + num + "']").css("background-color","aqua"); // 클릭파일 색 바꾸기
 }
 function disselectFile(num){
-	$("div[name='" + num + "']").css("background-color","#ff6666"); // 클릭파일 색 바꾸기
+	$("div[name='" + num + "']").css("background-color","#ffffff"); // 클릭파일 색 바꾸기
 }
 function setAddress(num, orgname){
 	var text = orgname + "  (";
@@ -97,4 +99,28 @@ function setAddress(num, orgname){
 		text = text + "쓰기 가능)";
 	}
 	$("font#filename").text(text); // 주소부분에 표시
+}
+function open(x, y){
+	var toplimit = $("body").innerHeight();
+	var leftlimit = $("body").innerWidth();
+	var height = $("#button1_1").height();
+	var width = $("#button1_1").width();
+	if(x + width + 5 > leftlimit){
+		x = x - width - 10;
+	}
+	if(y + height + 5 > toplimit){
+		y = y - height - 10;
+	}
+	$("#button1_1").css({
+		"top": (y + 5),
+		"left": (x + 5),
+		"position": "absolute"
+	});
+	$("#button1_1").show("slow");
+}
+function reopen(){
+	$("#button1_1").show("slow");
+}
+function close(){
+	$("#button1_1").css("display", "none");
 }

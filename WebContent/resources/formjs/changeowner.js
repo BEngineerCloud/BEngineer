@@ -5,6 +5,7 @@ $(function(){
 			hinder(); // 다른 폼 닫기
 			initFiles();
 			showChangeOwner();
+			reopen();
 			return false;
 		}
 		if(!form.nickname.value.trim() && !form.nickname.value.trim() == ""){ // 업로드할 파일 미선택시

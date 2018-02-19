@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script src='/BEngineer/resources/js/menu.js' type='text/javascript'></script>
 <script type="text/javascript">
@@ -16,10 +17,10 @@
 				var index = clickedfile.indexOf(ref);
 				if(index == -1){
 					clickedfile.push(ref);
-					$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
+					$(this).css("background-color","aqua"); // 클릭파일 색 바꾸기
 				}else{
 					clickedfile.splice(index, 1);
-					$(this).css("background-color","#ff6666"); // 클릭파일 색 바꾸기
+					$(this).css("background-color","#ffffff"); // 클릭파일 색 바꾸기
 				}
 				form.file_ref.value = clickedfile.join();
 			}else{
@@ -27,7 +28,7 @@
 				form.file_ref.value = ref;
 				form.submitmultirepair.type = "submit";
 				document.getElementById("submitdelete").type = "button";
-				$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+				$("#files > div").css("background-color","#ffffff"); // 모든 파일 선택 취소
 				$(this).css("background-color","#6666dd"); // 클릭파일 색 바꾸기
 			}
 		});
@@ -56,7 +57,7 @@
 			document.getElementById("multitext").type = "hidden";
 			document.getElementById("cancelmulti").type = "hidden";
 			document.getElementById("submitdelete").type = "hidden";
-			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+			$("#files > div").css("background-color","#ffffff"); // 모든 파일 선택 취소
 		});
 	});
 	$(function(){
@@ -78,7 +79,7 @@
 			document.getElementById("submitdelete").type = "button";
 			document.getElementById("multichoice").type = "hidden";
 			form.submitmultirepair.type = "submit";
-			$("#files > div").css("background-color","#ff6666"); // 모든 파일 선택 취소
+			$("#files > div").css("background-color","#ffffff"); // 모든 파일 선택 취소
 		});
 	});
 	$(function(){
@@ -109,8 +110,12 @@
 <div id="logo" style="height:10%; width:15%; background-color:#ff9999; float:left;">
 	<img src="/BEngineer/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
 </div>
-<div id="search" style="height:10%; width:70%; background-color:#99ff99; float:left;">
-	search
+<!-- 검색창 -->
+<div align="center" style="height:10%; width:61%; float:left;">
+	<div style="margin-top:2%">
+	<input type="text" id="searchword"style="height:38%; width:20%; border-color: black; background-color:#FFFFFF;"/>
+	<input type="button" id="search" value="검  색" style="height:41%; border-color: black; background-color:#FFFFFF;"/>
+	</div>
 </div>
 <div align="center" id="logout" style="height:10%; width:15%;float:left;">
 	<div style="height:30%; width:100%;float:left;  margin-top: 3%"> 
@@ -124,7 +129,7 @@
 		<input type="button" id="logout" style="height:61%; border-color: black; background-color:#FFFFFF; font-size:11pt"value="로그아웃"/>
 	</div>
 </div>
-<div id="button1" style="height:5%; width:100%; background-color:#ffff99; float:left;">
+<div id="button1">
 	<!-- 다수 파일 선택 폼 -->
 	<div style="height:5%; width:relative; margin:0; float:left;">
 		<div style="height:100%; width:relative; margin-top:5; float:left;">
@@ -150,7 +155,7 @@
 		</div>
 	</div>
 </div>
-<div id="address" style="height:5%; width:100%; background-color:#99ffff; float:left;">
+<div id="address">
 	<c:set var="num" value="0" />
 	<!-- 폴더경로 보여주기 -->
 	<c:forEach var="addr" items="${folderaddress }">
@@ -165,7 +170,7 @@
 	<!-- 선택파일 보여주기용 -->
 	<font id="filename"></font>
 </div>
-<div id="button2" style="height:80%; width:10%; background-color:#ff99ff; float:left;">
+<div id="button2">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
@@ -179,18 +184,18 @@
 		</select>
 		<input type="submit" value="최근 파일"/>
 	</form>
-	button2
+	전체 사용량
 	<c:if test="${space != null && space !=''}">
 		<img src="data:image/png;base64,${space}" style="width:100%;" />
 	</c:if>
 </div>
 <!-- 파일들 창 -->
-<div id="files" style="height:80%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
+<div id="files">
 	<c:forEach var="file" items="${list }">
-		<div class="file" name="${file.num }" style="height:100; width:100; margin:1%; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" name="${file.num }" >${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>
-<div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
+<div id="etc">
 	etc
 </div>

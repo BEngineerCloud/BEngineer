@@ -16,7 +16,6 @@ function initCopy(){
 	var form = document.getElementById("copyform");
 	if(form != null){
 		form.submitcopy.type="hidden";
-		form.copycancel.type="hidden";
 	}
 }
 function setCopy(num){

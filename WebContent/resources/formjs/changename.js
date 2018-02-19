@@ -5,6 +5,7 @@ $(function(){
 			hinder(); // 다른 폼 닫기
 			form.name.type = "text";
 			form.submitchangename.type="submit";
+			reopen();
 			return false;
 		}
 		if(!form.name.value.trim() || form.name.value == "폴더 이름" || form.name.value == "파일 이름"){ // 폴더 명 미입력시

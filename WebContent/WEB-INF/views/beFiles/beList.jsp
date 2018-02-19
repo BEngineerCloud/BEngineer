@@ -58,7 +58,7 @@
 		<input type="button" id="logout" style="height:45%; border-color: black; background-color:#FFFFFF; font-size:100%;"value="로그아웃"/>
 	</div>
 </div>
-<div id="button1" style="height:4.5%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black">
+<div id="button1" >
 	<!-- 파일업로드 폼 -->
 	<div style="width:relative; margin:0; float:left;">
 		<form action="/BEngineer/beFiles/fileupload.do" id="uploadform" method="post" enctype="multipart/form-data">
@@ -118,61 +118,9 @@
 		</div>
 	</c:if>
 </div>
-<div id="button1_1" style="height:4.5%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black">
-	<!-- 파일/폴더 이동 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
-			<input type="hidden" name="ref"/>
-			<c:if test="${file_flag eq 'move' }">
-				<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="submit"  id="submitmove"name="submitmove" value="이동하기"/>
-				<input type="hidden" name="select_flag" value="${ref }"/>
-				<input type="hidden" name="folder_ref" value="${folder_ref }"/>
-				</div>
-				<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="button"  id="movecancel" name="movecancel" value="이동 취소"/>
-				</div>
-			</c:if>
-			<c:if test="${file_flag ne 'move' }">
-				<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="hidden"  id="submitmove"name="submitmove" value="이동"/>
-				<input type="hidden" name="select_flag"/>
-				<input type="hidden" name="folder_ref"/>
-				</div>
-				<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="hidden"  id="movecancel" name="movecancel" value="이동 취소"/>
-				</div>
-			</c:if>
-		</form>
-	</div>
-	<!-- 파일/폴더 복사 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="copyform" method="post" action="/BEngineer/beFiles/beCopy.do">
-			<input type="hidden" name="ref"/>
-			<c:if test="${file_flag eq 'copy' }">
-				<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="submit"  id="submitcopy"name="submitcopy" value="복사하기"/>
-				<input type="hidden" name="select_flag" value="${ref }"/>
-				<input type="hidden" name="folder_ref" value="${folder_ref }"/>
-				</div>
-				<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="button"  id="copycancel" name="copycancel" value="복사 취소"/>
-				</div>
-			</c:if>
-			<c:if test="${file_flag ne 'copy' }">
-				<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="hidden"  id="submitcopy"name="submitcopy" value="복사"/>
-				<input type="hidden" name="select_flag"/>
-				<input type="hidden" name="folder_ref"/>
-				</div>
-				<div style="height:5%; width:relative; margin:0; float:left;">
-				<input type="hidden"  id="copycancel" name="copycancel" value="복사 취소"/>
-				</div>
-			</c:if>
-		</form>	
-	</div>
+<div id="button1_1">
 	<!-- 폴더명 변경 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
 		<form id="changenameform" method="post">
 			<input type="hidden" name="folder" value="${folder_ref }" />
 			<input type="hidden" name="ref" />
@@ -180,12 +128,67 @@
 			<input type="hidden" name="submitchangename" />
 		</form>
 	</div>
+	<br />
+	<!-- 파일/폴더 이동 폼 -->
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
+			<input type="hidden" name="ref"/>
+			<c:if test="${file_flag eq 'move' }">
+				<div>
+				<input type="submit"  id="submitmove"name="submitmove" value="이동하기"/>
+				<input type="hidden" name="select_flag" value="${ref }"/>
+				<input type="hidden" name="folder_ref" value="${folder_ref }"/>
+				</div>
+				<div>
+				<input type="button"  id="movecancel" name="movecancel" value="이동 취소"/>
+				</div>
+			</c:if>
+			<c:if test="${file_flag ne 'move' }">
+				<div>
+				<input type="hidden"  id="submitmove"name="submitmove" value="이동"/>
+				<input type="hidden" name="select_flag"/>
+				<input type="hidden" name="folder_ref"/>
+				</div>
+				<div>
+				<input type="hidden"  id="movecancel" name="movecancel" value="이동 취소"/>
+				</div>
+			</c:if>
+		</form>
+	</div>
+	<br />
+	<!-- 파일/폴더 복사 폼 -->
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<form id="copyform" method="post" action="/BEngineer/beFiles/beCopy.do">
+			<input type="hidden" name="ref"/>
+			<c:if test="${file_flag eq 'copy' }">
+				<div>
+				<input type="submit"  id="submitcopy"name="submitcopy" value="복사하기"/>
+				<input type="hidden" name="select_flag" value="${ref }"/>
+				<input type="hidden" name="folder_ref" value="${folder_ref }"/>
+				</div>
+				<div>
+				<input type="button"  id="copycancel" name="copycancel" value="복사 취소"/>
+				</div>
+			</c:if>
+			<c:if test="${file_flag ne 'copy' }">
+				<div>
+				<input type="hidden"  id="submitcopy"name="submitcopy" value="복사"/>
+				<input type="hidden" name="select_flag"/>
+				<input type="hidden" name="folder_ref"/>
+				</div>
+				<div>
+				<input type="hidden"  id="copycancel" name="copycancel" value="복사 취소"/>
+				</div>
+			</c:if>
+		</form>	
+	</div>
+	<br />
 	<!-- 공유 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<div style="height:100%; width:relative; margin-top:5; float:left;">
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<div>
 			<input type="hidden" id="text" style="background-color:transparent; border:0px; text-color:black; width:70px;" value="공유 기한 : " disabled/>
 		</div>
-		<div style="height:100%; width:relative; margin:0; float:left;">
+		<div>
 			<form action="/BEngineer/beFiles/shareFile.do" id="shareform" method="post">
 				<input type="hidden" name="ref" />
 				<input type="hidden" name="enddate" />
@@ -197,32 +200,27 @@
 			</form>
 		</div>
 	</div>
-	<!-- 폴더 다운로드 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
-			<input type="hidden" name="file_ref" />
-			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
-		</form>
-	</div>
+	<br />
 	<!-- 공유중인 사람 확인 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
 		<form id="sharecheckform" action="/BEngineer/beFiles/lookSharedPeople.do" method="post">
 			<input type="hidden" name="file" />
 			<input type="hidden" name="submitsharecheck" value="공유 중인 사람 보기"/>
 		</form>
 	</div>
+	<br />
 	<!-- 공유 해제 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
-		<div style="height:100%; width:relative; float:left;">
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<div>
 			<select id="unshareselect" hidden style="height:25px">
 				<option value="1">모든 사람의 공유 해제</option>
 				<option value="2">한 사람의 공유 해제</option>
 			</select>
 		</div>
-		<div style="height:100%; width:relative; float:left;">
+		<div>
 			<input type="hidden" id="unsharetext" style="top:2px; background-color:transparent; border:0px; text-color:black; width:140px; height:25px;" value="해제할 사람의 닉네임 : " disabled/>
 		</div>
-		<div style="height:100%; width:relative; float:left;">
+		<div>
 			<form id="unshareform" action="/BEngineer/beFiles/unshare.do" method="get"> 
 				<input type="hidden" name="nickname" />
 				<input type="hidden" name="file_ref" />
@@ -231,12 +229,21 @@
 			</form>
 		</div>
 	</div>
+	<br />
+	<!-- 폴더 다운로드 폼 -->
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
+			<input type="hidden" name="file_ref" />
+			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
+		</form>
+	</div>
+	<br />
 	<!-- 주인 바꾸기 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;" id="changeownerdiv">
-		<div style="height:100%; width:relative; float:left;">
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<div>
 			<input type="hidden" id="changeownertext" style="top:2px; background-color:transparent; border:0px; text-color:black; width:140px; height:25px;" value="넘겨줄 사람의 닉네임 : " disabled/>
 		</div>
-		<div style="height:100%; width:relative; float:left;">
+		<div>
 			<form id="changeownerform" action="/BEngineer/beFiles/changeowner.do" method="get"> 
 				<input type="hidden" name="nickname" />
 				<input type="hidden" name="file_ref" />
@@ -245,15 +252,16 @@
 			</form>
 		</div>
 	</div>
+	<br />
 	<!-- 텍스트 파일 수정 폼 -->
-	<div style="height:5%; width:relative; margin:0; float:left;">
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
 		<form id="rewritetextform" action="/BEngineer/beFiles/rewriteText.do" method="post">
 			<input type="hidden" name="filenum" />
 			<input type="hidden" name="submitrewritetext" value="내용 수정하기"/>
 		</form>
 	</div>
 </div>
-<div id="address" style="height:4.5%; width:98%; float:left; padding:0.5% 0% 0% 2%; border-top:1px solid black">
+<div id="address">
 	<c:set var="num" value="0" />
 	<!-- 폴더경로 보여주기 -->
 	<c:forEach var="addr" items="${folderaddress }">
@@ -268,7 +276,7 @@
 	<!-- 선택파일 보여주기용 -->
 	<font id="filename"></font>
 </div>
-<div id="button2" style="height:75%; width:10%; float:left; padding:0.5% 0% 0% 0%; border-top:1px solid black; border-right:1 solid black; ">
+<div id="button2">
 	<input type="button" id="myfile" value="내 파일"/>
 	<input type="button" id="mysharedfile" value="공유 파일"/>
 	<input type="button" id="mytrashcan" value="휴지통"/>
@@ -282,16 +290,17 @@
 		</select>
 		<input type="submit" value="최근 파일"/>
 	</form>
-	button2
+	각 파일/폴더 용량
 	<c:if test="${gra != null && gra !=''}">
 		<img src="data:image/png;base64,${gra}" style="height:50%; width:80%;" />
 	</c:if>
+	전체 사용량
 	<c:if test="${space != null && space !=''}">
 		<img src="data:image/png;base64,${space}" style="width:100%;" />
 	</c:if>
 </div>
 <!-- 파일들 창 -->
-<div id="files" style="height:75%; width:90%; background-color:#999999; float:left; overflow-y:scroll;">
+<div id="files">
 	<c:forEach var="file" items="${list }">
 	<c:choose>
 	<c:when test="${file.important ==-2}">
@@ -301,7 +310,7 @@
 		<input type="checkbox" id="check" onclick="star(this.value);" value="${file.num }" style="height:2%; width:2%; float:left;"/>
 	</c:otherwise>
 	</c:choose>
-		<div class="file" id="${file.num }" name="${file.num }" style="height:100; width:100; margin:0; margin-top:1%; box-sizing:border-box; background-color:#ff6666; float:left; overflow:hidden">${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" id="${file.num }" name="${file.num }" >${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>
@@ -326,11 +335,14 @@
 		</div>
 	</form>
 </div>
-<div id="etc" style="height:10%; width:100%; background-color:#5f7f89; float:left;">
+<div id="etc">
 	etc
 </div>
 <script>
+var width = $("body").width() * 0.8;
+var height = $("body").height() * 0.8;
 if("${file_flag}"=="move"){
+	open(width, height);
 	var fileform = document.getElementById("${ref}"); // 클릭되어있는 fileform 가져오기
 	var moveform = document.getElementById("moveform");
 	 // moveform.ref에 fileform.ref 대입하기
@@ -340,14 +352,16 @@ if("${file_flag}"=="move"){
 	moveform.submitmove.type="hidden"; 	// moveform.submitmove 타입을 '숨김'으로 설정
 	moveform.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정
 }else if("${file_flag}"=="copy"){
+	open(width, height);
 	var fileform = document.getElementById("${ref}"); // 클릭되어있는 fileform 가져오기
 	var copyform = document.getElementById("copyform");
 	 // moveform.ref에 fileform.ref 대입하기
 	fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
 	copyform.ref.value="${ref}";
 	copyform.submitcopy.value="복사하기" 		// moveform.submitmove 값을 확인으로 설정
-	copyform.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정	
+	copyform.copycancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정	
 }else if("${file_flag}"=="multimove"){
+	open(width, height);
 	var moveform = document.getElementById("moveform");
 	var copyform = document.getElementById("copyform");
 	var ref = "${ref}";
@@ -372,6 +386,7 @@ if("${file_flag}"=="move"){
 		formEx.style.border="dotted";
 	}	
 }else if("${file_flag}"=="multicopy"){
+	open(width, height);
 	var moveform = document.getElementById("moveform");
 	var copyform = document.getElementById("copyform");
 	var ref = "${ref}";
