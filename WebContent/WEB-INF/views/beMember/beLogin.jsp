@@ -57,7 +57,7 @@ $(function(){
 			<input type="text" name="email" id="email" style="border-color:black; width:28%; height:20%"  value="아이디"><br/><br/>
 			<input type="password" name="pw" id="pw" style="border-color:black; width:28%; height:20%"  value="비밀번호"><br/>
 			<div id="Login-input4" style="width:28%; float:left; margin-left:36%; text-align:left;">
-				<input type=checkbox name="autoLogin" value="T" style="border:none;"/><font size="2">아이디 기억하기</font>
+				<input type=checkbox id="emailSave" name="emailSave" value="T" style="border:none;"/><font size="2">아이디 기억하기</font>
 				<font size="2" style="margin-left: 36%"><a href="/BEngineer/beMember/beJoinmember.do" style="text-decoration:none">회원가입</a></font>
 			</div>
 		</div>
