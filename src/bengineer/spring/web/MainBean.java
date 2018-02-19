@@ -78,6 +78,7 @@ public class MainBean extends Thread{
 			}
 			session.setAttribute("id", dto.getId()); // 테스트용임시세션등록
 			session.setAttribute("nickname", dto.getNickname());
+			session.setMaxInactiveInterval(30);
 		}
 		return veiw;
 	}

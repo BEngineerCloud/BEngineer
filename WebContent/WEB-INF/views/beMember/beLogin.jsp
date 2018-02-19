@@ -87,4 +87,52 @@ $(function(){
 	</script>
 <div align="center" id="Bottom" style="height:15%; width:100%; float:left; background-color:#5f7f89;"></div>
 </body>
+<script>
+$(document).ready(function(){ //메일아이디를 저장할 경우 쿠키파일을 만들어 저장한다.
+	var userEmail = getCookie("userEmail");
+	$("#email").val(userEmail);
+	
+	if($("#email").val()!=""){
+		$("#emailSave").attr("checked",true);
+	}
+	
+	$("#emailSave").change(function(){
+		if($("#emailSave").is(":checked")){ //email 저장하기 체크했을 경우
+			var userEmail = $("#email").val();
+			setCookie("userEmail",userEmail,7); //7일동안 쿠키보관
+		}else{
+			deleteCookie("userEmail");
+		}
+	});
+	
+	$("#email").keyup(function(){
+		if($("#emailSave").is(":checked")){
+			var userEmail = $("email").val();
+			setCookie("userEmail",userEmail,7);
+		}
+	});
+});
+
+function setCookie(cName, cValue, cDay){ //쿠키설정
+	var expire = new Date(); expire.setDate(expire.getDate() + cDay); 
+	cookies = cName + '=' + encodeURI(cValue) + '; path=/ '; 
+	if(typeof cDay != 'undefined') cookies += ';expires=' + expire.toGMTString() + ';'; 
+	document.cookie = cookies; 
+}
+
+function deleteCookie(cookieName){ //쿠키삭제
+	var date = new Date();
+	date.setDate(date.getDate()-1);
+	document.cookie = cookieName + "=" + "; expires=" + date.toGMTString();
+}
+
+function getCookie(cName) { //쿠키 가져오기
+	cName = cName + '='; var cookieData = document.cookie; 
+	var start = cookieData.indexOf(cName); var cValue = ''; 
+	if(start != -1){ start += cName.length; var end = cookieData.indexOf(';', start); 
+	if(end == -1)end = cookieData.length; 
+	cValue = cookieData.substring(start, end); } 
+	return decodeURI(cValue); 
+}
+</script>
 </html>
