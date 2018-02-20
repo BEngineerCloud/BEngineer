@@ -140,14 +140,17 @@ public class FileBean2 {
 		}
 		dto = (FileDTO)originalAddr.get(0);
 		String orgname = dto.getOrgname();
+		String originOwner = dto.getOwner(); //수정
 		newPath += orgname;
 		int num = dto.getNum();
 		dto.setNum(num);
 		int folderref = ((FileDTO)newAddr.get(0)).getNum();
+		String newOwner = ((FileDTO)newAddr.get(0)).getOwner(); //수정
 		dto.setFolder_ref(folderref);
 		File file = new File(originalPath);
 		boolean is_Move = false;
 		int flag = 0;
+		if(originOwner.equals(newOwner)) {
 		if(file.isFile()) { // 이동하려는 파일/폴더가 파일일 경우
 			String filetype = orgname.substring(orgname.lastIndexOf("."));
 			String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
@@ -174,6 +177,10 @@ public class FileBean2 {
 			}else {
 				is_Move = nioFilemove(originalPath,newPath);
 			}
+		}
+		}else {
+			is_Move = false;
+			flag = 1;
 		}
 		
 		if(is_Move) {
@@ -323,8 +330,9 @@ public class FileBean2 {
 				folderref = ((FileDTO)newAddr.get(0)).getFolder_ref();
 			else
 				folderref = ((FileDTO)newAddr.get(0)).getNum();
-			
+			String newOwner = ((FileDTO)newAddr.get(0)).getOwner(); //
 			dto.setFolder_ref(folderref);
+			dto.setOwner(newOwner); //
 			
 			int orginsub = 0; //복사할 디렉터리의 넘버
 			orginsub = ((FileDTO)originalAddr.get(0)).getNum();
