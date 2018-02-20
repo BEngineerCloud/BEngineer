@@ -229,7 +229,7 @@ public class FileBean2 {
 					String filetype = orgname.substring(orgname.lastIndexOf("."));
 					String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
 					String result = filebean.checkFile(filetype);
-					if(newFolder.equals("image")) {
+					if(newFolder.equals("image")||newFolder.equals("music")||newFolder.equals("video")||newFolder.equals("document")||newFolder.equals("etc")) {
 						if(!newFolder.equals(result)) {
 							model.addAttribute("alert", "해당폴더에 복사할수 없는 폴더의 형식입니다.");
 							model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
