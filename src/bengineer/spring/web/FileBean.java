@@ -650,6 +650,8 @@ public class FileBean {
 			}
 			fileaddress = "d:/PM/BEngineer/" + fileaddress;
 			List filelist = new ArrayList();
+			boolean check = false;
+			int refcheck = dto.getFolder_ref();
 			for(int i = 0; i < files.length; i++) {
 				try {
 					 filenum = Integer.parseInt(files[i]);
@@ -661,6 +663,10 @@ public class FileBean {
 					return mav;
 				}
 				dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
+				if(dto.getFolder_ref() != refcheck) {
+					check = true;
+					break;
+				}
 				if(dto.getFiletype().equals("dir")) {
 					List add = getFilelist(fileaddress, "/" + dto.getOrgname());
 					if(add != null && !(add.get(0) instanceof Boolean)) {
@@ -675,6 +681,44 @@ public class FileBean {
 					mav.addObject("alert", "다운로드할 파일이 없습니다.");
 					mav.addObject("location", "history.go(-1)");
 					return mav;
+				}
+			}
+			if(check) {
+				filelist = new ArrayList();
+				List EntryList = new ArrayList();
+				for(int i = 0; i < files.length; i++) {
+					try {
+						 filenum = Integer.parseInt(files[i]);
+					}catch(Exception e) {
+						ModelAndView mav = new ModelAndView();
+						mav.setViewName("beFiles/alert");
+						mav.addObject("alert", "유효하지 않은 접근입니다.");
+						mav.addObject("location", "history.go(-1)");
+						return mav;
+					}
+					address_ref = getAddr(filenum);
+					for(int j = address_ref.size() - 1; i > 0; i--) {
+						dto = (FileDTO)address_ref.get(j);
+						fileaddress += dto.getOrgname();
+						if(i != 0) {
+							fileaddress += "/";
+						}
+					}
+					if(dto.getFiletype().equals("dir")) {
+						List add = getFilelist(fileaddress, "/" + dto.getOrgname());
+						if(add != null && !(add.get(0) instanceof Boolean)) {
+							filelist.addAll(add);
+						}
+					}else {
+						filelist.add(dto.getOrgname());
+					}
+					if(filelist == null || filelist.size() == 0) {
+						ModelAndView mav = new ModelAndView();
+						mav.setViewName("beFiles/alert");
+						mav.addObject("alert", "다운로드할 파일이 없습니다.");
+						mav.addObject("location", "history.go(-1)");
+						return mav;
+					}
 				}
 			}
 			Date time = new Date(System.currentTimeMillis());
@@ -1680,7 +1724,10 @@ public class FileBean {
 		}
 		return result;
 	}
-	private File zipFiles(String path, String zipName, List files) { // 파일들 압축용 메서드 path는 압축파일을 만들 실제 경로, files는 압축할 파일들의 path 기준의 상대 경로 
+	private File zipFiles(String path, String zipName, List files) { // 파일들 압축용 메서드 path는 압축파일을 만들 실제 경로, files는 압축할 파일들의 path 기준의 상대 경로
+		return zipFiles(path, zipName, files, files);
+	}
+	private File zipFiles(String path, String zipName, List entry, List files) { // 파일들 압축용 메서드 path는 압축파일을 만들 실제 경로, files는 압축할 파일들의 path 기준의 상대 경로 
 		int size = 1024;
 		byte[] buf = new byte[size];
 		FileInputStream fis = null;
@@ -1696,9 +1743,10 @@ public class FileBean {
 			for(int i = 0; i < files.size(); i++) {
 				zos.setEncoding("UTF-8");
 				String filename = (String)files.get(i);
+				String fileentry = (String)entry.get(i);
 				if(filename.indexOf(".") != -1) {
-					zos.putArchiveEntry(new ZipArchiveEntry(filename));
-					fis = new FileInputStream(path + "/" + files.get(i));
+					zos.putArchiveEntry(new ZipArchiveEntry(fileentry));
+					fis = new FileInputStream(path + "/" + filename);
 					bis = new BufferedInputStream(fis, size);
 					for(int j = 0; j != -1; j = bis.read(buf, 0, size)) {
 						zos.write(buf, 0, j);

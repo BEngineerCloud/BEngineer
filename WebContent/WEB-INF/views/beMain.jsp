@@ -11,7 +11,17 @@
 	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud2-all.js"></script>
 	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/hover.js"></script>
 	<script src="/BEngineer/resources/wordcloud2/wordcloud2-binding-0.2.0/wordcloud2.js?ver=2"></script>
-<script src='/BEngineer/resources/js/menu.js' type='text/javascript'></script>
+<script src='/BEngineer/resources/pagectrl/menu.js' type='text/javascript'></script>
+<script src='/BEngineer/resources/pagectrl/search.js' type='text/javascript'></script>
+<script type="text/javascript">
+	//비교대상 목록?
+	var font_test = Array(
+		<c:forEach var="dto" items="${font}">
+			'${dto.filename}',
+		</c:forEach>
+		''
+	);
+</script>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;"> 
 	<img src="/BEngineer/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>

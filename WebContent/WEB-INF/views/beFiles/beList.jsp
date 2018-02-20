@@ -345,34 +345,33 @@ var width = $("body").width() * 0.8;
 var height = $("body").height() * 0.8;
 if("${file_flag}"=="move"){
 	open(width, height);
-	var fileform = document.getElementById("${ref}"); // 클릭되어있는 fileform 가져오기
+	var fileform = document.getElementById("${sessionScope.ref}"); // 클릭되어있는 fileform 가져오기
 	var moveform = document.getElementById("moveform");
 	 // moveform.ref에 fileform.ref 대입하기
 	fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
-	moveform.ref.value="${ref}";
+	moveform.ref.value="${sessionScope.ref}";
 	moveform.submitmove.value="이동하기" 		// moveform.submitmove 값을 확인으로 설정
 	moveform.submitmove.type="hidden"; 	// moveform.submitmove 타입을 '숨김'으로 설정
 	moveform.movecancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정
 }else if("${file_flag}"=="copy"){
 	open(width, height);
-	var fileform = document.getElementById("${ref}"); // 클릭되어있는 fileform 가져오기
+	var fileform = document.getElementById("${sessionScope.ref}"); // 클릭되어있는 fileform 가져오기
 	var copyform = document.getElementById("copyform");
 	 // moveform.ref에 fileform.ref 대입하기
 	fileform.style.border="dotted"; // fileform의 테두리를 점선으로 설정
-	copyform.ref.value="${ref}";
+	copyform.ref.value="${sessionScope.ref}";
 	copyform.submitcopy.value="복사하기" 		// moveform.submitmove 값을 확인으로 설정
 	copyform.copycancel.type="button"; 	// moveform.movecancel 타입을 button으로 설정	
 }else if("${file_flag}"=="multimove"){
-	open(width, height);
 	var moveform = document.getElementById("moveform");
 	var copyform = document.getElementById("copyform");
-	var ref = "${ref}";
+	var ref = "${sessionScope.ref}";
 	var refArray = ref.split(',');
 	var form = document.getElementById("multidownform");
 	
 	moveform.submitmove.type="hidden";
 	copyform.submitcopy.type="hidden";
-	form.file_ref.value="${ref}";
+	form.file_ref.value="${sessionScope.ref}";
 	
 	form.multimove_flag.value = 1;
 	form.multicopy_flag.value = 0;
@@ -388,17 +387,16 @@ if("${file_flag}"=="move"){
 		formEx.style.border="dotted";
 	}	
 }else if("${file_flag}"=="multicopy"){
-	open(width, height);
 	var moveform = document.getElementById("moveform");
 	var copyform = document.getElementById("copyform");
-	var ref = "${ref}";
+	var ref = "${sessionScope.ref}";
 	var refArray = ref.split(',');
 	var form = document.getElementById("multidownform");
 	
 	moveform.submitmove.type="hidden";
 	copyform.submitcopy.type="hidden";
 	form.multicopy.type="hidden";
-	form.file_ref.value="${ref}";
+	form.file_ref.value="${sessionScope.ref}";
 	form.submitmultidown.value = "다운로드";
 	form.multimove_flag.value = 1;
 	form.multicopy_flag.value = 0;

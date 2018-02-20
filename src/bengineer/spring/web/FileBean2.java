@@ -953,7 +953,7 @@ public class FileBean2 {
 		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
 
-		//@@ model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
+		model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
 		return "beFiles/beImagePreview";
 	}
 	
@@ -1016,9 +1016,7 @@ public class FileBean2 {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", -5);
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
-		model.addAttribute("movefile_Ref",0);
-		model.addAttribute("movefile_FRef",0);
-		return "beFiles/hotlist";
+		return "beFiles/beList";
 	}
  	@RequestMapping("searchForm.do")
     public String searchForm(HttpSession session, String result,Model model,String filename) {
@@ -1062,9 +1060,7 @@ public class FileBean2 {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", -5);
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
-		model.addAttribute("movefile_Ref",0);
-		model.addAttribute("movefile_FRef",0);
-		//@@ model.addAttribute("space", filebean.viewSpace(id, sqlSession));
+		model.addAttribute("space", filebean.viewSpace(id, sqlSession));
       }
  	  return "beFiles/beList";
 

@@ -3,7 +3,7 @@ $(function(){
 		var form = document.getElementById("multidownform"); // 폼 받아오기
 		form.multicopy_flag.value = 1;
 		form.multimove_flag.value = 0;
-		form.file_ref.value = clickedfile.join();
+		form.file_ref.value = clickedFile.join();
 	
 		if($(this).val()=="복사"){
 			window.location="/BEngineer/beFiles/beFilesession.do?folder="+folder_ref+"&ref="+form.file_ref.value+"&file_flag=multicopy";
