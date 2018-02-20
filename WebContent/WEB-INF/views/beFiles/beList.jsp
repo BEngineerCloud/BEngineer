@@ -129,6 +129,14 @@
 		</form>
 	</div>
 	<br />
+	<!-- 단일 지우기 폼 -->
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<form id="throwatrashform" method="post" action="/BEngineer/beFiles/throwToTrashcan.do">
+			<input type="hidden" name="file_ref" />
+			<input type="hidden" name="submitthrow" value="지우기"/>
+		</form>
+	</div>
+	<br />
 	<!-- 파일/폴더 이동 폼 -->
 	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
 		<form id="moveform" method="post" action="/BEngineer/beFiles/beMove.do">
@@ -312,7 +320,7 @@
 		<label for="check${file.num }"></label>
 	</c:otherwise>
 	</c:choose>
-		<div class="file" id="${file.num }" name="${file.num }" >${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" id="${file.num }" name="${file.num }" >${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" readOnly/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 	</c:forEach>

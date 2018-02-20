@@ -1,8 +1,6 @@
 $(function(){
 	$("#multidownform").submit(function(){ // 여러 파일 다운로드 버튼 클릭시
 		var form = document.getElementById("multidownform"); // 폼 받아오기
-		initMove();
-		initCopy();
 		if(document.getElementById("multidowntext").type == "hidden"){ // 폼이 숨겨진 상태일 때 폼 보이고 이동 취소
 			hinder(); // 다른 폼 닫기
 			initFiles();
@@ -35,6 +33,7 @@ function initMultiSel(){
 		document.getElementById("cancelmultidown").type = "hidden";
 		initMultiMove();
 		initMultiCopy();
+		initThrowToTrashcan();
 	}
 }
 function showMultiSel(){
@@ -44,6 +43,7 @@ function showMultiSel(){
 		document.getElementById("cancelmultidown").type = "button";
 		setMultiMove();
 		setMultiCopy();
+		setThrowToTrashcan();
 		form.submitmultidown.value = "다운로드";
 	}
 }

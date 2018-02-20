@@ -683,9 +683,10 @@ public class FileBean {
 					return mav;
 				}
 			}
+			String path = "d:/PM/BEngineer";
 			if(check) {
 				filelist = new ArrayList();
-				List EntryList = new ArrayList();
+				List entryList = new ArrayList();
 				for(int i = 0; i < files.length; i++) {
 					try {
 						 filenum = Integer.parseInt(files[i]);
@@ -697,20 +698,27 @@ public class FileBean {
 						return mav;
 					}
 					address_ref = getAddr(filenum);
-					for(int j = address_ref.size() - 1; i > 0; i--) {
+					fileaddress = "";
+					for(int j = address_ref.size() - 1; j > 0; j--) {
 						dto = (FileDTO)address_ref.get(j);
 						fileaddress += dto.getOrgname();
-						if(i != 0) {
+						if(j != 0) {
 							fileaddress += "/";
 						}
 					}
+					dto = (FileDTO)address_ref.get(0);
 					if(dto.getFiletype().equals("dir")) {
-						List add = getFilelist(fileaddress, "/" + dto.getOrgname());
+						List add = getFilelist(path + "/" + fileaddress, "/" + dto.getOrgname());
 						if(add != null && !(add.get(0) instanceof Boolean)) {
-							filelist.addAll(add);
+							for(int j = 0; j < add.size(); j++) {
+								String addone = (String)add.get(j);
+								filelist.add(fileaddress + "/" + addone);
+								entryList.add(addone);
+							}
 						}
 					}else {
-						filelist.add(dto.getOrgname());
+						filelist.add(fileaddress + dto.getOrgname());
+						entryList.add(dto.getOrgname());
 					}
 					if(filelist == null || filelist.size() == 0) {
 						ModelAndView mav = new ModelAndView();
@@ -720,18 +728,30 @@ public class FileBean {
 						return mav;
 					}
 				}
-			}
-			Date time = new Date(System.currentTimeMillis());
-			SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
-			String name = dto.getFilename();
-			int index = name.lastIndexOf("."); 
-			if(index != -1) {
-				name = name.substring(0, index) + "외";
+				Date time = new Date(System.currentTimeMillis());
+				SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
+				String name = dto.getFilename();
+				int index = name.lastIndexOf("."); 
+				if(index != -1) {
+					name = name.substring(0, index) + "외";
+				}else {
+					name += "외";
+				}
+				String zipname = "d:/PM/BEngineer/downtemp/" + name + format.format(time).substring(0, 12) + ".zip";
+				file = zipFiles(path, zipname, entryList, filelist);
 			}else {
-				name += "외";
+				Date time = new Date(System.currentTimeMillis());
+				SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
+				String name = dto.getFilename();
+				int index = name.lastIndexOf("."); 
+				if(index != -1) {
+					name = name.substring(0, index) + "외";
+				}else {
+					name += "외";
+				}
+				String zipname = "d:/PM/BEngineer/downtemp/" + name + format.format(time).substring(0, 12) + ".zip";
+				file = zipFiles(fileaddress, zipname, filelist);
 			}
-			String zipname = "d:/PM/BEngineer/downtemp/" + name + format.format(time).substring(0, 12) + ".zip";
-			file = zipFiles(fileaddress, zipname, filelist);
 		}else {
 			ModelAndView mav = new ModelAndView();
 			mav.setViewName("beFiles/alert");
@@ -1763,6 +1783,10 @@ public class FileBean {
 			fos.close();
 			file = new File(zipName);
 		}catch(Exception e){
+			file = new File(zipName);
+			if(file.exists()) {
+				file.delete();
+			}
 			e.printStackTrace();
 		}finally {
 			if(bis != null) {try{bis.close();}catch(IOException i) {}}

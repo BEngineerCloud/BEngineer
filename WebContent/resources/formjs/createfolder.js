@@ -5,7 +5,6 @@ $(function(){
 			hinder(); // 다른 폼 닫기
 			initFiles();
 			showFolderCreate();
-			reopen();
 			return false;
 		}
 		if(!form.foldername.value.trim() || form.foldername.value == "폴더 이름"){ // 폴더 명 미입력시

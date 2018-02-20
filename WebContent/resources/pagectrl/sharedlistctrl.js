@@ -1,48 +1,64 @@
 $(function(){
-	$("#files > div").click(function(e){ // 파일 클릭시
-		var filename = $(this).text();
-		var ref = $(this).attr("name");
-		var important =document.getElementById(ref + "important");
-		var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
-		var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
-		setAddress(ref, orgname.value);
-		var multiCheck = document.getElementById("multidowntext");
-		if(multiCheck != null && multiCheck.type == "text"){
-			var index = clickedFile.indexOf(ref);
-			var checkwrite = writeList.indexOf(ref);
-			if(index == -1){
-				clickedFile.push(ref);
-				if(important.value == -1 || checkwrite == -1){
-					clickedImportant.push(1)
+	$("#files").click(function(e){
+		var target = $(e.target).attr("class");
+		var parent = $(e.target).parent().attr("class");
+		var check = false;
+		var filename = null;
+		var ref = null;
+		if(target == 'file'){
+			filename = $(e.target).text();
+			ref = $(e.target).attr("name");
+			check = true;
+		}else if(parent == 'file'){
+			filename = $(e.target).parent().text();
+			ref = $(e.target).parent().attr("name");
+			check = true;
+		}
+		if(check){
+			var important =document.getElementById(ref + "important");
+			var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
+			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+			setAddress(ref, orgname.value);
+			var multiCheck = document.getElementById("multidowntext");
+			if(multiCheck != null && multiCheck.type == "text"){
+				var index = clickedFile.indexOf(ref);
+				var checkwrite = writeList.indexOf(ref);
+				if(index == -1){
+					clickedFile.push(ref);
+					if(important.value == -1 || checkwrite == -1){
+						clickedImportant.push(1)
+					}
+					selectFile(ref);
+				}else{
+					clickedFile.splice(index, 1);
+					if(important.value == -1 || checkwrite != -1){
+						clickedImportant.splice(0, 1);
+					}
+					disselectFile(ref);
+				}
+				if(clickedImportant.length > 0){
+					hideMultiMove();
+				}else{
+					setMultiMove();
+					setMultiCopy();
 				}
 				selectFile(ref);
-			}else{
-				clickedFile.splice(index, 1);
-				if(important.value == -1 || checkwrite != -1){
-					clickedImportant.splice(0, 1);
-				}
-				disselectFile(ref);
+				return;
 			}
-			if(clickedImportant.length > 0){
-				hideMultiMove();
-			}else{
-				setMultiMove();
-				setMultiCopy();
-			}
+			hinder();
+			initFiles();
 			selectFile(ref);
-			return;
+			setRewriteText(ref);
+			setChangeName(ref, type);
+			setFolderDown(ref, type);
+			setShareCheck(ref);
+			setUnshare(ref);
+			setCopy(ref);
+			setMove(ref);
+			open(e.clientX, e.clientY);
+		}else{
+			hinder();
 		}
-		hinder();
-		initFiles();
-		selectFile(ref);
-		setRewriteText(ref);
-		setChangeName(ref, type);
-		setFolderDown(ref, type);
-		setShareCheck(ref);
-		setUnshare(ref);
-		setCopy(ref);
-		setMove(ref);
-		open(e.clientX, e.clientY);
 	});
 });
 $(function(){

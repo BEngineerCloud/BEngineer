@@ -13,14 +13,23 @@ function initThrowToTrashcan(){
 		tttc.type = "hidden";
 	}
 }
-function setThrowToTrashcan(num){
+function setThrowToTrashcan(){
 	var tttc = document.getElementById("throwtotrashcan");
-	var important = document.getElementById(num + "important");
-	if(tttc != null && important.value > -1){
+	if(tttc != null){
 		tttc.type = "button";
-		var form = document.getElementById("multidownform");
-		if(form != null){
-			form.file_ref.value = num;
-		}
+	}
+}
+function initThrowATrash(){
+	var form = document.getElementById("throwatrashform");
+	if(form != null){
+		form.submitthrow.type = "hidden";
+	}
+}
+function setThrowATrash(num){
+	var form = document.getElementById("throwatrashform");
+	var important = document.getElementById(num + "important");
+	if(form != null && important.value > -1){
+		form.file_ref.value = num;
+		form.submitthrow.type = "submit";
 	}
 }

@@ -4,32 +4,47 @@
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script src='/BEngineer/resources/js/menu.js' type='text/javascript'></script>
 <script type="text/javascript">
-	var clickedfile = new Array();
-	$(function(){
-		$("#files > div").click(function(){ // 파일 클릭시
-			var filename = $(this).text();
-			var ref = $(this).attr("name");
-			var orgname = document.getElementById(ref); // 원 파일명 저장되어있는 인풋의 값 가져오기
-			$("font#filename").text(orgname.value); // 주소부분에 표시
-			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
-			form = document.getElementById("multiform");
-			if(document.getElementById("multitext").type == "text"){
-				var index = clickedfile.indexOf(ref);
-				if(index == -1){
-					clickedfile.push(ref);
-					$(this).css("background-color","aqua"); // 클릭파일 색 바꾸기
+	var clickedfile = new Array();$(function(){
+		$("#files").click(function(e){
+			var target = $(e.target).attr("class");
+			var parent = $(e.target).parent().attr("class");
+			var check = false;
+			var filename = null;
+			var ref = null;
+			if(target == 'file'){
+				filename = $(e.target).text();
+				ref = $(e.target).attr("name");
+				check = true;
+			}else if(parent == 'file'){
+				filename = $(e.target).parent().text();
+				ref = $(e.target).parent().attr("name");
+				check = true;
+			}
+			if(check){
+				var orgname = document.getElementById(ref); // 원 파일명 저장되어있는 인풋의 값 가져오기
+				$("font#filename").text(orgname.value); // 주소부분에 표시
+				var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
+				form = document.getElementById("multiform");
+				if(document.getElementById("multitext").type == "text"){
+					var index = clickedfile.indexOf(ref);
+					if(index == -1){
+						clickedfile.push(ref);
+						$(this).css("background-color","aqua"); // 클릭파일 색 바꾸기
+					}else{
+						clickedfile.splice(index, 1);
+						$(this).css("background-color","#ffffff"); // 클릭파일 색 바꾸기
+					}
+					form.file_ref.value = clickedfile.join();
 				}else{
-					clickedfile.splice(index, 1);
-					$(this).css("background-color","#ffffff"); // 클릭파일 색 바꾸기
+					hinder(); // 업로드 입력, 폴더생성 입력 취소
+					form.file_ref.value = ref;
+					form.submitmultirepair.type = "submit";
+					document.getElementById("submitdelete").type = "button";
+					$("#files > div").css("background-color","#ffffff"); // 모든 파일 선택 취소
+					$(this).css("background-color","aqua"); // 클릭파일 색 바꾸기
 				}
-				form.file_ref.value = clickedfile.join();
 			}else{
-				hinder(); // 업로드 입력, 폴더생성 입력 취소
-				form.file_ref.value = ref;
-				form.submitmultirepair.type = "submit";
-				document.getElementById("submitdelete").type = "button";
-				$("#files > div").css("background-color","#ffffff"); // 모든 파일 선택 취소
-				$(this).css("background-color","aqua"); // 클릭파일 색 바꾸기
+				hinder();
 			}
 		});
 	});
@@ -192,7 +207,7 @@
 <!-- 파일들 창 -->
 <div id="files">
 	<c:forEach var="file" items="${list }">
-		<div class="file" name="${file.num }" >${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" name="${file.num }" >${file.filename }<input type="text" id="${file.num }" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" readOnly/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 	</c:forEach>
 </div>

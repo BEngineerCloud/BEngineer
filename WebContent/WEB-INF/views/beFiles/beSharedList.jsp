@@ -249,7 +249,7 @@ var folder_ref = '${folder_ref}';
 <div id="files">
 	<c:set var="fnum" value="0" />
 	<c:forEach var="file" items="${list }">
-		<div class="file" name="${file.num }" >${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>
+		<div class="file" name="${file.num }" >${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" readOnly/></div>
 		<input type="hidden" id="${file.num }type" value="${file.filetype }"/>
 		<input type="hidden" id="${file.num }important" value="${file.important }"/>
 		<input type="hidden" id="${file.num }date" value="${datelist.get(fnum) }"/>

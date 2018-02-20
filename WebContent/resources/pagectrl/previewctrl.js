@@ -1,17 +1,17 @@
 $(function(){
 	$("#files").click(function(e){
-		var target = $(e.target).attr("class");
-		var parent = $(e.target).parent().attr("class");
+		var target = $(e.target).parent().attr("class");
+		var parent = $(e.target).parent().parent().parent().attr("class");
 		var check = false;
 		var filename = null;
 		var ref = null;
 		if(target == 'file'){
-			filename = $(e.target).text();
-			ref = $(e.target).attr("name");
-			check = true;
-		}else if(parent == 'file'){
 			filename = $(e.target).parent().text();
 			ref = $(e.target).parent().attr("name");
+			check = true;
+		}else if(parent == 'file'){
+			filename = $(e.target).parent().parent().parent().text();
+			ref = $(e.target).parent().parent().parent().attr("name");
 			check = true;
 		}
 		if(check){
@@ -46,9 +46,7 @@ $(function(){
 			hinder();
 			initFiles();
 			selectFile(ref);
-			setRewriteText(ref);
 			setChangeName(ref, type);
-			setFolderDown(ref, type);
 			setShareCheck(ref);
 			setShare(ref);
 			setUnshare(ref);
@@ -56,6 +54,7 @@ $(function(){
 			setMove(ref);
 			setThrowATrash(ref);
 			setChangeOwner(ref);
+			setImage(ref);
 			open(e.clientX, e.clientY);
 		}else{
 			hinder();
@@ -65,40 +64,21 @@ $(function(){
 $(function(){
 	$("#files > div").dblclick(function(){ // 파일 더블클릭시
 		var ref = $(this).attr("name");
-		var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
-		var important =document.getElementById(ref + "important");
-		var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
-		if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
-			if(important.value==-1 && orgname.value=="image"){ 
-				window.location = "/BEngineer/beFiles/beImagePreview.do?folder="+ref;	 
-			}else{
-				window.location = "/BEngineer/beFiles/beMyList.do?folder=" + ref; 
-			}
-		}else{ // 파일일 때 해당 파일 다운로드
-			window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + ref;
-		}
-	});
-});
-$(function(){
-	$(".file").mouseleave(function(){ // 파일 더블클릭시
+		window.location = "/BEngineer/beFiles/beDownload.do?file_ref=" + ref;
 	});
 });
 function hinder(){ // 모든 폼 초기화 함수
 	initUpload();
-	initFolderCreate();
 	initMultiSel();
 	initCopy();
 	initMove();
-	initWriteText();
-	initRewriteText();
-	hideWriteText();
 	initChangeName();
-	initFolderDown();
 	initShare();
 	initShareCheck();
 	initUnshare();
 	initChangeOwner();
 	initThrowToTrashcan();
+	initImage();
 	initThrowATrash();
 	close();
 }
@@ -144,11 +124,40 @@ function open(x, y){
 		"left": (x + 5),
 		"position": "absolute"
 	});
-	$("#button1_1").show("fast");
+	$("#button1_1").show("slow");
 }
 function reopen(){
-	$("#button1_1").show("fast");
+	$("#button1_1").show("slow");
 }
 function close(){
 	$("#button1_1").css("display", "none");
+}
+$(function(){
+	$("body").append("<div id='glayLayer' ></div><div id='overLayer' style='overflow-y:auto;'></div>");
+	
+	$("#glayLayer").click(function(){
+		$(this).hide()
+		$("#overLayer").hide();
+	});
+	
+	$("#imageview").click(function(){
+		hinder();
+		var imageform = document.getElementById("imageform");
+		$("#glayLayer").show();
+		$("#overLayer").show().html("<img src='"+$("#" + imageform.selImageview.value + " > div > a.modal").attr("href")+"'style=\"width:100%; \" />");
+		return false;
+	});
+});
+function setImage(num){
+	var form = document.getElementById("imageform"); //imageform 가져오기
+	if(form != null){
+		form.selImageview.value = num;
+		form.imageview.type = "button";
+	}
+}
+function initImage(){
+	var form = document.getElementById("imageform"); //imageform 가져오기
+	if(form != null){
+		form.imageview.type = "hidden";
+	}
 }
