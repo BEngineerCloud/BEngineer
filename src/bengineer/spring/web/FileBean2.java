@@ -167,7 +167,8 @@ public class FileBean2 {
 			}
 		}else {
 			String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
-			if(newFolder.equals("image")) {
+			boolean is_Check = checkFolder(file, newFolder);
+			if(newFolder.equals("image")||!is_Check) {
 				is_Move = false;
 				flag = 1;
 			}else {
@@ -240,7 +241,8 @@ public class FileBean2 {
 				}
 				else {
 					String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
-					if(newFolder.equals("image")) {
+					boolean is_Check = checkFolder(isFolderfile, newFolder);
+					if(newFolder.equals("image")||!is_Check) {
 						model.addAttribute("alert", "해당폴더에 복사할수 없는 폴더의 형식입니다.");
 						model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
 						session.removeAttribute("ref");
@@ -463,7 +465,8 @@ public class FileBean2 {
 					}
 				}
 			}else {
-				if(neworgname.equals("image")) {
+				boolean is_Check = checkFolder(file, neworgname);
+				if(neworgname.equals("image")||!is_Check) {
 					is_Move = false;
 					flag = 1;
 					break;
@@ -572,16 +575,32 @@ public class FileBean2 {
 			dto2 = (FileDTO)newAddr2.get(0);
 			String neworgname = dto2.getOrgname();
 			
-			if(!file.isFile()) { // 이동하려는 파일/폴더가 폴더일 경우
+			if(file.isFile()) { // 이동하려는 파일/폴더가 폴더일 경우
 				// 이동할 위치의 폴더가 기본폴더인 경우
-				if(neworgname.equals("image")) {
+				FileDTO dto3 = (FileDTO)originalAddr.get(0);
+				String orgname3 = dto3.getOrgname();
+				String filetype = orgname3.substring(orgname3.lastIndexOf("."));
+				String result = filebean.checkFile(filetype);
+				
+				if(neworgname.equals("image")||neworgname.equals("music")||neworgname.equals("video")||neworgname.equals("document")||neworgname.equals("etc")) {
+					if(!neworgname.equals(result)) {
+						model.addAttribute("alert", "해당폴더에 복사할수 없는 폴더의 형식입니다.");
+						model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+						session.removeAttribute("ref");
+						session.removeAttribute("file_flag");
+						return "beFiles/alert";
+					}
+				}
+			}else {
+				boolean is_Check = checkFolder(file, neworgname);
+				if(neworgname.equals("image")||!is_Check) {
 					model.addAttribute("alert", "해당폴더에 복사할수 없는 폴더의 형식입니다.");
 					model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
 					session.removeAttribute("ref");
 					session.removeAttribute("file_flag");
 					return "beFiles/alert";
-					}
 				}
+			}
 		}
 		
 		if(ref.equals(file_fref)) { // 자기자신의 복사하려할 때
@@ -1148,7 +1167,8 @@ public class FileBean2 {
 		}
 		try {
 			Files.copy(originPath, movePath, StandardCopyOption.REPLACE_EXISTING);
-			copys(orginfile,newfile);
+			if(orginfile.isDirectory())
+				copys(orginfile,newfile);
 		}catch(IOException e) {
 			e.printStackTrace();
 			return false;
@@ -1195,6 +1215,26 @@ public class FileBean2 {
         		}
         	}
         }
+   }
+	
+	public  boolean checkFolder(File selectFolder, String copyFolder) { //복사할 디렉토리, 복사될 디렉토리
+        File[] ff = selectFolder.listFiles();  //복사할 디렉토리안의 폴더와 파일들을 불러옴
+        FileBean filebean = new FileBean();
+        boolean is_Check = true;
+        for (File file : ff) {
+        	if(file.isFile()) {
+        		if(copyFolder.equals("image")||copyFolder.equals("music")||copyFolder.equals("video")||copyFolder.equals("document")||copyFolder.equals("etc")) {
+        			String filename = file.getName();
+            		String filetype = filename.substring(filename.lastIndexOf("."));
+            		String result = filebean.checkFile(filetype);
+        			if(!copyFolder.equals(result)) {
+    					is_Check=false;
+    					break;
+    				}
+        		}
+        	}
+        }
+        return is_Check; 
    }
 	
 	public void sqlCopy(int num, FileDTO dto) {
