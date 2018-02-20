@@ -304,10 +304,12 @@
 	<c:forEach var="file" items="${list }">
 	<c:choose>
 	<c:when test="${file.important ==-2}">
-		<input type="checkbox" id="check" onclick="star(this.value);" value="${file.num }" style="height:2%; width:2%; float:left;" checked="checked"/>
+		<input type="checkbox" id="check${file.num }" onclick="star(this.value);" value="${file.num }" checked="checked"/>
+		<label for="check${file.num }"></label>
 	</c:when>
 	<c:otherwise>
-		<input type="checkbox" id="check" onclick="star(this.value);" value="${file.num }" style="height:2%; width:2%; float:left;"/>
+		<input type="checkbox" id="check${file.num }" onclick="star(this.value);" value="${file.num }"/>
+		<label for="check${file.num }"></label>
 	</c:otherwise>
 	</c:choose>
 		<div class="file" id="${file.num }" name="${file.num }" >${file.filename }<input type="text" id="${file.num }orgname" value="${file.orgname }" style="border:0; background:transparent; cursor:default; width:100%;" disabled/></div>

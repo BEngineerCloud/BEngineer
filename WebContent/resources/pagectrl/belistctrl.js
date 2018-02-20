@@ -98,12 +98,11 @@ function setAddress(num, orgname){
 	$("font#filename").text(text); // 주소부분에 표시
 }
 function star(num){
-	var boo = $('input:checkbox[id="check"]').is(":checked");	// 체크여부 체크o true , x false
+	var boo = $('input:checkbox[id=\'check' + num + '\']').is(":checked");	// 체크여부 체크o true , x false
 	if(boo==true){
 		alert("즐겨찾기 추가");
 		window.location = "/BEngineer/beFiles/hot.do?num=" + num;			
-	}
-	if(boo==false){
+	}else{
 		alert("즐겨찾기 헤제");
 		window.location = "/BEngineer/beFiles/exhot.do?num=" + num;			
 	}

@@ -10,3 +10,18 @@ input:active{background:aqua;}
 .file{height:100; width:100; margin:2%; box-sizing:border-box; background-color:#ffffff; float:left; overflow:hidden; border:3px solid black;}
 #button1_1{height:relative; display:none; width:relative; top:20%; left:10%; position:absolute; padding:2% 2% 2% 2%; border:1px solid black; background:#3d56b1; z-index:10;}
 #writetextdiv{height:40%; width:90%; background-color:#7095e3; top:60%; left:10%; position:absolute; overflow-y:scroll; display:none;}
+   input[type="checkbox"] + label {
+     display: inline-block;
+     width: 14px;
+     height: 14px;
+     background-color: #bcbcbc;
+     border-radius: 7px;
+     cursor: pointer;
+     float:left;
+   }
+   input[type="checkbox"]:checked + label {
+     background-color: yellow;
+   }
+   input[type="checkbox"] {
+     display: none;
+   }
