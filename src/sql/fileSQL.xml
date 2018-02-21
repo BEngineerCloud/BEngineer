@@ -231,4 +231,16 @@
 	<select id="newCopyfiles" parameterType="fileDto" resultType="fileDTO">
 		select * from BEfilelist where folder_ref=#{folder_ref} and orgname=#{orgname}
 	</select>
+	<insert id="backup" parameterType="String">
+		insert into BEbackuplist(num,folder_ref,filename,orgname,filetype,filesize,uploaddate,updatedate,hitcount,important,owner) (select * from BEfilelist where owner = #{owner})
+	</insert>
+	<delete id="clearbackup" parameterType="String">
+		delete from BEbackuplist where owner = #{id}
+	</delete>
+	<insert id="rollback" parameterType="String">
+		insert into BEfilelist (select num,folder_ref,filename,orgname,filetype,filesize,uploaddate,updatedate,hitcount,important,owner from BEbackuplist where owner = #{owner})
+	</insert>
+	<delete id="clearorg" parameterType="String">
+		delete from BEfilelist where owner = #{id}
+	</delete>
 </mapper>

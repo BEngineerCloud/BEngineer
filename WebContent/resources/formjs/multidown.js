@@ -33,7 +33,10 @@ function initMultiSel(){
 		document.getElementById("cancelmultidown").type = "hidden";
 		initMultiMove();
 		initMultiCopy();
-		initThrowToTrashcan();
+		var tttc = document.getElementById("throwtotrashcan");
+		if(tttc != null){
+			initThrowToTrashcan();
+		}
 	}
 }
 function showMultiSel(){

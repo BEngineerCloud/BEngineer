@@ -117,6 +117,7 @@ function setAddress(num, orgname){
 	$("font#filename").text(text); // 주소부분에 표시
 }
 function open(x, y){
+	$("#button1_1").css("width", "15%");
 	var toplimit = $("body").innerHeight();
 	var leftlimit = $("body").innerWidth();
 	var height = $("#button1_1").height();
@@ -135,7 +136,7 @@ function open(x, y){
 	$("#button1_1").show("slow");
 }
 function reopen(){
-	$("#button1_1").show("slow");
+	$("#button1_1").css("width", "20%").show("fast");
 }
 function close(){
 	$("#button1_1").css("display", "none");

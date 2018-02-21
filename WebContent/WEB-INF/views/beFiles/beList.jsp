@@ -117,6 +117,12 @@
 			<input type="button" value="텍스트 파일 만들기" id="writetextbutton" />
 		</div>
 	</c:if>
+	<div style="width:relative; margin:0; float:left;">
+		<input type="button" value="파일 백업하기" id="backupbutton" />
+	</div>
+	<div style="width:relative; margin:0; float:left;">
+		<input type="button" value="파일 복원하기" id="rollbackbutton" />
+	</div>
 </div>
 <div id="button1_1">
 	<!-- 폴더명 변경 폼 -->

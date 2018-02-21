@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
-<script src='/BEngineer/resources/js/menu.js' type='text/javascript'></script>
+<script src='/BEngineer/resources/pagectrl/menu.js' type='text/javascript'></script>
 <script type="text/javascript">
 	var clickedfile = new Array();$(function(){
 		$("#files").click(function(e){

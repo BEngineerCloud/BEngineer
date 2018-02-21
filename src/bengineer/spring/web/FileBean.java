@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.io.FileUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.rosuda.REngine.REXPMismatchException;
 import org.rosuda.REngine.Rserve.RConnection;
@@ -55,7 +56,7 @@ public class FileBean {
 	public String myFile(HttpSession session, Model model, int folder) {
 		if(folder < 0 && folder > -5) {return "redirect:/beFiles/beRecentFiles.do?weeks=" + -folder;}
 		if(folder <= -5) {
-			model.addAttribute("location", "history.go(-2)");
+			model.addAttribute("location", "history.go(-1)");
 			return "/beFiles/location";
 		}
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
@@ -622,7 +623,7 @@ public class FileBean {
 				}
 				Date time = new Date(System.currentTimeMillis());
 				SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
-				String zipname = "d:/PM/BEngineer/downtemp/" + dto.getFilename() + format.format(time).substring(0, 12) + ".zip";
+				String zipname = "d:/PM/BEngineer/downtempfiles/" + dto.getFilename() + format.format(time).substring(0, 12) + ".zip";
 				file = zipFiles(fileaddress, zipname, filelist);
 			}else {
 				file = new File(fileaddress);
@@ -737,7 +738,7 @@ public class FileBean {
 				}else {
 					name += "외";
 				}
-				String zipname = "d:/PM/BEngineer/downtemp/" + name + format.format(time).substring(0, 12) + ".zip";
+				String zipname = "d:/PM/BEngineer/downtempfiles/" + name + format.format(time).substring(0, 12) + ".zip";
 				file = zipFiles(path, zipname, entryList, filelist);
 			}else {
 				Date time = new Date(System.currentTimeMillis());
@@ -749,7 +750,7 @@ public class FileBean {
 				}else {
 					name += "외";
 				}
-				String zipname = "d:/PM/BEngineer/downtemp/" + name + format.format(time).substring(0, 12) + ".zip";
+				String zipname = "d:/PM/BEngineer/downtempfiles/" + name + format.format(time).substring(0, 12) + ".zip";
 				file = zipFiles(fileaddress, zipname, filelist);
 			}
 		}else {
@@ -1543,6 +1544,131 @@ public class FileBean {
 		}
 		return "beFiles/alert";
 	}
+	@RequestMapping("beBackUp.do")
+	public String backup(HttpSession session, Model model) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		if(!checkSpace(session)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		String id = (String)session.getAttribute("id");
+		sqlSession.delete("bengineer.clearbackup", id);
+		sqlSession.insert("bengineer.backup", id);
+		String path = "d:/PM/BEngineer/" + id + "/";
+		String zipname = "d:/PM/BEngineer/beBackUpFiles/" + id + ".zip";
+		File check = new File(zipname);
+		if(check.exists()) {
+			check.delete();
+		}
+		String exception = path + "/beTrashcan";
+		List filelist = getFilelist(path, "", exception);
+		zipFiles(path, zipname, filelist);
+		model.addAttribute("alert", "백업을 완료했습니다.");
+		model.addAttribute("location", "history.go(-1)");
+		return "beFiles/alert";
+	}
+	@RequestMapping("beRollBack.do")
+	public String rollback(HttpSession session, Model model) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
+		if(!checkSpace(session)) {
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		String id = (String)session.getAttribute("id");
+		String backupaddress = "d:/PM/BEngineer/beBackUpFiles/" + id + ".zip";
+		File backupfile = new File(backupaddress);
+		if(!backupfile.exists()) {
+			model.addAttribute("alert", "백업정보가 없습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		String orgaddress = "d:/PM/BEngineer/" + id;
+		File backupfolder = new File(orgaddress + "backup");
+		if(backupfolder.exists()) {
+			try {
+				FileUtils.deleteDirectory(backupfolder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		backupfolder.mkdirs();
+		backupfolder = null;
+		File orgfolder = new File(orgaddress);
+		File tempfolder = new File(orgaddress + "temp");
+		if(tempfolder.exists()) {
+			try {
+				FileUtils.deleteDirectory(tempfolder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if(!unzipFiles(orgaddress + "backup", backupaddress)) {
+			model.addAttribute("alert", "복원을 하는 동안 오류가 발생했습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		backupfolder = new File(orgaddress + "backup");
+		if(!orgfolder.renameTo(tempfolder)) {
+			try {
+				if(backupfolder.exists()) {
+					FileUtils.deleteDirectory(backupfolder);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(tempfolder.exists()) {
+				try {
+					FileUtils.deleteDirectory(tempfolder);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			model.addAttribute("alert", "복원을 하는 동안 오류가 발생했습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		if(!backupfolder.renameTo(orgfolder)) {
+			tempfolder.renameTo(orgfolder);
+			try {
+				if(backupfolder.exists()) {
+					FileUtils.deleteDirectory(backupfolder);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			if(tempfolder.exists()) {
+				try {
+					FileUtils.deleteDirectory(tempfolder);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			model.addAttribute("alert", "복원을 하는 동안 오류가 발생했습니다.");
+			model.addAttribute("location", "history.go(-1)");
+			return "beFiles/alert";
+		}
+		try {
+			if(backupfolder.exists()) {
+				FileUtils.deleteDirectory(backupfolder);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if(tempfolder.exists()) {
+			try {
+				FileUtils.deleteDirectory(tempfolder);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		sqlSession.delete("bengineer.clearorg", id);
+		sqlSession.insert("bengineer.rollback", id);
+		model.addAttribute("alert", "복원을 완료했습니다.");
+		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0\"");
+		return "beFiles/alert";
+	}
 	public String makecode(int num) {
 		String code = "";
 		for(int i = 0; i < num; i++) {
@@ -1837,6 +1963,65 @@ public class FileBean {
 		trash.delete();
 		return result;
 	}
+	private boolean unzipFiles(String path, String zipName) { // 파일들 압축용 메서드 path는 압축파일을 만들 실제 경로, files는 압축할 파일들의 path 기준의 상대 경로
+		boolean result = false;
+		int size = 1024;
+		byte[] buf = new byte[size];
+		FileInputStream fis = null;
+		FileOutputStream fos = null;
+		ZipArchiveInputStream zis = null;
+		BufferedInputStream bis = null;
+		BufferedOutputStream bos = null;
+		File file = null;
+		ZipArchiveEntry zipEntry = null;
+		try {
+			fis = new FileInputStream(zipName);
+			bis = new BufferedInputStream(fis);
+			zis = new ZipArchiveInputStream(bis);
+			for(zipEntry = zis.getNextZipEntry(); zipEntry != null; zipEntry = zis.getNextZipEntry()) {
+				String name = zipEntry.getName();
+				if(zipEntry.isDirectory()) {
+					File check = new File(path + "/" + name);
+					if(!check.exists()) {
+						check.mkdirs();
+					}
+					continue;
+				}
+				int index = name.lastIndexOf("/");
+				if(index != -1) {
+					String parent = name.substring(0, index);
+					File folder = new File(path + "/" + parent);
+					if(!folder.exists()) {
+						folder.mkdirs();
+					}
+				}
+				fos = new FileOutputStream(path + "/" + name);
+				bos = new BufferedOutputStream(fos);
+				for(int j = 0; j != -1; j = zis.read(buf, 0, size)) {
+					bos.write(buf, 0, j);
+				}
+				bos.close();
+				fos.close();
+			}
+			zis.close();
+			bis.close();
+			fis.close();
+			result = true;
+		}catch(Exception e){
+			File trash = new File(path);
+			if(trash.exists()) {
+				trash.delete();
+			}
+			e.printStackTrace();
+		}finally {
+			if(bos != null) {try{bos.close();}catch(IOException i) {}}
+			if(fos != null) {try{fos.close();}catch(IOException i) {}}
+			if(zis != null) {try{zis.close();}catch(IOException i) {}}
+			if(bis != null) {try{bis.close();}catch(IOException i) {}}
+			if(fis != null) {try{fis.close();}catch(IOException i) {}}
+		}
+		return result;
+	}
 	private FileDTO writeTextFile(String address, String orgname, String content) {
 		FileDTO dto = new FileDTO();
 		dto.setOrgname(orgname);
@@ -1860,7 +2045,8 @@ public class FileBean {
 		return dto;
 	}
 	private List getFilelist(String dirPath) {return getFilelist(dirPath, "");}
-	private List getFilelist(String dirPath, String pre) { // 폴더 내의 모든 파일의 상대 주소를 리스트로 돌려주는 메서드
+	private List getFilelist(String dirPath, String pre) {return getFilelist(dirPath, pre, "");}
+	private List getFilelist(String dirPath, String pre, String exception) { // 폴더 내의 모든 파일의 상대 주소를 리스트로 돌려주는 메서드
 		List result = new ArrayList();
 		File file = new File(dirPath + pre);
 		if(!file.exists()) {
@@ -1880,9 +2066,10 @@ public class FileBean {
 		}
 		for(int i = 0; i < names.length; i++) {
 			String path = dirPath + pre + "/" + names[i];
+			if(path.equals(exception)) {continue;}
 			File files = new File(path);
 			if(files.isDirectory()) {
-				List add = getFilelist(dirPath, pre + "/" + names[i]);
+				List add = getFilelist(dirPath, pre + "/" + names[i], exception);
 				if(add != null && !(add.get(0) instanceof Boolean)) {
 					result.addAll(add);
 				}
