@@ -12,34 +12,69 @@
 </head>
 <script type="text/javascript">
 $(function(){
-	$("#beLogin").submit(function(){
-		if($("#email").val()=="" || $("#email").val()=="아이디"){
-			alert("메일주소를 입력하세요.");
-			return false;
-		}
-		
-		if($("#pw").val()=="" || $("#pw").val()=="비밀번호"){
-			alert("비밀번호를 입력하세요.");
-			return false;
-		}
-		
-		return true;
-	});
+	var userEmail = getCookie("userEmail");
+	$("#email").val(userEmail);
 	
+	if($("#email").val()!=""){
+		$("#emailSave").attr("checked",true);
+	}
+	
+	if($("#email").val()==""){
+		$("#email").val("메일아아디");
+	}
+
+$("#beLogin").submit(function(){
+	if($("#email").val()=="" || $("#email").val()=="메일아이디"){
+		alert("메일주소를 입력하세요.");
+		return false;
+	}
+	
+	if($("#pw").val()=="" || $("#pw").val()=="비밀번호"){
+		alert("비밀번호를 입력하세요.");
+		return false;
+	}
+	return true;
 });
-$(function(){
-	$("#email").focus(function(){
-		if($("#email").val() == "아이디"){
-			$("#email").val("");
-		}
-	});
+
+$("#emailSave").change(function(){
+	if($("#emailSave").is(":checked")){ //email 저장하기 체크했을 경우
+		var userEmail = $("#email").val();
+		setCookie("userEmail",userEmail,7);
+		
+	}else{
+		setCookie("userEmail",'',-1);
+	}
 });
-$(function(){
-	$("#pw").focus(function(){
-		if($("#pw").val() == "비밀번호"){
-			$("#pw").val("");
-		}
-	});
+
+$("#email").blur(function(){
+	if($("#emailSave").is(":checked")){
+		var userEmail = $("#email").val();
+		setCookie("userEmail",userEmail,7);
+	}
+});
+
+function setCookie(cName, cValue, cDay){
+    var expire = new Date();
+    expire.setDate(expire.getDate() + cDay);
+    cookies = cName + '=' + encodeURIComponent(cValue) + '; path=/ '; // 한글 깨짐을 막기위해 escape(cValue)를 합니다.
+    if(typeof cDay != 'undefined') cookies += ';expires=' + expire.toGMTString() + ';';
+    document.cookie = cookies;
+}
+
+// 쿠키 가져오기
+function getCookie(cName) {
+    cName = cName + '=';
+    var cookieData = document.cookie;
+    var start = cookieData.indexOf(cName);
+    var cValue = '';
+    if(start != -1){
+        start += cName.length;
+        var end = cookieData.indexOf(';', start);
+        if(end == -1)end = cookieData.length;
+        cValue = cookieData.substring(start, end);
+    }
+    return decodeURIComponent(cValue);
+}
 });
 </script>
 
@@ -87,52 +122,4 @@ $(function(){
 	</script>
 <div align="center" id="Bottom" style="height:15%; width:100%; float:left; background-color:#5f7f89;"></div>
 </body>
-<script>
-$(document).ready(function(){ //메일아이디를 저장할 경우 쿠키파일을 만들어 저장한다.
-	var userEmail = getCookie("userEmail");
-	$("#email").val(userEmail);
-	
-	if($("#email").val()!=""){
-		$("#emailSave").attr("checked",true);
-	}
-	
-	$("#emailSave").change(function(){
-		if($("#emailSave").is(":checked")){ //email 저장하기 체크했을 경우
-			var userEmail = $("#email").val();
-			setCookie("userEmail",userEmail,7); //7일동안 쿠키보관
-		}else{
-			deleteCookie("userEmail");
-		}
-	});
-	
-	$("#email").keyup(function(){
-		if($("#emailSave").is(":checked")){
-			var userEmail = $("email").val();
-			setCookie("userEmail",userEmail,7);
-		}
-	});
-});
-
-function setCookie(cName, cValue, cDay){ //쿠키설정
-	var expire = new Date(); expire.setDate(expire.getDate() + cDay); 
-	cookies = cName + '=' + encodeURI(cValue) + '; path=/ '; 
-	if(typeof cDay != 'undefined') cookies += ';expires=' + expire.toGMTString() + ';'; 
-	document.cookie = cookies; 
-}
-
-function deleteCookie(cookieName){ //쿠키삭제
-	var date = new Date();
-	date.setDate(date.getDate()-1);
-	document.cookie = cookieName + "=" + "; expires=" + date.toGMTString();
-}
-
-function getCookie(cName) { //쿠키 가져오기
-	cName = cName + '='; var cookieData = document.cookie; 
-	var start = cookieData.indexOf(cName); var cValue = ''; 
-	if(start != -1){ start += cName.length; var end = cookieData.indexOf(';', start); 
-	if(end == -1)end = cookieData.length; 
-	cValue = cookieData.substring(start, end); } 
-	return decodeURI(cValue); 
-}
-</script>
 </html>
