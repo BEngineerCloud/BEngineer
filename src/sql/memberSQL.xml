@@ -6,6 +6,7 @@
 		select count(*) from bemember where nickname=#{nickname}
 	</select>
 	
+	<!-- 임의로 생성한 id문자열이 이미 존재하는지 확인 -->
 	<select id="beChecklogin" resultType="int" parameterType="string">
 		select count(*) from bemember where id=#{id}
 	</select>
@@ -14,6 +15,7 @@
 		select * from bemember where id=#{id}
 	</select>
 	
+	<!-- 메일아이디를 이용해 멤버DTO를 받아온다. -->
 	<select id="beSelectmember2" resultType="MemberDTO" parameterType="string">
 		select * from bemember where email=#{email}
 	</select>
@@ -26,6 +28,7 @@
 		insert into bemember(id,email,nickname,birthday,gender,chmod) values(#{id},#{email},#{nickname},#{birthday},#{gender},2)
 	</insert>
 	
+	<!-- 멤버DTO의 id, 비밀번호, 이메일, 닉네임, 생년월일, 성별을 insert -->
 	<insert id="beInsertmember2" parameterType="MemberDTO">
 		insert into bemember(id,pw,email,nickname,birthday,gender) values(#{id},#{pw},#{email},#{nickname},#{birthday},#{gender})
 	</insert>
@@ -46,6 +49,7 @@
 		]]>
 	</select>
 	
+	<!-- 메일아이디를 이용해 멤버가 존재하는지 체크 -->
 	<select id="beCheckmailid" resultType="int" parameterType="string">
 		select count(*) from bemember where email=#{email}
 	</select>
@@ -58,6 +62,7 @@
 		select id from BEmember where nickname = #{nickname}
 	</select>
 	
+	<!-- 메일아이디를 이용해 멤버의 비밀번호를 받아온다. -->
 	<select id="beSelectpw" resultType="string" parameterType="string">
 		select pw from bemember where email=#{email}
 	</select>
