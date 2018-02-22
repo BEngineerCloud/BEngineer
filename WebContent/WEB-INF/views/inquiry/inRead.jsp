@@ -35,6 +35,9 @@
  
   <tr><td width="90" style="text-align:top;">내 용</td>
     <td width="330">${re.content}</td></tr>
+    
+  <tr><td width="90">파일</td>
+    <td width="330"><img src="/BEngineer/inquiryImg/${re.filename }" width="50" height="50"/></td></tr>
   
   <tr><td width="90">답변</td>
     <td width="330">${re.reply}</td></tr>

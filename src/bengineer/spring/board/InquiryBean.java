@@ -1,5 +1,6 @@
 package bengineer.spring.board;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 @Controller
 @RequestMapping("/inquiry/")
@@ -39,10 +42,20 @@ public class InquiryBean {
 		return "/inquiry/inForm";
 	}
 	// member 문의완료
-	@RequestMapping("inPro.do")
-	public String inPro(InquiryDTO dto,HttpSession session,Model model,String Id) { 
+	@RequestMapping(value="inPro.do",method=RequestMethod.POST)
+	public String inPro(InquiryDTO dto,HttpSession session,Model model,String Id,MultipartHttpServletRequest request)throws Exception { 
 		model.addAttribute("Id",dto.getId());
 		sqlSession.insert("board.inquiry",dto);
+		try {
+		MultipartFile uploadFile = request.getFile("upload");
+		String fileName = uploadFile.getOriginalFilename();
+		String filename = fileName;
+		sqlSession.update("board.inquiry2",filename);
+		File saveFile = new File("D://PM//app//BEngineer//WebContent//inquiryImg//"+fileName);
+		uploadFile.transferTo(saveFile);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 		return "forward:/inquiry/inList.do";
 	}
 	// member 내문의목록보기

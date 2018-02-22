@@ -6,7 +6,7 @@ right:50px;
 top:200px;
 width:1800px;
 height:100px;
-} 
+}
 </style>
 <div id="logo" style="height:10%; width:15%; float:left;"> 
 	<img src="/BEngineer/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
@@ -39,14 +39,17 @@ height:100px;
 <!-- @@ -->
 <div id="wide" style="height:75%; width:90%;">
 <div id="in">
-<form name="inForm" action="inPro.do" method="post">
+<form name="inForm" action="inPro.do" method="post" enctype="multipart/form-data">
 <table border="1" align="center">
   <tr><td  width="110" bgcolor="#ABF200">제목</td>
   <td  width="300"><input type="text" size="40" maxlength="30" name="title"></td></tr>
   <tr><td  width="110" bgcolor="#ABF200">문의 내 용</td>
     <td  width="300" ><textarea name="content" rows="13" cols="40"></textarea></td></tr>
+  <tr><td  width="100" bgcolor="#ABF200">파일첨부</td>
+     <td><input type="file" name="upload"></td> </tr>
+     	<!-- <input type="hidden" name="filename" value="chicken3.PNG">  -->
   <tr><td  width="100" bgcolor="#ABF200">작성자</td>
-     <td>${Id}<input type="hidden" value="${Id}" name="Id"><br/></td> </tr>
+     <td>${Id}<input type="hidden" value="${Id}" name="Id"><br/></td> </tr>     
 </table>  
 <table align="center"><tr><td align="right">
 <input type="submit" value="문의완료" style="width:80px; height:25px; color:#000000; background-color:#ABF200;"/></td></tr></table>

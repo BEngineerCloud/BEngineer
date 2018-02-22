@@ -1,5 +1,6 @@
 package bengineer.spring.manager;
 
+import java.util.Base64;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -7,16 +8,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import bengineer.spring.filter.*;
+import bengineer.spring.web.FileDTO;
 import bengineer.spring.web.MainBean;
 
 import org.apache.catalina.User;
 import org.mybatis.spring.SqlSessionTemplate;
+import org.rosuda.REngine.REXP;
+import org.rosuda.REngine.Rserve.RConnection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.rosuda.REngine.*;
+import org.rosuda.REngine.Rserve.*;
+import org.rosuda.REngine.REXPMismatchException;
+import org.rosuda.REngine.Rserve.RConnection;
+import org.rosuda.REngine.Rserve.RserveException;
 @Controller
 @RequestMapping("/manager/")
 public class ManagerBean {
@@ -303,6 +311,28 @@ public class ManagerBean {
 		int all = sqlSession.selectOne("manager.all");
 		model.addAttribute("list",list);
 		model.addAttribute("all",all);
+		RConnection r = null;
+		try {
+			r = new RConnection();
+			r.eval("png('rr.png')");
+			String Fsize ="c(";
+			for(int i=list.size()-1; i>=0;i--) {
+				FileDTO file1 = (FileDTO)list.get(i);
+				if(i==0) {
+					Fsize+=file1.getFilesize()+")";
+				}else {
+					Fsize+=file1.getFilesize()+",";
+				}
+			}
+			r.eval("Fsize<-"+Fsize);
+			r.eval("par(bg = 'transparent')");
+			r.eval("barplot(Fsize,col=rainbow(7),horiz=T)");
+			r.eval("dev.off()");
+			REXP image = r.eval("r<-readBin('rr.png', 'raw', 50*50)");
+			model.addAttribute("rr",Base64.getEncoder().encodeToString(image.asBytes()));
+		}catch(Exception e) {e.printStackTrace();}finally {
+			r.close();
+		}
 		return "/manager/charge"; 
 	}
 }

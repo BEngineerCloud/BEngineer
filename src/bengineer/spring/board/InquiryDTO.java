@@ -9,7 +9,7 @@ public class InquiryDTO {
 	private String id;
 	private String reply;
 	private Timestamp reg_date;
-	
+	private String filename;
 	public int getNum() {
 		return num;
 	}
@@ -46,4 +46,11 @@ public class InquiryDTO {
 	public void setReg_date(Timestamp reg_date) {
 		this.reg_date = reg_date;
 	}
+	public String getFilename() {
+		return filename;
+	}
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+	
 }
