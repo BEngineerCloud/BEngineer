@@ -1,10 +1,15 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
 <!-- 회원가입 페이지 -->
+
 <html>
 	<head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<title>beJoinmember</title>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js"></script>
+	
+	<!-- javascript 유효성검사 script -->
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 	</head>
 	
 	<!-- 미입력시 뜨는 validate의 색상,크기 설정 -->
@@ -14,10 +19,7 @@
 			font-size: 10pt;
 		}
 	</style>
-	<script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js"></script>
 	
-	<!-- javascript validate -->
-	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery.validation/1.16.0/jquery.validate.min.js"></script>
 	<script type="text/javascript">
 		$(function(){
 			$("#confirmEmail").click(function(){ //메일아이디 인증버튼을 클릭했을 시

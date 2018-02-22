@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!-- 닉네임 중복검사 페이지 -->
+
 <html>
 	<head>
 	<title>beChecknickname</title>

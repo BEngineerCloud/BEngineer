@@ -5,11 +5,11 @@
 	<head>
 	<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
 	<title>beRequestprofile</title>
-	</head>
 	<script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js"></script>
 	
 	<!-- 네이버아이디로그인 정보를 받는 javascript -->
 	<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+	</head>
 	
 	<script type="text/javascript">
 	
