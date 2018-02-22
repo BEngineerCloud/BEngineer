@@ -4,8 +4,12 @@
 <style type="text/css">
 #back {position:relative;}
 #in2 {position:absolute;
+top:34px;
 left:220px;
-} 
+}
+#in3 {position:absolute;
+left:370px;
+}  
 </style>
 <body bgcolor="#00D8F0">
 <div id="back">
@@ -30,6 +34,9 @@ left:220px;
 </c:forEach>   
 <tr><td width="100" bgcolor="#ABF200">전체</td><td align="right" bgcolor="#0054FF">${all }MByte</td></tr>
 </table>
+</div>
+<div id="in3">
+<img src="data:image/png;base64,${rr}" style="height:43%; width:80%;"/>
 </div>
 </div>
 </body>

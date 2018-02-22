@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <style type="text/css">
 #in {position:absolute;
-bottom:450px;
+bottom:50px;
 } 
 </style>
 <div id="logo" style="height:10%; width:15%; float:left;"> 
