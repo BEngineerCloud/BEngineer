@@ -1,11 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
 <style type="text/css">
-#wide {position:relative;}
+#back {position:relative;}
 #in {position:absolute;
-right:50px;
-top:200px;
-width:1800px;
-height:100px;
+left:200px;
+top:100px;
+}
+#in2{position:absolute;
+left:550px;
+top:400px;
 }
 </style>
 <div id="logo" style="height:10%; width:15%; float:left;"> 
@@ -36,8 +38,7 @@ height:100px;
 	<input type="button" id="mytrashcan" value="휴지통"/>
 	<input type="button" id="hotlist" value="즐겨찾기"/>
 </div>
-<!-- @@ -->
-<div id="wide" style="height:75%; width:90%;">
+<div id="back" style="height:75%; width:90%;">
 <div id="in">
 <form name="inForm" action="inPro.do" method="post" enctype="multipart/form-data">
 <table border="1" align="center">
@@ -51,8 +52,9 @@ height:100px;
   <tr><td  width="100" bgcolor="#ABF200">작성자</td>
      <td>${Id}<input type="hidden" value="${Id}" name="Id"><br/></td> </tr>     
 </table>  
-<table align="center"><tr><td align="right">
-<input type="submit" value="문의완료" style="width:80px; height:25px; color:#000000; background-color:#ABF200;"/></td></tr></table>
+</div>
+<div id="in2">
+	<input type="submit" value="문의완료" style="width:80px; height:25px; color:#000000; background-color:#ABF200;"/>
 </form>
 </div>
 </div>

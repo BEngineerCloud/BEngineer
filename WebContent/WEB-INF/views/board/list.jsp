@@ -17,7 +17,7 @@
 	<td align="center" bgcolor="#5AAEFF" colspan="2">작성일</td></tr>
 	
 	<c:forEach var="board" items="${list}">	
-	<tr><td width="30" align="center">${board.num}</td> 
+	<tr><td width="30" align="center">${board.num-1}</td> 
 	<td width="100"><a href="/BEngineer/board/updateForm.do?num=${board.num}">${board.title}</a></td> 
 	<!-- <td>${board.content}</td>  -->
 	<td width="50">${board.id}</td> 

@@ -163,6 +163,7 @@ public class MemberBean {
 	@RequestMapping("change.do")
 	public String change(MemberDTO dto) {
 		sqlSession.update("bengineer.change",dto);
+		sqlSession.update("bengineer.change2");
 		return "/beMember/change";	
 	}
 }

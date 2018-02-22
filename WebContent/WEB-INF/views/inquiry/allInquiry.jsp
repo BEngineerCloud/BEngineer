@@ -4,7 +4,7 @@
 <style type="text/css">
 #back {position:relative;}
 #in2 {position:absolute;
-bottom:220px;
+
 } 
 </style>
 <body bgcolor="#00D8F0">
@@ -28,7 +28,7 @@ bottom:220px;
 	<c:choose>
 	   <c:when test="${empty all.reply}">
 	<tr>
-	<td width="50" align="center">${all.num}</td> 
+	<td width="50" align="center">${all.num-1}</td> 
 	<td width="200"><a href="/BEngineer/inquiry/replyForm.do?num=${all.num}">${all.title}</a></td> 
 	<!-- <td>${board.content}</td>  -->
 	<td width="100">${all.id}</td> 

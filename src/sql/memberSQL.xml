@@ -79,6 +79,9 @@
 	<update id="change" parameterType="memberDTO">
   		update  bemember set chmod=#{chmod},term=sysdate+365 where id = #{id}
   	</update>
+  	<update id="change2">
+  		update  bemember set chmod=2 where sysdate > term
+  	</update>
   	
 	<select id="checkchmod" resultType="int" parameterType="string">  
 		select chmod from bemember where id=#{id} and term > sysdate
