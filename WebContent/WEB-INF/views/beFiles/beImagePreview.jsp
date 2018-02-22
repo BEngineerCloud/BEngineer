@@ -199,6 +199,7 @@
 			<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
 				<form id="throwatrashform" method="post" action="/BEngineer/beFiles/throwToTrashcan.do">
 					<input type="hidden" name="file_ref" />
+					<input type="hidden" name="folder" value="${folder_ref }" />
 					<input type="hidden" name="submitthrow" value="지우기"/>
 				</form>
 			</div>

@@ -46,7 +46,10 @@ function showMultiSel(){
 		document.getElementById("cancelmultidown").type = "button";
 		setMultiMove();
 		setMultiCopy();
-		setThrowToTrashcan();
+		var tttc = document.getElementById("throwtotrashcan");
+		if(tttc != null){
+			setThrowToTrashcan();
+		}
 		form.submitmultidown.value = "다운로드";
 	}
 }

@@ -57,6 +57,10 @@ $(function(){
 			setImage(ref);
 			open(e.clientX, e.clientY);
 		}else{
+			var multiCheck = document.getElementById("multidowntext");
+			if(multiCheck != null && multiCheck.type == "text"){
+				return;
+			}
 			hinder();
 		}
 	});
@@ -76,9 +80,7 @@ $(function(){
 });
 $(function(){
 	$("#rollbackbutton").click(function(){ // 파일 복원 클릭시
-		if(confirm("백업 시점으로 복원 하시겠습니까? 백업 이후 저장/수정된 모든 파일정보가 사라집니다. \n\r (파일의 양에 따라 시간이 다소 소요될 수 있습니다.)")){
-			window.location = "/BEngineer/beFiles/beRollBack.do";
-		}
+		window.location = "/BEngineer/beFiles/beRollBack.do";
 	});
 });
 function hinder(){ // 모든 폼 초기화 함수
@@ -123,7 +125,7 @@ function star(num){
 	}
 }
 function open(x, y){
-	$("#button1_1").css("width", "15%");
+	$("#button1_1").css("width", "150");
 	var toplimit = $("body").innerHeight();
 	var leftlimit = $("body").innerWidth();
 	var height = $("#button1_1").height();
@@ -142,7 +144,7 @@ function open(x, y){
 	$("#button1_1").show("slow");
 }
 function reopen(){
-	$("#button1_1").css("width", "20%").show("fast");
+	$("#button1_1").css("width", "200").show("fast");
 }
 function close(){
 	$("#button1_1").css("display", "none");

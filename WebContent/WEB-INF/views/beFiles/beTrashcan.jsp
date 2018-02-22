@@ -29,10 +29,10 @@
 					var index = clickedfile.indexOf(ref);
 					if(index == -1){
 						clickedfile.push(ref);
-						$(this).css("background-color","aqua"); // 클릭파일 색 바꾸기
+						$("div[name='" + ref + "']").css("background-color","aqua"); // 클릭파일 색 바꾸기
 					}else{
 						clickedfile.splice(index, 1);
-						$(this).css("background-color","#ffffff"); // 클릭파일 색 바꾸기
+						$("div[name='" + ref + "']").css("background-color","#ffffff"); // 클릭파일 색 바꾸기
 					}
 					form.file_ref.value = clickedfile.join();
 				}else{
@@ -41,7 +41,7 @@
 					form.submitmultirepair.type = "submit";
 					document.getElementById("submitdelete").type = "button";
 					$("#files > div").css("background-color","#ffffff"); // 모든 파일 선택 취소
-					$(this).css("background-color","aqua"); // 클릭파일 색 바꾸기
+					$("div[name='" + ref + "']").css("background-color","aqua"); // 클릭파일 색 바꾸기
 				}
 			}else{
 				hinder();

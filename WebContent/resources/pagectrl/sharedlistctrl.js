@@ -31,18 +31,17 @@ $(function(){
 					selectFile(ref);
 				}else{
 					clickedFile.splice(index, 1);
-					if(important.value == -1 || checkwrite != -1){
+					if(important.value == -1 || checkwrite == -1){
 						clickedImportant.splice(0, 1);
 					}
 					disselectFile(ref);
 				}
 				if(clickedImportant.length > 0){
-					hideMultiMove();
+					initMultiMove();
 				}else{
 					setMultiMove();
 					setMultiCopy();
 				}
-				selectFile(ref);
 				return;
 			}
 			hinder();
@@ -57,6 +56,10 @@ $(function(){
 			setMove(ref);
 			open(e.clientX, e.clientY);
 		}else{
+			var multiCheck = document.getElementById("multidowntext");
+			if(multiCheck != null && multiCheck.type == "text"){
+				return;
+			}
 			hinder();
 		}
 	});
@@ -117,7 +120,7 @@ function setAddress(num, orgname){
 	$("font#filename").text(text); // 주소부분에 표시
 }
 function open(x, y){
-	$("#button1_1").css("width", "15%");
+	$("#button1_1").css("width", "150");
 	var toplimit = $("body").innerHeight();
 	var leftlimit = $("body").innerWidth();
 	var height = $("#button1_1").height();
@@ -136,7 +139,7 @@ function open(x, y){
 	$("#button1_1").show("slow");
 }
 function reopen(){
-	$("#button1_1").css("width", "20%").show("fast");
+	$("#button1_1").css("width", "200").show("fast");
 }
 function close(){
 	$("#button1_1").css("display", "none");

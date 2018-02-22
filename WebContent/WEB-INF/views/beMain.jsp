@@ -46,10 +46,8 @@
 	</div>
 </div>
 <div id="button1">
-	button1
 </div>
 <div id="address">
-	address
 </div>
 <div id="button2">
 	<input type="button" id="myfile" value="내 파일"/>

@@ -95,11 +95,19 @@
 			#{item}
 		</foreach>
 	</delete>
+	<delete id="deletealltrash" parameterType="string">
+		delete from BEtrashcan where filenum in (select num from BEfilelist where owner = #{owner})
+	</delete>
+	<insert id="insertalltrash" parameterType="string">
+		insert into BEtrashcan(num, filenum, deletedate) select BEtrashcan_seq.NEXTVAL num, num filenum, sysdate deletedate from BEfilelist where owner = #{owner} and important = 1
+	</insert>
 	<select id="checktrash" parameterType="int" resultType="java.sql.Date">
 		select deletedate from BEtrashcan where filenum = #{num}
 	</select>
 	<select id="checkall1" parameterType="list" resultType="fileDTO">
-		select * from BEfilelist where important = -1 and num in
+		<![CDATA[
+			select * from BEfilelist where important < 0 and num in
+		]]>
 		<foreach item="item" collection="list" open="(" separator="," close=")">
 			#{item}
 		</foreach>
@@ -243,4 +251,7 @@
 	<delete id="clearorg" parameterType="String">
 		delete from BEfilelist where owner = #{id}
 	</delete>
+	<select id="getbackupdate" parameterType="string" resultType="java.sql.Date">
+		select max(backupdate) from BEbackuplist where owner = #{owner}
+	</select>
 </mapper>
