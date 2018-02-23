@@ -162,19 +162,20 @@ public class MemberBean {
 			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); //소켓설정
 			props.put("mail.smtp.port","465"); //포트
 			props.put("mail.smtp.user",from); //사용자
-			props.put("mail.smtp.auth","true");
+			props.put("mail.smtp.auth","true"); //사용자인증
 			
 			Session mailSession = Session.getInstance(props,
 					new javax.mail.Authenticator() {
 						protected PasswordAuthentication getPasswordAuthentication() {
 							return new PasswordAuthentication(username, password);
 						}
-			});
-			Message msg = new MimeMessage(mailSession);
+			}); //Properties 객체로 메일세션 객체 생성(사용자 아이디와 비밀번호를 통한 인증)
+			
+			Message msg = new MimeMessage(mailSession); //메시지 객체 생성
 			msg.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromName,"UTF-8","B")));
 			
 			InternetAddress[] address1 = { new InternetAddress(to1)}; 
-			msg.setRecipients(Message.RecipientType.TO, address1);
+			msg.setRecipients(Message.RecipientType.TO, address1); //보낼 이메일 설정(다수 설정 가능)
 			msg.setSubject(subject); //메시지 제목설정
 			msg.setSentDate(new java.util.Date()); //메시지 날짜 설정
 			msg.setContent(content,"text/html;charset=UTF-8"); //메시지 내용 설정

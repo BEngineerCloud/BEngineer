@@ -44,24 +44,27 @@ public class FileBean2 {
 	@RequestMapping("autoArrangefile.do") //파일 자동정리
 	public String autoArrangefile(HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 비 로그인 상태시 로그인 창으로 리디렉트
-		FileBean filebean = new FileBean();
+		FileBean filebean = new FileBean(); //FileBean 객체 생성
+		
 		if(!filebean.checkSpace(session, sqlSession)) {
 			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
+		
 		String owner = (String)session.getAttribute("id");
 		String filePath=""; //파일경로
 		String fileName=""; //파일이름
 		String fileType=""; //파일확장자
 		String moveFolder=""; //이동할 파일폴더
-		boolean exist_file = false;
+		boolean exist_file = false; //파일이 존재하는지 여부
 		Integer moveParent = 0;
 		File path = new File("d:/PM/BEngineer/" + owner); //사용자폴더 경로
 		File[] list = path.listFiles(); //사용자폴더 안에 모든 파일/폴더 받아오기
 		FileDTO dto = new FileDTO();
 		dto.setOwner(owner);
-		if(list.length > 0){
+		
+		if(list.length > 0){ //파일들이 존재할 경우
 		    for(int i=0; i < list.length; i++){
 		    	if(list[i].isFile()) { //파일인지 판단, 파일이면
 		    		exist_file =true;
@@ -72,9 +75,13 @@ public class FileBean2 {
 		    		fileType = fileName.substring(fileName.lastIndexOf("."));
 		    		moveFolder = filebean.checkFile(fileType); //파일확장자 범주에 들어가는 폴더이름	
 		    		moveParent = moveFile(filePath, fileName, moveFolder, owner); //파일 이동
-		    		if( moveParent!=0) {
+		    		
+		    		if( moveParent!=0) { //파일이동이 완료되면
+		    			
+		    			//이동한 파일의 folder_ref 수정
 		    			dto.setNum(moveParent);
 		    			sqlSession.update("bengineer.autoarrange",dto);
+		    			
 		    			dto.setFilesize(filesize);
 		    			sqlSession.update("bengineer.updatesize",dto);
 		    		}
@@ -83,10 +90,10 @@ public class FileBean2 {
 		    	}
 		    }
 		}
-		if(moveParent!=0) {
+		
+		if(moveParent!=0) { //모든 파일이동이 완료되면
 			model.addAttribute("alert", "자동정리가 완료되었습니다.");
-		}
-		else {
+		}else { //자동정리할 파일이 없거나 중복된 이름이 있을 시
 			if(!exist_file)  model.addAttribute("alert", "자동정리할 파일이 존재하지 않습니다.");
 			else model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
 		}
@@ -94,36 +101,43 @@ public class FileBean2 {
 			return "beFiles/alert";	
 	}
 	
-	@RequestMapping("beFilesession.do") //�뙆�씪 �옄�룞�젙由�
+	@RequestMapping("beFilesession.do") //파일세션 설정
 	public String beFilesession(HttpSession session, int folder, String ref, String file_flag, Model model) {
+		
+		//받아온 file플래그 함수와 파일ref 세션으로 설정
 		session.setAttribute("file_flag", file_flag);
 		session.setAttribute("ref", ref);
+		
 		FileDTO filedto = new FileDTO();
 		int folder_ref = folder;
-		filedto = sqlSession.selectOne("bengineer.getaddr",folder_ref);
-		if(filedto == null) {
+		filedto = sqlSession.selectOne("bengineer.getaddr",folder_ref); //해당하는 fileDTO 받아오기
+		if(filedto == null) 
 			model.addAttribute("location","\"/BEngineer/beFiles/beSharedList.do?folder=0\"");
-		}else if(filedto.getFilename().equals("image") && filedto.getImportant()==-1)
+		else if(filedto.getFilename().equals("image") && filedto.getImportant()==-1) //파일이 기본이미지 폴더일 시
 			model.addAttribute("location","\"/BEngineer/beFiles/beImagePreview.do?folder="+folder+ "\"");
 		else
 			model.addAttribute("location","\"/BEngineer/beFiles/beMyList.do?folder="+folder+ "\"");
 		return "beFiles/location";	
 	}
 	
-	@RequestMapping("beMove.do") //�뙆�씪/�뤃�뜑 �씠�룞
+	@RequestMapping("beMove.do") //파일/폴더 이동
 	public String beMove(HttpSession session, Model model, int folder_ref) {
-		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 鍮� 濡쒓렇�씤 �긽�깭�떆 濡쒓렇�씤 李쎌쑝濡� 由щ뵒�젆�듃
-		FileBean filebean = new FileBean();
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 비 로그인 상태시 로그인 창으로 리디렉트
+		FileBean filebean = new FileBean(); //FileBean 객체 생성
+		filebean.setSqlSession(sqlSession);
 		if(!filebean.checkSpace(session, sqlSession)) {
 			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
-		filebean.setSqlSession(sqlSession);
+
+		//받아온 파일ref로 원래 폴더 리스트 받아오기
 		List originalAddr = null;
 		String refTemp = (String)session.getAttribute("ref");
 		Integer ref = Integer.parseInt(refTemp);
-		originalAddr = filebean.getAddr(ref);
+		originalAddr = filebean.getAddr(ref); //ref를 인자로 폴더 리스트 받아오기
+		
+		//원래 폴더 경로 대입
 		String originalPath = "d:/PM/BEngineer/";
 		FileDTO dto = new FileDTO();
 		for(int i = originalAddr.size() - 1; i >= 0; i--) {
@@ -131,53 +145,63 @@ public class FileBean2 {
 			originalPath += dto.getOrgname();
 			if(i!=0) originalPath+="/";
 		}
+		
+		//받아온 파일folder_ref로 이동할 폴더 리스트 받아오기
 		List newAddr = null;
 		newAddr = filebean.getAddr(folder_ref);
+		
+		//이동할 폴더 경로 대입
 		String newPath = "d:/PM/BEngineer/";
 		for(int i = newAddr.size() - 1; i >= 0; i--) {
 			dto = (FileDTO)newAddr.get(i);
 			newPath += dto.getOrgname() + "/";
 		}
+		
+		//자신의 파일정보 받아와서 dto 설정하고 newPath에 더해주기
 		dto = (FileDTO)originalAddr.get(0);
 		String orgname = dto.getOrgname();
-		String originOwner = dto.getOwner(); //수정
+		String originOwner = dto.getOwner(); 
 		newPath += orgname;
 		int num = dto.getNum();
 		dto.setNum(num);
-		int folderref = ((FileDTO)newAddr.get(0)).getNum();
-		String newOwner = ((FileDTO)newAddr.get(0)).getOwner(); //수정
-		dto.setFolder_ref(folderref);
-		File file = new File(originalPath);
-		boolean is_Move = false;
-		int flag = 0;
-		if(originOwner.equals(newOwner)) {
-		if(file.isFile()) { // 이동하려는 파일/폴더가 파일일 경우
-			String filetype = orgname.substring(orgname.lastIndexOf("."));
-			String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
-			String result = filebean.checkFile(filetype);
 		
-			// 이동할 위치의 폴더가 기본폴더인 경우
-			if(newFolder.equals("image")||newFolder.equals("music")||newFolder.equals("video")||newFolder.equals("document")||newFolder.equals("etc")) {
-				if(!newFolder.equals(result)) {
-					is_Move = false;
-					flag = 1;
-				}
-				else {
+		//자신의 filedto의 folder_ref의 이동할 filedto의 foder_ref를 대입 
+		int folderref = ((FileDTO)newAddr.get(0)).getNum();
+		String newOwner = ((FileDTO)newAddr.get(0)).getOwner();
+		dto.setFolder_ref(folderref);
+		
+		File file = new File(originalPath); //원래경로의 파일/폴더 객체 생성
+		boolean is_Move = false; //이동 가능 여부의 변수
+		int flag = 0; //이동할 수 없는 이유 변수
+		
+		if(originOwner.equals(newOwner)) { //이동할 파일/폴더와 이동할 곳의 파일/폴더의 소유자가 같을 경우
+			if(file.isFile()) { // 이동하려는 파일/폴더가 파일일 경우
+				String filetype = orgname.substring(orgname.lastIndexOf("."));
+				String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
+				String result = filebean.checkFile(filetype);
+			
+				// 이동할 위치의 폴더가 기본폴더인 경우
+				if(newFolder.equals("image")||newFolder.equals("music")||newFolder.equals("video")||newFolder.equals("document")||newFolder.equals("etc")) {
+					if(!newFolder.equals(result)) { //기본폴더의 파일형식과 이동할려는 파일의 형식이 맞지 않을 시
+						is_Move = false;
+						flag = 1;
+					}
+					else { //형식이 맞으면 이동
+						is_Move = nioFilemove(originalPath,newPath);
+					}
+				}else { //이동할 위치의 폴더가 기본폴더가 아닌 경우
 					is_Move = nioFilemove(originalPath,newPath);
 				}
-			}else {
-				is_Move = nioFilemove(originalPath,newPath);
+			}else { // 이동하려는 파일/폴더가 폴더일 경우
+				String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
+				boolean is_Check = checkFolder(file, newFolder);
+				if(newFolder.equals("image")||!is_Check) {
+					is_Move = false;
+					flag = 1;
+				}else {
+					is_Move = nioFilemove(originalPath,newPath);
+				}
 			}
-		}else {
-			String newFolder = ((FileDTO)newAddr.get(0)).getOrgname();
-			boolean is_Check = checkFolder(file, newFolder);
-			if(newFolder.equals("image")||!is_Check) {
-				is_Move = false;
-				flag = 1;
-			}else {
-				is_Move = nioFilemove(originalPath,newPath);
-			}
-		}
 		}else {
 			is_Move = false;
 			flag = 1;
@@ -199,6 +223,7 @@ public class FileBean2 {
 		session.removeAttribute("file_flag");
 		return "beFiles/alert";
 	}
+	
 	@RequestMapping("beCopy.do") //�뙆�씪/�뤃�뜑 �씠�룞
 	public String beCopy(HttpSession session, Model model, int folder_ref) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 鍮� 濡쒓렇�씤 �긽�깭�떆 濡쒓렇�씤 李쎌쑝濡� 由щ뵒�젆�듃
@@ -931,6 +956,7 @@ public class FileBean2 {
 			return "beFiles/alert";
 		}
 		filebean.setSqlSession(sqlSession);
+		sqlSession.update("bengineer.setsize",folder);
 		String owner = (String)session.getAttribute("id");
 		String nickname = (String)session.getAttribute("nickname");
 		File file = new File("d:/PM/BEngineer/" + owner);
@@ -1235,10 +1261,11 @@ public class FileBean2 {
 	
 	public  boolean checkFolder(File selectFolder, String copyFolder) { //복사할 디렉토리, 복사될 디렉토리
         File[] ff = selectFolder.listFiles();  //복사할 디렉토리안의 폴더와 파일들을 불러옴
-        FileBean filebean = new FileBean();
-        boolean is_Check = true;
-        for (File file : ff) {
-        	if(file.isFile()) {
+        FileBean filebean = new FileBean(); //Filebean 객체 생성
+        boolean is_Check = true; //복사가 완료됐는지 여부
+        
+        for (File file : ff) { //복사할 디렉토리안의 파일/폴더가 존재할 시
+        	if(file.isFile()) { //파일인 경우 기본폴더 안에 옮길 시 형식에 맞는지 확인
         		if(copyFolder.equals("image")||copyFolder.equals("music")||copyFolder.equals("video")||copyFolder.equals("document")||copyFolder.equals("etc")) {
         			String filename = file.getName();
             		String filetype = filename.substring(filename.lastIndexOf("."));
