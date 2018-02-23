@@ -1,16 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
-   	<link rel='stylesheet' href='/BEngineer/resources/css/nv.d3.css'>
-   	<link rel='stylesheet' href='/BEngineer/resources/css/rNVD3.css'>
 	<script src='/BEngineer/resources/js/jquery-1.8.2.min.js' type='text/javascript'></script>
-	<script src='/BEngineer/resources/js/d3.v3.min.js' type='text/javascript'></script>
-    <script src='/BEngineer/resources/js/nv.d3.min-new.js' type='text/javascript'></script>
-    <script src='/BEngineer/resources/js/fisheye.js' type='text/javascript'></script>
-    <script src="/BEngineer/resources/wordcloud2/htmlwidgets-0.8/htmlwidgets.js?ver=2"></script>
-	<link href="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud.css" rel="stylesheet" />
-	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud2-all.js"></script>
-	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/hover.js"></script>
-	<script src="/BEngineer/resources/wordcloud2/wordcloud2-binding-0.2.0/wordcloud2.js?ver=2"></script>
 <script src='/BEngineer/resources/pagectrl/menu.js' type='text/javascript'></script>
 <script src='/BEngineer/resources/pagectrl/search.js' type='text/javascript'></script>
 <script type="text/javascript">
@@ -69,10 +60,8 @@ top:200px;
 	</div>
 </div>
 <div id="button1">
-	button1
 </div>
 <div id="address">
-	address
 </div>
 <div id="button2">
 	<input type="button" id="myfile" value="내 파일"/>
@@ -89,9 +78,8 @@ top:200px;
 		<input type="submit" value="최근 파일"/>
 	</form>
 </div>
-<div id="back" style="height:80%; width:100%;">
-<div id="in" style="height:80%; width:50%;">
-<table align="center">
+<div id="files">
+<table style="float:left; margin:1%;">
   <tr><td align="center" bgcolor="#00D8FF">제목</td>
     <td width="330">${con.title}</td></tr>
   
@@ -99,12 +87,9 @@ top:200px;
     <td width="330" height="200" >${con.content}</td></tr>  
 </table>
 </div>
-</div>
 <div id="etc">
-	etc
 		<a href="/BEngineer/inquiry/inList.do?id=${sessionScope.id}">문의내역</a>
         <a href="/BEngineer/beMember/beboard.do?id=${sessionScope.id}">공지사항</a>
         <a href="/BEngineer/beMember/upgrade.do?id=${sessionScope.id}">유료전환</a>
-        <a href="">사이트맵</a>
 </div>
 </body>

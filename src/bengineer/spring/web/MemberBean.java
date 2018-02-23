@@ -30,6 +30,7 @@ public class MemberBean {
 	
 	@RequestMapping("beAddinfo.do") //수정정보 페이지로 이동
 	public String beAddinfo(Model model,HttpSession session) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		
 		//세션 id로 회원memberDTO 받아오기
 		MemberDTO memberDTO = (MemberDTO)sqlSession.selectOne("bengineer.beSelectmember", session.getAttribute("id"));
@@ -67,6 +68,7 @@ public class MemberBean {
 	//유저 공지사항읽기
 	@RequestMapping("beboard.do")
 	public String beboard(Model model,HttpSession session,MemberDTO dto) { 
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		List list = sqlSession.selectList("board.List");
 		model.addAttribute("list",list);
 		session.setAttribute("Id", dto.getId());
@@ -75,7 +77,8 @@ public class MemberBean {
 	
 	//문의내역읽기
 	@RequestMapping("beread.do")
-	public String updateForm(Model model,int num) { 
+	public String updateForm(Model model, HttpSession session, int num) { 
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		BoardDTO con = (BoardDTO)sqlSession.selectOne("board.read",num);	
 		model.addAttribute("con",con);
 		return "beMember/beread";

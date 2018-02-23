@@ -1,18 +1,17 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
-   	<link rel='stylesheet' href='/BEngineer/resources/css/nv.d3.css'>
-   	<link rel='stylesheet' href='/BEngineer/resources/css/rNVD3.css'>
-	<script src='/BEngineer/resources/js/jquery-1.8.2.min.js' type='text/javascript'></script>
-	<script src='/BEngineer/resources/js/d3.v3.min.js' type='text/javascript'></script>
-    <script src='/BEngineer/resources/js/nv.d3.min-new.js' type='text/javascript'></script>
-    <script src='/BEngineer/resources/js/fisheye.js' type='text/javascript'></script>
-    <script src="/BEngineer/resources/wordcloud2/htmlwidgets-0.8/htmlwidgets.js?ver=2"></script>
-	<link href="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud.css" rel="stylesheet" />
-	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud2-all.js"></script>
-	<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/hover.js"></script>
-	<script src="/BEngineer/resources/wordcloud2/wordcloud2-binding-0.2.0/wordcloud2.js?ver=2"></script>
+<script src='/BEngineer/resources/js/jquery-1.8.2.min.js' type='text/javascript'></script>
 <script src='/BEngineer/resources/pagectrl/menu.js' type='text/javascript'></script>
 <script src='/BEngineer/resources/pagectrl/search.js' type='text/javascript'></script>
+<style type="text/css">
+#back {position:relative;}
+#in {position:absolute;
+left:10px;
+top:5px;
+}
+</style>
 <script type="text/javascript">
 	//비교대상 목록?
 	var font_test = Array(
@@ -22,13 +21,6 @@
 		''
 	);
 </script>
-<style type="text/css">
-#back {position:relative;}
-#in {position:absolute;
-left:250px;
-top:200px;
-}
-</style>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;"> 
 	<img src="/BEngineer/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
@@ -53,10 +45,8 @@ top:200px;
 	</div>
 </div>
 <div id="button1">
-	button1
 </div>
 <div id="address">
-	address
 </div>
 <div id="button2">
 	<input type="button" id="myfile" value="내 파일"/>
@@ -73,10 +63,9 @@ top:200px;
 		<input type="submit" value="최근 파일"/>
 	</form>
 </div>
-<div id="back">
-<div id="in">
-<input name="inList" type="button" value="목록" onClick="location.href='inList.do?id=${sessionScope.id}'"/>
-	<table border="1">
+<div id="files">
+<input name="inList" type="button" value="목록" onClick="location.href='inList.do?id=${sessionScope.id}'" style="margin:1%;"/><br />
+	<table border="1" style="float:left; margin:1%;">
 	  <tr><td width="90">제목</td><td width="330">${re.title}</td></tr>
 	 
 	  <tr><td width="90" style="text-align:top;">내 용</td>
@@ -89,12 +78,9 @@ top:200px;
 	    <td width="330">${re.reply}</td></tr>
 	</table>
 </div>
-</div>
 <div id="etc">
-	etc
 		<a href="/BEngineer/inquiry/inList.do?id=${sessionScope.id}">문의내역</a>
         <a href="/BEngineer/beMember/beboard.do?id=${sessionScope.id}">공지사항</a>
         <a href="/BEngineer/beMember/upgrade.do?id=${sessionScope.id}">유료전환</a>
-        <a href="">사이트맵</a>
 </div>
 </body>

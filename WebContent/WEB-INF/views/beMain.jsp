@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8"%> 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
    	<link rel='stylesheet' href='/BEngineer/resources/css/nv.d3.css'>
    	<link rel='stylesheet' href='/BEngineer/resources/css/rNVD3.css'>
@@ -72,10 +73,8 @@
 	${ content }
 </div>
 <div id="etc">
-	etc
 		<a href="/BEngineer/inquiry/inList.do?id=${sessionScope.id}">문의내역</a>
         <a href="/BEngineer/beMember/beboard.do?id=${sessionScope.id}">공지사항</a>
         <a href="/BEngineer/beMember/upgrade.do?id=${sessionScope.id}">유료전환</a>
-        <a href="">사이트맵</a>
 </div>
 </body>

@@ -271,7 +271,9 @@ var folder_ref = '${folder_ref}';
 	</form>
 </div>
 <div id="etc">
-	etc
+		<a href="/BEngineer/inquiry/inList.do?id=${sessionScope.id}">문의내역</a>
+        <a href="/BEngineer/beMember/beboard.do?id=${sessionScope.id}">공지사항</a>
+        <a href="/BEngineer/beMember/upgrade.do?id=${sessionScope.id}">유료전환</a>
 </div>
 <script>
 if(${write} == true){

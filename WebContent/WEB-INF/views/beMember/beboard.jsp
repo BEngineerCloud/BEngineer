@@ -1,18 +1,8 @@
 <%@ page contentType="text/html; charset=UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>	
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %><!-- 날짜표현하기위해.. -->
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
- 	<link rel='stylesheet' href='/BEngineer/resources/css/nv.d3.css'>
- 	<link rel='stylesheet' href='/BEngineer/resources/css/rNVD3.css'>
 <script src='/BEngineer/resources/js/jquery-1.8.2.min.js' type='text/javascript'></script>
-<script src='/BEngineer/resources/js/d3.v3.min.js' type='text/javascript'></script>
-<script src='/BEngineer/resources/js/nv.d3.min-new.js' type='text/javascript'></script>
-<script src='/BEngineer/resources/js/fisheye.js' type='text/javascript'></script>
-<script src="/BEngineer/resources/wordcloud2/htmlwidgets-0.8/htmlwidgets.js?ver=2"></script>
-<link href="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud.css" rel="stylesheet" />
-<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/wordcloud2-all.js"></script>
-<script src="/BEngineer/resources/wordcloud2/wordcloud2-0.0.1/hover.js"></script>
-<script src="/BEngineer/resources/wordcloud2/wordcloud2-binding-0.2.0/wordcloud2.js?ver=2"></script>
 <script src='/BEngineer/resources/pagectrl/menu.js' type='text/javascript'></script>
 <script src='/BEngineer/resources/pagectrl/search.js' type='text/javascript'></script>
 <style type="text/css">
@@ -55,10 +45,8 @@ top:5px;
 	</div>
 </div>
 <div id="button1">
-	button1
 </div>
 <div id="address">
-	address
 </div>
 <div id="button2">
 	<input type="button" id="myfile" value="내 파일"/>
@@ -74,14 +62,9 @@ top:5px;
 		</select>
 		<input type="submit" value="최근 파일"/>
 	</form>
-	<c:if test="${space != null && space !=''}">
-		전체 사용량
-		<img src="data:image/png;base64,${space}" style="width:100%;" />
-	</c:if>
 </div>
-<div id="back">
-<div id="in" align="center" style="height:80%; width:100%; background-color:#FFFFFF;">
-	<table border="1">
+<div id="files">
+	<table border="1" style="float:left; margin:1%;">
 	<tr bgcolor="#2524FF">
 	<td align="center" >글번호</td>
 	<td align="center">제목</td>
@@ -99,12 +82,9 @@ top:5px;
 	</c:forEach>   
 	</table>
 </div>
-</div>
 <div id="etc">
-	etc
 		<a href="/BEngineer/inquiry/inList.do?id=${sessionScope.id}">문의내역</a>
         <a href="/BEngineer/beMember/beboard.do?id=${sessionScope.id}">공지사항</a>
         <a href="/BEngineer/beMember/upgrade.do?id=${sessionScope.id}">유료전환</a>
-        <a href="">사이트맵</a>
 </div>
 </body>

@@ -10,6 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import bengineer.spring.board.BoardDTO;
 import bengineer.spring.manager.ManagerDTO;
+import bengineer.spring.web.MainBean;
 import bengineer.spring.web.MemberDTO;
 
 import org.apache.catalina.User;
@@ -29,7 +30,8 @@ public class InquiryBean {
 	private SqlSessionTemplate sqlSession = null;
 	// member 문의내역
 	@RequestMapping("inList.do")
-	public String list(Model model,HttpSession session,MemberDTO dto,String id) { 
+	public String list(Model model,HttpSession session,MemberDTO dto,String id) {
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트 
 		List list = sqlSession.selectList("board.inList",dto.getId());
 		model.addAttribute("inList",list);
 		session.setAttribute("Id", dto.getId());
@@ -38,6 +40,7 @@ public class InquiryBean {
 	// member 문의하기
 	@RequestMapping("inForm.do")
 	public String writeForm(HttpSession session,InquiryDTO dto,String Id) { 
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		session.setAttribute("Id", dto.getId());
 		return "/inquiry/inForm";
 	}
@@ -51,7 +54,7 @@ public class InquiryBean {
 		String fileName = uploadFile.getOriginalFilename();
 		String filename = fileName;
 		sqlSession.update("board.inquiry2",filename);
-		File saveFile = new File("D://PM//app//BEngineer//WebContent//inquiryImg//"+fileName);
+		File saveFile = new File("d:/PM/app/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/BEngineer/inquiryImg/"+fileName);
 		uploadFile.transferTo(saveFile);
 		}catch(Exception e) {
 			e.printStackTrace();
@@ -60,7 +63,8 @@ public class InquiryBean {
 	}
 	// member 내문의목록보기
 	@RequestMapping("inRead.do")
-	public String inRead(int num,InquiryDTO dto,Model model ) { 
+	public String inRead(int num,InquiryDTO dto, HttpSession session, Model model ) { 
+		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		InquiryDTO re = (InquiryDTO)sqlSession.selectOne("board.reply",num);
 		model.addAttribute("re",re);
 		return "/inquiry/inRead";
