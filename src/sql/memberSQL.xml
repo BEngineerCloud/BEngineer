@@ -2,6 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
 <mapper namespace="bengineer">
+
+	<!-- 닉네임에 해당하는 멤버가 존재하는지 확인 -->
 	<select id="beChecknickname" resultType="int" parameterType="string">
 		select count(*) from bemember where nickname=#{nickname}
 	</select>
@@ -11,6 +13,7 @@
 		select count(*) from bemember where id=#{id}
 	</select>
 	
+	<!-- id를 이용해 멤버DTO를 받아온다. -->
 	<select id="beSelectmember" resultType="MemberDTO" parameterType="string">
 		select * from bemember where id=#{id}
 	</select>
@@ -20,10 +23,12 @@
 		select * from bemember where email=#{email}
 	</select>
 	
+	<!-- 메일아이디를 이용해 멤버ID를 받아온다. -->
 	<select id="beSelectid" resultType="string" parameterType="string">
 		select id from bemember where email=#{email}
 	</select>
 	
+	<!-- 멤버DTO의 id, 닉네임, 생년월일, 성별, 권한을 insert -->
 	<insert id="beInsertmember" parameterType="MemberDTO">
 		insert into bemember(id,email,nickname,birthday,gender,chmod) values(#{id},#{email},#{nickname},#{birthday},#{gender},2)
 	</insert>
@@ -33,10 +38,12 @@
 		insert into bemember(id,pw,email,nickname,birthday,gender) values(#{id},#{pw},#{email},#{nickname},#{birthday},#{gender})
 	</insert>
 	
+	<!-- Id에 해당하는 회원의 닉네임, 비밀번호 수정 -->
 	<update id="beUpdatenickname" parameterType="MemberDTO">
 		update bemember set nickname = #{nickname}, pw = #{pw} where id=#{id}
 	</update>
 	
+	<!-- 멤버DTO의 id 수정 -->
 	<update id="beUpdatemember2" parameterType="MemberDTO">
 		update bemember set id = #{id} where email=#{email}
 	</update>

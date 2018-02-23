@@ -191,9 +191,13 @@
 	<update id="exhot" parameterType="int"> <!-- 중요파일에서 제외 -->
 		update BEfilelist set important = -1 where num = #{num}
 	</update>
+	
+	<!-- 해당파일의 소유자를 바꾼다.-->
 	<update id="updateowner" parameterType="string">
 		update BEfilelist set owner = #{owner} where owner = #{owner}
 	</update>
+	
+	<!-- 회원이 가지고 있는 파일의 개수를 받아온다. -->
 	<select id="beCheckfolder" resultType="int" parameterType="string">
 		select count(*) from befilelist where owner=#{id}
 	</select>
@@ -209,6 +213,7 @@
 	<select id="getrecentfiles" parameterType="fileDTO" resultType="fileDTO">
 		select * from BEfilelist where owner = #{owner} and updatedate > #{updatedate} and (filetype != 'dir' or filename = orgname) order by filetype desc, important asc, filename asc 
 	</select>
+	
 	<!-- 초성 검색에 필요한 파일 목록들  / parameterType="string" where email=${email}-->
 	<select id="font" resultType="fileDTO">
 		select * from befilelist

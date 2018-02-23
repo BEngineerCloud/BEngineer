@@ -73,6 +73,7 @@ public class LoginBean {
 		
 	@RequestMapping("beJoinmemberpro.do") //회원가입 정보를 DB에 insert
 	public String beJoinmemberpro(MemberDTO dto, HttpSession session) {
+		
 		//FileBean에 makecode함수를 사용해야하는데 makecode함수에서 sql문을 사용하기 때문에 Filebean객체를 생성한 후 sqlSession도 설정해준다.
 		FileBean filebean = new FileBean();
 		filebean.setSqlSession(sqlSession);

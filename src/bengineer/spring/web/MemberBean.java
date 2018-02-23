@@ -28,29 +28,42 @@ public class MemberBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
 	
-	@RequestMapping("beAddinfo.do")
+	@RequestMapping("beAddinfo.do") //수정정보 페이지로 이동
 	public String beAddinfo(Model model,HttpSession session) {
+		
+		//세션 id로 회원memberDTO 받아오기
 		MemberDTO memberDTO = (MemberDTO)sqlSession.selectOne("bengineer.beSelectmember", session.getAttribute("id"));
-		model.addAttribute("memberDTO",memberDTO);
+		
+		model.addAttribute("memberDTO",memberDTO); //beAddinfo 페이지에 memberDTO의 정보 넘겨주기
 		return "beMember/beAddinfo";
 	}
 	
-	@RequestMapping("beAddinfopro.do")
-	public String beAddinfopro(String nickname, HttpSession session) {
+	@RequestMapping("beAddinfopro.do") //수정완료 페이지로 이동
+	public String beAddinfopro(String nickname, String pw, HttpSession session) {
+		
+		//세션 id로 회원memberDTO 받아오기
 		MemberDTO memberDTO = (MemberDTO)sqlSession.selectOne("bengineer.beSelectmember", session.getAttribute("id"));
-		memberDTO.setNickname(nickname);
+		
+		//새 닉네임, 새 비밀번호로 DB 수정 후 세션으로 다시 설정
+		memberDTO.setNickname(nickname); 
+		memberDTO.setPw(pw);
 		sqlSession.update("bengineer.beUpdatenickname", memberDTO);
 		session.setAttribute("nickname", memberDTO.getNickname());
+		
 		return "beMember/beAddinfopro";
 	}
 
-	@RequestMapping(value="beChecknickname.do")
+	@RequestMapping(value="beChecknickname.do") //닉네임 중복검사 페이지로 이동
 	public String beChecknickname(Model model, String nickname ) {
-		Integer check = (Integer)sqlSession.selectOne("bengineer.beChecknickname",nickname);
+		Integer check = (Integer)sqlSession.selectOne("bengineer.beChecknickname",nickname); //해당하는 닉네임이 존재하는지 확인
+		
+		//존재하는지 여부와 닉네임 정보 넘겨주기
 		model.addAttribute("check",check);
 		model.addAttribute("nickname",nickname);
+		
 		return "beMember/beChecknickname";
 	}
+	
 	//유저 공지사항읽기
 	@RequestMapping("beboard.do")
 	public String beboard(Model model,HttpSession session,MemberDTO dto) { 
@@ -59,6 +72,7 @@ public class MemberBean {
 		session.setAttribute("Id", dto.getId());
 		return "beMember/beboard";
 	}
+	
 	//문의내역읽기
 	@RequestMapping("beread.do")
 	public String updateForm(Model model,int num) { 
@@ -67,66 +81,84 @@ public class MemberBean {
 		return "beMember/beread";
 	}
 	
-	@RequestMapping(value="beCheckemail.do")
+	@RequestMapping(value="beCheckemail.do") //이메일 인증 페이지로 이동
 	public String beCheckmailid(Model model, String email, HttpSession session ) {
-		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email);
-		if(session.getAttribute("authcode")!=null) {
+		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email); //해당하는 이메일과 일치하는 멤버가 있는지 확인
+		
+		//'authocode'세션이 존재하면 삭제
+		if(session.getAttribute("authcode")!=null) { 
 			session.removeAttribute("authcode");
 		}
+		
+		//'email'세션이 존재하면 삭제
 		if(session.getAttribute("email")!=null) {
 			session.removeAttribute("email");
 		}
+		
+		//이메일에 해당하는 멤버가 존재하는지 여부와 메일주소 정보 넘겨주기
 		model.addAttribute("check",check);
 		model.addAttribute("mailid",email);
+		
 		return "beMember/beCheckemail";
 	}
 	
-	@RequestMapping(value="beAuthemail.do")
+	@RequestMapping(value="beAuthemail.do") //메일인증링크 
 	public String beAuthemail(Model model, String email, HttpSession session) {
+		
+		//FileBean에 makecode함수를 사용해야하는데 makecode함수에서 sql문을 사용하기 때문에 Filebean객체를 생성한 후 sqlSession도 설정해준다.
 		FileBean filebean = new FileBean();
 		filebean.setSqlSession(sqlSession);
 		
+		//authcode 임의로 8문자 생성
 		String authcode="";
 		authcode = filebean.makecode(8);
-		sendEmail(email,authcode);
+		
+		sendEmail(email,authcode); //인증코드를 포함한 링크를 메일로 보내기
+		
+		//authcode와 email 세션 설정 후 데이터로 넘겨주기
 		session.setAttribute("authcode", authcode); 
 		session.setAttribute("email", email);
 		model.addAttribute("mailid",email);
 		model.addAttribute("authcode",authcode);
+		
 		return "beMember/beCheckemail";
 	}
 	
-	//메일인증 확인
-	@RequestMapping(value="beConfirmemail.do") 
+	@RequestMapping(value="beConfirmemail.do") //메일인증 여부 확인
 	public String beConfirmemail(Model model, String authcode, HttpSession session) {
 		String email = (String)session.getAttribute("email");
-		if(authcode.equals(session.getAttribute("authcode"))) {
+		
+		if(authcode.equals(session.getAttribute("authcode"))) { //넘겨받은 인증코드가 세션으로 설정된 인증코드와 일치하면 confirmEmail을 0으로 설정하고 이메일과 같이 넘겨준다.
 			model.addAttribute("confirmEmail",0);
 			model.addAttribute("email",email);
-		}else {
+		}else { //일치하지 않으면 confirmEmail을 1로 설정해주고 보내준다.
 			model.addAttribute("confirmEmail",1);
 		}
+		
 		return "beMember/beConfirmemail";
 	}
 	
-	public void sendEmail(String email, String authcode) {
-		String username = "loser4kku@gmail.com";
-		String password = "bengineer";
+	public void sendEmail(String email, String authcode) { //이메일 보내기
+		String username = "loser4kku@gmail.com"; //메일 보낼 사용자 아이디
+		String password = "bengineer"; //메일 보낼 사용자 비밀번호
 		String host = "smtp.gmail.com"; //메일 서버
-		String subject = "BEngineer 메일인증링크";
+		String subject = "BEngineer 메일인증링크"; //메일 제목
 		String fromName = "BEngineer 관리자"; // 보낼사람 이름
 		String from = "loser4kku@gmail.com"; //보낼사람 이메일
-		String to1 = email;
+		String to1 = email; //받는사람 이메일
 		String content = "http://192.168.0.153/BEngineer/beMember/beConfirmemail.do?authcode="+authcode; //내용
 		
 		try {
+			
+			//메일 작업처리를 위해 세션을 생성해야하는데 SMTP와 관련된 세션을 생성하기 위해서 SMTP 서버와 관련된 정보 지정해야 함.
+			//Properies 클래스를 사용해 세션을 생성할 때 필요한 값 지정, 설정
 			Properties props = new Properties();
-			props.put("mail.smtp.starttls.enable","true");
-			props.put("mail.transport.protocol","smtp");
-			props.put("mail.smtp.host",host);
-			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-			props.put("mail.smtp.port","465");
-			props.put("mail.smtp.user",from);
+			props.put("mail.smtp.starttls.enable","true"); //암호화 메일전송을 위한 프로토콜 사용여부
+			props.put("mail.transport.protocol","smtp"); //SMTP 전송서버 이용
+			props.put("mail.smtp.host",host); //이메일을 발송해줄 SMTP 서버
+			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory"); //소켓설정
+			props.put("mail.smtp.port","465"); //포트
+			props.put("mail.smtp.user",from); //사용자
 			props.put("mail.smtp.auth","true");
 			
 			Session mailSession = Session.getInstance(props,
@@ -138,19 +170,21 @@ public class MemberBean {
 			Message msg = new MimeMessage(mailSession);
 			msg.setFrom(new InternetAddress(from, MimeUtility.encodeText(fromName,"UTF-8","B")));
 			
-			InternetAddress[] address1 = { new InternetAddress(to1)};
+			InternetAddress[] address1 = { new InternetAddress(to1)}; 
 			msg.setRecipients(Message.RecipientType.TO, address1);
-			msg.setSubject(subject);
-			msg.setSentDate(new java.util.Date());
-			msg.setContent(content,"text/html;charset=UTF-8");
+			msg.setSubject(subject); //메시지 제목설정
+			msg.setSentDate(new java.util.Date()); //메시지 날짜 설정
+			msg.setContent(content,"text/html;charset=UTF-8"); //메시지 내용 설정
 		
-			Transport.send(msg);
+			Transport.send(msg); //메시지 보내기
+			
 		}catch(javax.mail.MessagingException e) {
 			e.printStackTrace();
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
 	}
+	
 	@RequestMapping("upgrade.do")
 	public String upgrade(HttpSession session,Model model,String id) { 
 		Integer giga = (Integer)sqlSession.selectOne("bengineer.giga",id);
@@ -160,6 +194,7 @@ public class MemberBean {
 		model.addAttribute("giga2",chmod);
 		return "/beMember/upgrade";
 	}
+	
 	@RequestMapping("change.do")
 	public String change(MemberDTO dto) {
 		sqlSession.update("bengineer.change",dto);

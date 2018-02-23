@@ -71,7 +71,7 @@
 				      	return false; 
 				 	}else{ //새 비밀번호가 유효성 검사에 맞을 시 새 비밀번호 창에 값 입력
 				 		var newPw1 =$("#newPw").val();
-				 		$("#newPw").val(newPw1);
+				 		$("#pw").val(newPw1);
 				 	}
 				}
 				

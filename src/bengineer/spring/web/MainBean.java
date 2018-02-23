@@ -36,9 +36,12 @@ public class MainBean extends Thread{
 	}
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
-	@RequestMapping("beMain.do") // 메인페이지
+	
+	@RequestMapping("beMain.do") // 메인페이지 이동
 	public String main(HttpSession session, Model model) {
-		if(loginCheck(session)) {
+		
+		//id 세션값이 없으면 로그인 페이지로 이동
+		if(loginCheck(session)) { 
 			return "redirect:/beMember/beLogin.do";
 		}else {
 			String id = (String)session.getAttribute("id");
@@ -51,45 +54,54 @@ public class MainBean extends Thread{
 		}
 	}
 	
-	@RequestMapping(value="beMaintemp.do") // 메인페이지
+	@RequestMapping(value="beMaintemp.do") //네이버아이디 로그인을 했을 시 beMain.do로 이동
 	public String beMaintemp(MemberDTO dto, HttpSession session, Model model) {
 		String email = dto.getEmail();
+		
+		//받아온 메일 아이디로 멤버가 존재하는 지 체크
 		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email);
 		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember", email);
-		String veiw= "redirect:/beMain.do";
+		String view= "redirect:/beMain.do"; //기본은 beMain.do로 이동
 		if(impose==1) {
-			veiw="redirect:/beMember/imposeMember.do";
+			view="redirect:/beMember/imposeMember.do";
 		}else {
-			if(check!=1) {
-				System.out.println(1);
-				sqlSession.insert("bengineer.beInsertmember", dto);
+			if(check!=1) { //일치하는 멤버가 없을 시
+				sqlSession.insert("bengineer.beInsertmember", dto); //네이버회원 정보를 insert
 			}else {
-				String id = sqlSession.selectOne("bengineer.beSelectid",email);
-				if(!id.equals(dto.getId())) {
+				String id = sqlSession.selectOne("bengineer.beSelectid",email); //해당하는 회원id를 받아옴.
+				
+				if(!id.equals(dto.getId())) { //회원id와 넘겨받은 네이버회원 id가 다를 경우
+					
+					//FileBean에 makecode함수를 사용해야하는데 makecode함수에서 sql문을 사용하기 때문에 Filebean객체를 생성한 후 sqlSession도 설정해준다.
 					FileBean filebean = new FileBean();
 					filebean.setSqlSession(sqlSession);
+					
 					Integer folderCheck = (Integer)sqlSession.selectOne("bengineer.beCheckfolder",id); // id에 해당하는 폴더가 있는지
-					if(folderCheck==1) { // 아이디에 해당하는 폴더가 있으면 새로운 아이디로 수정
-						filebean.changeIdDirName(id, dto.getId());
-						sqlSession.update("begineer.updateowner",dto.getId());
+					
+					// 아이디에 해당하는 폴더가 있으면 폴더의 소유자를 네이버회원 ID로 변경
+					if(folderCheck==1) { 
+						filebean.changeIdDirName(id, dto.getId()); //파일명 바꾸기
+						sqlSession.update("begineer.updateowner",dto.getId()); //파일소유자 변경
 					}
-					sqlSession.update("bengineer.beUpdatemember2",dto);
+					sqlSession.update("bengineer.beUpdatemember2",dto); //네이버회원 ID로 정보 변경
 				}
 			}
-			session.setAttribute("id", dto.getId()); // 테스트용임시세션등록
-			session.setAttribute("nickname", dto.getNickname());
-			session.setMaxInactiveInterval(60);
+			session.setAttribute("id", dto.getId()); //id 세션설정
+			session.setAttribute("nickname", dto.getNickname()); //닉네임 세션 설정
+			session.setMaxInactiveInterval(60); //세션유효시간 60초
 		}
-		return veiw;
+		return view;
 	}
+	
 	@RequestMapping("imposeMember.do") // 메인페이지
 	public String imposeMember() {return "beMember/imposeMember";}
 	
-	@RequestMapping("beLogout.do") // 메인페이지
+	@RequestMapping("beLogout.do") //로그아웃 페이지 이동
 	public String beLogout(HttpSession session) {
-		session.invalidate();
+		session.invalidate(); //모든 세션 삭제
 		return "redirect:/beMain.do";
 	}
+	
 	@RequestMapping("shortcut.do")
 	public String shortcut(HttpSession session, Model model, String filename, int hitcount) {
 		if(loginCheck(session)) {return "redirect:/beMember/beLogin.do";}
