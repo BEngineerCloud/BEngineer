@@ -15,27 +15,27 @@ $(function(){
 			check = true;
 		}
 		if(check){
-			var important =document.getElementById(ref + "important");
+			var important =document.getElementById(ref + "important"); //중요파일인지 아닌지 판단하는 변수
 			var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
 			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			setAddress(ref, orgname.value);
 			var multiCheck = document.getElementById("multidowntext");
 			if(multiCheck != null && multiCheck.type == "text"){
 				var index = clickedFile.indexOf(ref);
-				if(index == -1){
+				if(index == -1){ 
 					clickedFile.push(ref);
-					if(important.value <= -1){
+					if(important.value <= -1){ //중요폴더일 때 중요폴더배열에 집어넣기
 						clickedImportant.push(1)
 					}
 					selectFile(ref);
 				}else{
 					clickedFile.splice(index, 1);
-					if(important.value <= -1){
+					if(important.value <= -1){ //중요폴더일 때 중요폴더배열에 해당하는 인덱스 내용 빼기
 						clickedImportant.splice(0, 1);
 					}
 					disselectFile(ref);
 				}
-				if(clickedImportant.length > 0){
+				if(clickedImportant.length > 0){ //중요폴더가 포함되있으면 다수 파일 이동버튼 클릭 비활성화
 					initMultiMove();
 				}else{
 					setMultiMove();
@@ -70,12 +70,12 @@ $(function(){
 	$("#files > div").dblclick(function(){ // 파일 더블클릭시
 		var ref = $(this).attr("name");
 		var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
-		var important =document.getElementById(ref + "important");
+		var important =document.getElementById(ref + "important"); //중요파일인지 아닌지 판단하는 변수
 		var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
 		if(type.value == "dir"){ // 폴더일 때 해당 폴더로 이동
-			if(important.value==-1 && orgname.value=="image"){ 
+			if(important.value==-1 && orgname.value=="image"){  //기본 이미지 폴더로 이동할 때 이미지프리뷰 페이지로 이동
 				window.location = "/BEngineer/beFiles/beImagePreview.do?folder="+ref;	 
-			}else{
+			}else{ //그 외에는 마이리스트 페이지로 이동
 				window.location = "/BEngineer/beFiles/beMyList.do?folder=" + ref; 
 			}
 		}else{ // 파일일 때 해당 파일 다운로드

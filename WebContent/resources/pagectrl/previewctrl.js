@@ -15,7 +15,7 @@ $(function(){
 			check = true;
 		}
 		if(check){
-			var important =document.getElementById(ref + "important");
+			var important =document.getElementById(ref + "important"); //중요파일인지 아닌지 판단하는 변수
 			var orgname = document.getElementById(ref + "orgname"); // 원 파일명 저장되어있는 인풋의 값 가져오기
 			var type = document.getElementById(ref + "type"); // 파일타입 저장되어있는 인풋의 값 가져오기
 			setAddress(ref, orgname.value);
@@ -24,18 +24,18 @@ $(function(){
 				var index = clickedFile.indexOf(ref);
 				if(index == -1){
 					clickedFile.push(ref);
-					if(important.value <= -1){
+					if(important.value <= -1){ //중요폴더일 때 중요폴더배열에 집어넣기
 						clickedImportant.push(1)
 					}
 					selectFile(ref);
 				}else{
 					clickedFile.splice(index, 1);
-					if(important.value <= -1){
+					if(important.value <= -1){ //중요폴더일 때 중요폴더배열에 해당하는 인덱스 내용 빼기
 						clickedImportant.splice(0, 1);
 					}
 					disselectFile(ref);
 				}
-				if(clickedImportant.length > 0){
+				if(clickedImportant.length > 0){ //중요폴더가 포함되있으면 다수 파일 이동버튼 클릭 비활성화
 					initMultiMove();
 				}else{
 					setMultiMove();
@@ -150,13 +150,17 @@ function close(){
 	$("#button1_1").css("display", "none");
 }
 $(function(){
+	
+	//imageview의 레이아웃, 정해진 크기를 벗어난 그림이면 자동으로 스크롤을 만들어준다.
 	$("body").append("<div id='glayLayer' ></div><div id='overLayer' style='overflow-y:auto;'></div>");
 	
+	//imageview 밖의 화면을 클릭하면 이미지화면 끄기
 	$("#glayLayer").click(function(){
 		$(this).hide()
 		$("#overLayer").hide();
 	});
 	
+	//imageview 버튼을 클릭했을 때 정해진 크기에 맞게 보여주기
 	$("#imageview").click(function(){
 		hinder();
 		var imageform = document.getElementById("imageform");
@@ -165,15 +169,15 @@ $(function(){
 		return false;
 	});
 });
-function setImage(num){
-	var form = document.getElementById("imageform"); //imageform 가져오기
+function setImage(num){ //이미지 form 설정
+	var form = document.getElementById("imageform"); 
 	if(form != null){
 		form.selImageview.value = num;
 		form.imageview.type = "button";
 	}
 }
-function initImage(){
-	var form = document.getElementById("imageform"); //imageform 가져오기
+function initImage(){ //이미지 보기 버튼 숨기기
+	var form = document.getElementById("imageform"); 
 	if(form != null){
 		form.imageview.type = "hidden";
 	}
