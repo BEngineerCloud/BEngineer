@@ -205,6 +205,8 @@
   function sizingPolicy(el) {
 	document.getElementById(el.id).style.height = "100%";
 	document.getElementById(el.id).style.width = "100%";
+	$("#" + el.id).css("overflow", "hidden");
+	$("#" + el.id).css("padding", "1%");
     var sizingEl = document.querySelector("script[data-for='" + el.id + "'][type='application/htmlwidget-sizing']");
     if (!sizingEl)
       return null;

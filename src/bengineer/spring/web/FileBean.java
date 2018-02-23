@@ -108,6 +108,7 @@ public class FileBean {
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		List filelist = sqlSession.selectList("bengineer.getfiles", folder_ref);
 		sqlSession.update("bengineer.hit", folder);
+		sqlSession.update("bengineer.setsize", folder);
 		model.addAttribute("list", filelist);
 		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
 		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
@@ -2229,14 +2230,15 @@ public class FileBean {
 			r = new RConnection(); // R연결
 			r.eval("png('pie.png')");
 			r.eval("name <- c('사용중', '사용가능')");
-			if(usingspace < 1024 * 1024 * 1024) {
+			if(usingspace < 1024 * 1024 * 1024 * 0.1) {
 				usingspace /= 1024;
 				r.eval("space <- c(" + usingspace + ", " + (space - usingspace) + ")");
-				r.eval("size <- paste('\\n\\r(', round(space / 1024 / 1024, digits = 2), 'MB)', sep = '')");
+				r.eval("size[1] <- paste('\\n\\r(', round(space[1] / 1024 / 1024, digits = 2), 'MB)', sep = '')");
 			}else {
 				r.eval("space <- c(" + usingspace + ", " + (space - usingspace) + ")");
-				r.eval("size <- paste('\\n\\r(', round(space / 1024 / 1024 / 1024, digits = 2), 'GB)', sep = '')");
+				r.eval("size[1] <- paste('\\n\\r(', round(space[1] / 1024 / 1024 / 1024, digits = 2), 'GB)', sep = '')");
 			}
+			r.eval("size[2] <- paste('\\n\\r(', round(space[2] / 1024 / 1024 / 1024, digits = 2), 'GB)', sep = '')");
 			r.eval("pie(space, radius = 1, clockwise = TRUE, labels = c('', ''), col=rainbow(2))");
 			// 사용중, 사용가능 표시의 위치 설정
 			r.eval("text(" + (x * Math.sin(angle)) + ", " + (x * Math.cos(angle) + 0.1) + ", name[1], cex = 5, font = 2)");

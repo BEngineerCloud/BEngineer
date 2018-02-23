@@ -69,7 +69,7 @@
 		<img src="data:image/png;base64,${space}" style="width:100%;" />
 	</c:if>
 </div>
-<div id="files">
+<div id="files" style="overflow:hidden;">
 	${ content }
 </div>
 <div id="etc">
