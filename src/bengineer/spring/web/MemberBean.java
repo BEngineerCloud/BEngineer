@@ -148,6 +148,18 @@ public class MemberBean {
 		return "beMember/beConfirmemail";
 	}
 	
+	@RequestMapping(value="beDeletemember.do") 
+	public String beDeletemember(Model model, HttpSession session, String email) {
+		sqlSession.delete("bengineer.beDeletemember",email); //회원탈퇴
+		
+		session.invalidate(); //세션지우기
+		
+		model.addAttribute("alert", "탈퇴되었습니다.");
+		model.addAttribute("location", "\"/BEngineer/beMember/beLogin.do\"");
+		
+		return "beFiles/alert";
+	}
+	
 	public void sendEmail(String email, String authcode, String flag) { //이메일 보내기
 		String username = "loser4kku@gmail.com"; //메일 보낼 사용자 아이디
 		String password = "bengineer"; //메일 보낼 사용자 비밀번호

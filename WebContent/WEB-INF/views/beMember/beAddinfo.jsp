@@ -95,6 +95,14 @@
 			$("#cancel").click(function(){ //취소버튼을 클릭했을 시
 				window.location = "/BEngineer/beMain.do";
 			});
+			
+			$("#delete").click(function(){ //탈퇴버튼을 클릭했을 시
+				var is_Delete = confirm("정말 탈퇴하시겠습니까?"); //문구를 띄어 확인을 받는다.
+				
+				//확인 버튼을 누르면 탈퇴작업을 수행한다.
+				if(is_Delete==true)
+					window.location = "/BEngineer/beMember/beDeletemember.do?email=${memberDTO.email}";
+			});
 		});
 	</script>
 	<body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
@@ -192,9 +200,10 @@
 				<div align="center" id="Addcontents2" style="height:50%; width:30%;">
 					<hr color="black"><br/>
 				
-					<!-- 수정, 취소버튼 -->
+					<!-- 수정, 취소, 탈퇴버튼 -->
 					<input type="submit" style="border-color:black;  width:12%; height:16%;background-color:#FFFFFF; font-size:16pt"  value="확인">
 					&emsp;<input type="button" id="cancel" style="border-color:black;  width:12%; height:16%;background-color:#FFFFFF; font-size:16pt"  value="취소" >
+					&emsp;<input type="button" id="delete" style="border-color:black;  width:12%; height:16%;background-color:#FFFFFF; font-size:16pt"  value="탈퇴" >
 				</div>
 			</div>
 			

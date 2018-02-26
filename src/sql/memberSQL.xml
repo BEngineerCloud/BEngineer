@@ -103,4 +103,9 @@
 	<update id="beUpdatepw"  parameterType="MemberDTO">
 		update bemember set pw = #{pw} where email=#{email} and nickname=#{nickname}
 	</update>
+	
+	<!-- 회원탈퇴 -->
+	<delete id="beDeletemember" parameterType="string">
+		delete from bemember where email=#{email}
+	</delete>
 </mapper>
