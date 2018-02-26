@@ -3,8 +3,17 @@
 <link rel='stylesheet' href='/BEngineer/resources/css/style.css'>
 <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.0.min.js" ></script>
 <script src='/BEngineer/resources/pagectrl/menu.js' type='text/javascript'></script>
+<script src='/BEngineer/resources/pagectrl/search.js' type='text/javascript'></script>
 <script type="text/javascript">
-	var clickedfile = new Array();$(function(){
+	var clickedfile = new Array();
+	//비교대상 목록?
+	var font_test = Array(
+		<c:forEach var="font" items="${font}">
+			'${font.filename}',
+		</c:forEach>
+		''
+	);
+	$(function(){
 		$("#files").click(function(e){
 			var target = $(e.target).attr("class");
 			var parent = $(e.target).parent().attr("class");
@@ -128,8 +137,10 @@
 <!-- 검색창 -->
 <div align="center" style="height:10%; width:61%; float:left;">
 	<div style="margin-top:2%">
-	<input type="text" id="searchword"style="height:38%; width:20%; border-color: black; background-color:#FFFFFF;"/>
-	<input type="button" id="search" value="검  색" style="height:41%; border-color: black; background-color:#FFFFFF;"/>
+		<form id="search" method="post">
+			<input type="text" id="searchword"style="height:38%; width:20%; border-color: black; background-color:#FFFFFF;"/>
+			<input type="submit" value="검  색" style="height:41%; border-color: black; background-color:#FFFFFF;"/>
+		</form>
 	</div>
 </div>
 <div align="center" id="logout" style="height:10%; width:15%;float:left;">

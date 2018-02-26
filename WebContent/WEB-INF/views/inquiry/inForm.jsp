@@ -43,8 +43,10 @@ top:5px;
 <!-- 검색창 -->
 <div align="center" style="height:10%; width:61%; float:left;">
 	<div style="margin-top:2%">
-	<input type="text" id="searchword"style="height:38%; width:20%; border-color: black; background-color:#FFFFFF;"/>
-	<input type="button" id="search" value="검  색" style="height:41%; border-color: black; background-color:#FFFFFF;"/>
+		<form id="search" method="post">
+			<input type="text" id="searchword"style="height:38%; width:20%; border-color: black; background-color:#FFFFFF;"/>
+			<input type="submit" value="검  색" style="height:41%; border-color: black; background-color:#FFFFFF;"/>
+		</form>
 	</div>
 </div>
 <div style="height:10%; width:12%; float:left;">

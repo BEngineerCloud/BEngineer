@@ -30,18 +30,24 @@ public class InquiryBean {
 	private SqlSessionTemplate sqlSession = null;
 	// member 문의내역
 	@RequestMapping("inList.do")
-	public String list(Model model,HttpSession session,MemberDTO dto,String id) {
+	public String list(Model model,HttpSession session,MemberDTO dto) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트 
 		List list = sqlSession.selectList("board.inList",dto.getId());
 		model.addAttribute("inList",list);
 		session.setAttribute("Id", dto.getId());
+		String id = (String)session.getAttribute("id");
+		List font = sqlSession.selectList("bengineer.font", id);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "/inquiry/inList";
 	}
 	// member 문의하기
 	@RequestMapping("inForm.do")
-	public String writeForm(HttpSession session,InquiryDTO dto,String Id) { 
+	public String writeForm(HttpSession session,InquiryDTO dto, Model model) { 
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		session.setAttribute("Id", dto.getId());
+		String id = (String)session.getAttribute("id");
+		List font = sqlSession.selectList("bengineer.font", id);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "/inquiry/inForm";
 	}
 	// member 문의완료
@@ -67,6 +73,9 @@ public class InquiryBean {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		InquiryDTO re = (InquiryDTO)sqlSession.selectOne("board.reply",num);
 		model.addAttribute("re",re);
+		String id = (String)session.getAttribute("id");
+		List font = sqlSession.selectList("bengineer.font", id);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "/inquiry/inRead";
 	}
 	//manager 전체문의목록

@@ -104,11 +104,17 @@ public class FileBean {
 				return "beFiles/alert";
 			}
 		}
-		List font = sqlSession.selectList("bengineer.font");	// ,email);
+		List font = sqlSession.selectList("bengineer.font", owner);
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		List filelist = sqlSession.selectList("bengineer.getfiles", folder_ref);
 		sqlSession.update("bengineer.hit", folder);
-		sqlSession.update("bengineer.setsize", folder);
+		if(folder == 0) {
+			dto.setOwner(owner);
+			dto.setNum(folder_ref);
+			sqlSession.update("bengineer.setallsize", dto);
+		}else {
+			sqlSession.update("bengineer.setsize", folder_ref);
+		}
 		model.addAttribute("list", filelist);
 		List folderaddress = new ArrayList(); // 폴더 경로를 하나씩 저장하기 위한 리스트
 		List orgaddress = new ArrayList(); // 폴더주소에 저장된 각각의 폴더에 대한 실제 경로를 하나씩 저장하기 위한 리스트
@@ -219,7 +225,7 @@ public class FileBean {
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
 			model.addAttribute("space", viewSpace(id));
-			List font = sqlSession.selectList("bengineer.font");	// ,email);
+			List font = sqlSession.selectList("bengineer.font", id);
 	 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 	 		model.addAttribute("write", false); // 해당 폴더의 권한 확인용
 			return "beFiles/beSharedList";
@@ -296,6 +302,8 @@ public class FileBean {
 			model.addAttribute("folder_ref", folder);
 			model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
 			model.addAttribute("space", viewSpace(id));
+			List font = sqlSession.selectList("bengineer.font", id);
+	 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 			return "beFiles/beSharedList";
 		}
 	}
@@ -315,6 +323,8 @@ public class FileBean {
 			model.addAttribute("folder_ref", folder);
 			model.addAttribute("write", false);
 			model.addAttribute("space", viewSpace(id));
+			List font = sqlSession.selectList("bengineer.font", id);
+	 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 			return "beFiles/beTrashcan";
 		}else {
 			List address_ref = getTrashAddr(folder);
@@ -351,7 +361,7 @@ public class FileBean {
 			model.addAttribute("orgaddress", orgaddress);
 			model.addAttribute("folder_ref", folder);
 			model.addAttribute("space", viewSpace(id));
-			List font = sqlSession.selectList("bengineer.font");	// ,email);
+			List font = sqlSession.selectList("bengineer.font", id);
 	 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 			return "beFiles/beTrashcan";
 		}
@@ -384,6 +394,8 @@ public class FileBean {
 		model.addAttribute("folder_ref", -weeks);
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		model.addAttribute("space", viewSpace(owner));
+		List font = sqlSession.selectList("bengineer.font", owner);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "beFiles/beList";
 	}
 	@RequestMapping(value="fileupload.do", method=RequestMethod.POST) // 업로드 페이지
@@ -2231,11 +2243,12 @@ public class FileBean {
 			r.eval("png('pie.png')");
 			r.eval("name <- c('사용중', '사용가능')");
 			if(usingspace < 1024 * 1024 * 1024 * 0.1) {
-				usingspace /= 1024;
 				r.eval("space <- c(" + usingspace + ", " + (space - usingspace) + ")");
+				r.eval("size <- c('', '')");
 				r.eval("size[1] <- paste('\\n\\r(', round(space[1] / 1024 / 1024, digits = 2), 'MB)', sep = '')");
 			}else {
 				r.eval("space <- c(" + usingspace + ", " + (space - usingspace) + ")");
+				r.eval("size <- c('', '')");
 				r.eval("size[1] <- paste('\\n\\r(', round(space[1] / 1024 / 1024 / 1024, digits = 2), 'GB)', sep = '')");
 			}
 			r.eval("size[2] <- paste('\\n\\r(', round(space[2] / 1024 / 1024 / 1024, digits = 2), 'GB)', sep = '')");

@@ -1061,7 +1061,7 @@ public class FileBean2 {
 			}
 		}
 		if(!owner.equals(dto.getOwner())) {
-			model.addAttribute("alert", "�옒紐삳맂 �젒洹쇱엯�땲�떎.");
+			model.addAttribute("alert", "잘못된 접근입니다.");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1076,6 +1076,8 @@ public class FileBean2 {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", folder_ref);
 		model.addAttribute("folder",folder); // 상위폴더로 이동하기 위해
+		List font = sqlSession.selectList("bengineer.font", owner);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 
 		model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
 		return "beFiles/beImagePreview";
@@ -1144,10 +1146,12 @@ public class FileBean2 {
 		model.addAttribute("orgaddress", orgaddress);
 		model.addAttribute("folder_ref", -5);
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
+		List font = sqlSession.selectList("bengineer.font", owner);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "beFiles/beList";
 	}
  	@RequestMapping("searchForm.do")
-    public String searchForm(HttpSession session, String result,Model model,String filename) {
+    public String searchForm(HttpSession session, String result,Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";}
 		FileBean filebean = new FileBean();
 		if(!filebean.checkSpace(session, sqlSession)) {
@@ -1161,8 +1165,6 @@ public class FileBean2 {
        int count = StringUtils.countOccurrencesOf(result,",");   // result에 ','갯수
        int comma[] = new int[count];	// ',' 갯수만큼
        String[] str = new String[count];
-		FileDTO dto = new FileDTO();
-		dto.setFilename(filename);
        if(result.length() > 0){
           int l = 0 ;
           for(i=0;i<count;i++) {
@@ -1178,7 +1180,10 @@ public class FileBean2 {
        }
       if(count>0) { // 검색어가 있을때
  	  java.util.List<String> list = new ArrayList<String>(Arrays.asList(str));
- 	  List filelist = sqlSession.selectList("bengineer.searchfiles", list);
+ 	  ListDTO ldto = new ListDTO();
+ 	  ldto.setList(list);
+ 	  ldto.setString(id);
+ 	  List filelist = sqlSession.selectList("bengineer.searchfiles", ldto);
 		List folderaddress = new ArrayList();
 		List orgaddress = new ArrayList();
 		folderaddress.add("검색결과");
@@ -1186,10 +1191,20 @@ public class FileBean2 {
  	  model.addAttribute("list",filelist);
 		model.addAttribute("folderaddress", folderaddress);
 		model.addAttribute("orgaddress", orgaddress);
-		model.addAttribute("folder_ref", -5);
-		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
-		model.addAttribute("space", filebean.viewSpace(id, sqlSession));
+      }else {
+  		List folderaddress = new ArrayList();
+  		List orgaddress = new ArrayList();
+  		folderaddress.add("검색결과가 없습니다.");
+  		orgaddress.add(null);
+   	  model.addAttribute("list", null);
+  		model.addAttribute("folderaddress", folderaddress);
+  		model.addAttribute("orgaddress", orgaddress);
       }
+      model.addAttribute("folder_ref", -5);
+      model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
+      model.addAttribute("space", filebean.viewSpace(id, sqlSession));
+      List font = sqlSession.selectList("bengineer.font", id);
+      model.addAttribute("font",font);	// 검색에 필요한 파일목록들
  	  return "beFiles/beList";
 
  	}
@@ -1271,13 +1286,13 @@ public class FileBean2 {
 			return false;
 		}
 		if(originPath==null) {
-			throw new IllegalArgumentException("orginPath�뿉 留욌뒗 �뜲�씠�꽣 �삎�떇�쓣 �꽔�뼱二쇱꽭�슂.");
+			throw new IllegalArgumentException("orginPath에 맞는 데이터 형식을 넣어주세요.");
 		}
 		if(movePath==null) {
-			throw new IllegalArgumentException("orginPath�뿉 留욌뒗 �뜲�씠�꽣 �삎�떇�쓣 �꽔�뼱二쇱꽭�슂.");
+			throw new IllegalArgumentException("orginPath에 맞는 데이터 형식을 넣어주세요.");
 		}
 		if(!Files.exists(originPath, new LinkOption[] {})) {
-			throw new IllegalArgumentException("orginFile�씠 議댁옱�븯吏� �븡�뒿�땲�떎."+originPath.toString());
+			throw new IllegalArgumentException("orginFile이 존재하지 않습니다."+originPath.toString());
 			
 		}
 		try {
@@ -1293,7 +1308,7 @@ public class FileBean2 {
 		if(Files.exists(movePath,new LinkOption[] {})) {
 			return true;
 		}else {
-			System.out.println("�뙆�씪�씠�룞�뿉 �떎�뙣�뻽�뒿�땲�떎.");
+			System.out.println("파일복사에 실패했습니다.");
 			return false;
 		}	
 	}

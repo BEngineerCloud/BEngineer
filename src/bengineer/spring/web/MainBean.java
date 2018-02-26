@@ -48,7 +48,7 @@ public class MainBean extends Thread{
 			model.addAttribute("content", returnWC2(id));
 			FileBean filebean = new FileBean();
 			model.addAttribute("space", filebean.viewSpace(id, sqlSession));
-			List font = sqlSession.selectList("bengineer.font");	// ,email);
+			List font = sqlSession.selectList("bengineer.font", id);
 	 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 			return "beMain";
 		}
@@ -133,6 +133,8 @@ public class MainBean extends Thread{
 		model.addAttribute("movefile_FRef",0);
 		FileBean filebean = new FileBean();
 		model.addAttribute("space", filebean.viewSpace(id, sqlSession));
+		List font = sqlSession.selectList("bengineer.font", id);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "beFiles/beList";
 	}
 	public static boolean loginCheck(HttpSession session) { // 로그인 체크용 메서드, 세션에 nickname 세션이 정상적으로 있지 않을 경우 true  

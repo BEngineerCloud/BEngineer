@@ -215,14 +215,15 @@
 	</select>
 	
 	<!-- 초성 검색에 필요한 파일 목록들  / parameterType="string" where email=${email}-->
-	<select id="font" resultType="fileDTO">
-		select * from befilelist
+	<select id="font" resultType="fileDTO" parameterType="string">
+		select * from befilelist where owner = #{owner} and (filetype != 'dir' or filename = orgname)
 	</select>
-	<select id="searchfiles" parameterType="list" resultType="fileDTO">
+	<select id="searchfiles" parameterType="listDTO" resultType="fileDTO">
 		select * from BEfilelist where filename in
 		<foreach item="item" collection="list" open="(" separator="," close=")">
 			#{item}
 		</foreach>
+		and owner = #{string}
 	</select>
 	<select id="shortcut" resultType="fileDTO" parameterType="fileDTO">
 		<![CDATA[
@@ -260,6 +261,9 @@
 		select max(backupdate) from BEbackuplist where owner = #{owner}
 	</select>
 	<update id="setsize" parameterType="int">
-		update BEfilelist set filesize = (select sum(filesize) from BEfilelist where folder_ref = #{num}) where num = #{num}
+		update BEfilelist set filesize = (select sum(filesize) from BEfilelist where folder_ref = #{num} and important != 1) where num = #{num}
+	</update>
+	<update id="setallsize" parameterType="fileDTO">
+		update BEfilelist set filesize = (select sum(filesize) from BEfilelist where filetype != 'dir' and important != 1 and owner = #{owner}) where num = #{num}
 	</update>
 </mapper>

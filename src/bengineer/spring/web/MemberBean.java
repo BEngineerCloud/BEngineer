@@ -72,6 +72,9 @@ public class MemberBean {
 		List list = sqlSession.selectList("board.List");
 		model.addAttribute("list",list);
 		session.setAttribute("Id", dto.getId());
+		String id = (String)session.getAttribute("id");
+		List font = sqlSession.selectList("bengineer.font", id);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "beMember/beboard";
 	}
 	
@@ -81,6 +84,9 @@ public class MemberBean {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
 		BoardDTO con = (BoardDTO)sqlSession.selectOne("board.read",num);	
 		model.addAttribute("con",con);
+		String id = (String)session.getAttribute("id");
+		List font = sqlSession.selectList("bengineer.font", id);
+ 		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "beMember/beread";
 	}
 	
