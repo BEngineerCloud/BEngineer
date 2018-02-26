@@ -123,7 +123,7 @@ public class MemberBean {
 		String authcode="";
 		authcode = filebean.makecode(8);
 		
-		sendEmail(email,authcode); //인증코드를 포함한 링크를 메일로 보내기
+		sendEmail(email,authcode,"메일인증"); //인증코드를 포함한 링크를 메일로 보내기
 		
 		//authcode와 email 세션 설정 후 데이터로 넘겨주기
 		session.setAttribute("authcode", authcode); 
@@ -148,15 +148,24 @@ public class MemberBean {
 		return "beMember/beConfirmemail";
 	}
 	
-	public void sendEmail(String email, String authcode) { //이메일 보내기
+	public void sendEmail(String email, String authcode, String flag) { //이메일 보내기
 		String username = "loser4kku@gmail.com"; //메일 보낼 사용자 아이디
 		String password = "bengineer"; //메일 보낼 사용자 비밀번호
 		String host = "smtp.gmail.com"; //메일 서버
-		String subject = "BEngineer 메일인증링크"; //메일 제목
+		String subject = ""; //메일 제목
 		String fromName = "BEngineer 관리자"; // 보낼사람 이름
 		String from = "loser4kku@gmail.com"; //보낼사람 이메일
 		String to1 = email; //받는사람 이메일
-		String content = "http://192.168.0.153/BEngineer/beMember/beConfirmemail.do?authcode="+authcode; //내용
+		String content = ""; //내용
+		
+		if(flag.equals("메일인증")) { //메일인증일 시
+			subject = "BEngineer 메일인증링크"; 
+			content = "http://192.168.0.153/BEngineer/beMember/beConfirmemail.do?authcode="+authcode; //내용
+		}
+		else if(flag.equals("임시비밀번호")) { //임시비밀번호 발급일 시
+			subject = "BEngineer 임시비밀번호 발급";
+			content = "로그인 후 꼭 정보를 수정해주세요. [ "+authcode+" ]"; //내용
+		}
 		
 		try {
 			

@@ -98,4 +98,39 @@ public class LoginBean {
 		
 		return "beMember/beJoinmemberpro";
 	}	
+	
+	//비밀번호 찾기
+	@RequestMapping("beSearchpw.do")
+	public String beSearchpw() { return "beMember/beSearchpw"; }
+		
+	//회원정보 받아서 임시비밀번호를 메일로 보냄
+	@RequestMapping("beSearchpwpro.do")
+	public String beSearchpwpro(MemberDTO dto, Model model) {
+			
+		//FileBean에 makecode함수를 사용해야하는데 makecode함수에서 sql문을 사용하기 때문에 FileBean객체를 생성한 후 sqlSession도 설정해준다.
+		FileBean filebean = new FileBean();
+		filebean.setSqlSession(sqlSession);
+		
+		MemberBean memberbean = new MemberBean();
+		
+		Integer checkPw = (Integer)sqlSession.selectOne("bengineer.beSearchpw",dto); //받아온 메일아이디와 닉네임 정보로 회원이 존재하는 지 검사
+			
+		//회원이 존재하면 임시비밀번호를 생성한 후 메일로 보내고 sql update
+		if(checkPw>0) { 
+			String pw = "";
+			pw = filebean.makecode(10);
+			memberbean.sendEmail(dto.getEmail(), pw, "임시비밀번호");
+				
+			dto.setPw(pw);
+			sqlSession.update("bengineer.beUpdatepw",dto);
+				
+			model.addAttribute("alert", "임시비밀번호를 메일로 보냈습니다.");
+			model.addAttribute("location", "\"/BEngineer/beMember/beLogin.do\"");
+		}else {
+			model.addAttribute("alert", "일치하는 회원정보가 없습니다.");
+			model.addAttribute("location", "history.go(-1)");
+		}
+		
+		return "beFiles/alert"; 
+	}
 }

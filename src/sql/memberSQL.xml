@@ -93,4 +93,14 @@
 	<select id="checkchmod" resultType="int" parameterType="string">  
 		select chmod from bemember where id=#{id} and term > sysdate
 	</select>
+	
+	<!-- 비밀번호 찾기 -->
+	<select id="beSearchpw" resultType="int" parameterType="MemberDTO">
+		select count(*) from bemember where email=#{email} and nickname=#{nickname}
+	</select>
+	
+	<!-- 비밀번호 update -->
+	<update id="beUpdatepw"  parameterType="MemberDTO">
+		update bemember set pw = #{pw} where email=#{email} and nickname=#{nickname}
+	</update>
 </mapper>

@@ -129,7 +129,8 @@
 					
 						<div style="width:28%; float:left; margin-left:36%; text-align:left;">
 							<input type=checkbox id="emailSave" name="emailSave" value="T" style="border:none;"/><font size="2">메일아이디 기억하기</font>
-							<font size="2" style="margin-left: 36%"><a href="/BEngineer/beMember/beJoinmember.do" style="text-decoration:none">회원가입</a></font>
+							<font size="2" style="margin-left: 5%"><a href="/BEngineer/beMember/beSearchpw.do" style="text-decoration:none">비밀번호 찾기/</a></font>
+							<font size="2" ><a href="/BEngineer/beMember/beJoinmember.do" style="text-decoration:none">회원가입</a></font>
 						</div>
 					</div>
 				</div>
