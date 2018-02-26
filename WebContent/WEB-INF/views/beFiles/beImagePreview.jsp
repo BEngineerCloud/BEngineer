@@ -13,6 +13,7 @@
 	<script src='/BEngineer/resources/pagectrl/previewctrl.js' type='text/javascript'></script>
 	<script src='/BEngineer/resources/formjs/upload.js' type='text/javascript'></script>
 	<script src='/BEngineer/resources/formjs/multidown.js' type='text/javascript'></script>
+	<script src='/BEngineer/resources/formjs/folderdown.js' type='text/javascript'></script>
 	
 	<!-- 다수 파일 복사 스크립트 -->
 	<script src='/BEngineer/resources/formjs/multicopy.js' type='text/javascript'></script>
@@ -197,17 +198,6 @@
 			
 			<br />
 			
-			<!-- 단일 지우기 폼 -->
-			<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
-				<form id="throwatrashform" method="post" action="/BEngineer/beFiles/throwToTrashcan.do">
-					<input type="hidden" name="file_ref" />
-					<input type="hidden" name="folder" value="${folder_ref }" />
-					<input type="hidden" name="submitthrow" value="지우기"/>
-				</form>
-			</div>
-			
-			<br />
-			
 			<!-- 폴더명 변경 폼 -->
 			<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
 				<form id="changenameform" method="post">
@@ -215,6 +205,17 @@
 					<input type="hidden" name="ref" />
 					<input type="hidden" name="name" />
 					<input type="hidden" name="submitchangename" />
+				</form>
+			</div>
+			
+			<br />
+			
+			<!-- 단일 지우기 폼 -->
+			<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+				<form id="throwatrashform" method="post" action="/BEngineer/beFiles/throwToTrashcan.do">
+					<input type="hidden" name="file_ref" />
+					<input type="hidden" name="folder" value="${folder_ref }" />
+					<input type="hidden" name="submitthrow" value="지우기"/>
 				</form>
 			</div>
 			
@@ -282,6 +283,16 @@
 						</div>
 					</c:if>
 				</form>	
+			</div>
+			
+			<br />
+			
+			<!-- 폴더 다운로드 폼 -->
+			<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+				<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
+					<input type="hidden" name="file_ref" />
+					<input type="hidden" name="submitfolderdown" value="다운로드"/>
+				</form>
 			</div>
 			
 			<br />

@@ -177,6 +177,14 @@ var folder_ref = '${folder_ref}';
 		</form>	
 	</div>
 	<br />
+	<!-- 폴더 다운로드 폼 -->
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
+			<input type="hidden" name="file_ref" />
+			<input type="hidden" name="submitfolderdown" value="다운로드"/>
+		</form>
+	</div>
+	<br />
 	<!-- 공유중인 사람 확인 폼 -->
 	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
 		<form id="sharecheckform" action="/BEngineer/beFiles/lookSharedPeople.do" method="post">
@@ -191,14 +199,6 @@ var folder_ref = '${folder_ref}';
 			<input type="hidden" name="file_ref" />
 			<input type="hidden" name="folder" value="${folder_ref }"/>
 			<input type="hidden" name="submitunshare" value="공유 해제하기"/>
-		</form>
-	</div>
-	<br />
-	<!-- 폴더 다운로드 폼 -->
-	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
-		<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
-			<input type="hidden" name="file_ref" />
-			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
 		</form>
 	</div>
 	<br />

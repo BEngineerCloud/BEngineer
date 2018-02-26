@@ -47,6 +47,7 @@ $(function(){
 			initFiles();
 			selectFile(ref);
 			setChangeName(ref, type);
+			setFolderDown(ref);
 			setShareCheck(ref);
 			setShare(ref);
 			setUnshare(ref);
@@ -91,6 +92,7 @@ function hinder(){ // 모든 폼 초기화 함수
 	initChangeName();
 	initShare();
 	initShareCheck();
+	initFolderDown();
 	initUnshare();
 	initChangeOwner();
 	initThrowToTrashcan();

@@ -4,14 +4,10 @@ function initFolderDown(){
 		form.submitfolderdown.type = "hidden";
 	}
 }
-function setFolderDown(num, type){
+function setFolderDown(num){
 	var form = document.getElementById("folderdownform");
 	if(form != null){
-		if(type.value == "dir"){
-			form.file_ref.value = num;
-			form.submitfolderdown.type = "submit";
-		}else{
-			initFolderDown();
-		}
+		form.file_ref.value = num;
+		form.submitfolderdown.type = "submit";
 	}
 }

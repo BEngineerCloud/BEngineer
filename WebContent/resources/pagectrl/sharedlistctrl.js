@@ -49,7 +49,7 @@ $(function(){
 			selectFile(ref);
 			setRewriteText(ref);
 			setChangeName(ref, type);
-			setFolderDown(ref, type);
+			setFolderDown(ref);
 			setShareCheck(ref);
 			setUnshare(ref);
 			setCopy(ref);

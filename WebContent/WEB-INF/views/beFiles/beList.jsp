@@ -200,6 +200,14 @@
 		</form>	
 	</div>
 	<br />
+	<!-- 폴더 다운로드 폼 -->
+	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
+		<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
+			<input type="hidden" name="file_ref" />
+			<input type="hidden" name="submitfolderdown" value="다운로드"/>
+		</form>
+	</div>
+	<br />
 	<!-- 공유 폼 -->
 	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
 		<div>
@@ -245,14 +253,6 @@
 				<input type="hidden" name="submitunshare" value="공유 해제하기"/>
 			</form>
 		</div>
-	</div>
-	<br />
-	<!-- 폴더 다운로드 폼 -->
-	<div style="height:relative; width:100%; margin:0; padding:0; capping:0; float:left;">
-		<form id="folderdownform" method="post" action="/BEngineer/beFiles/beDownload.do">
-			<input type="hidden" name="file_ref" />
-			<input type="hidden" name="submitfolderdown" value="폴더 다운로드"/>
-		</form>
 	</div>
 	<br />
 	<!-- 주인 바꾸기 폼 -->
