@@ -50,6 +50,7 @@ public class MemberBean {
 		memberDTO.setPw(pw);
 		sqlSession.update("bengineer.beUpdatenickname", memberDTO);
 		session.setAttribute("nickname", memberDTO.getNickname());
+		sqlSession.update("bengineer.updatefilename", memberDTO);
 		
 		return "beMember/beAddinfopro";
 	}

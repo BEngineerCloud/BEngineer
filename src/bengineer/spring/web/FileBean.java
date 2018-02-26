@@ -104,6 +104,13 @@ public class FileBean {
 				return "beFiles/alert";
 			}
 		}
+		dto = (FileDTO)address_ref.get(0);
+		if(dto.getImportant() < 0 && dto.getOrgname().equals("image")) {
+			dto = (FileDTO)address_ref.get(1);
+			if(!dto.getOrgname().equals(dto.getFilename())) {
+				return "redirect:/beFiles/beImagePreview.do?folder=" + folder_ref;
+			}
+		}
 		List font = sqlSession.selectList("bengineer.font", owner);
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		List filelist = sqlSession.selectList("bengineer.getfiles", folder_ref);

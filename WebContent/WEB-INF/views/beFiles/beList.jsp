@@ -310,6 +310,7 @@
 	<c:if test="${gra != null && gra !=''}">
 		각 파일/폴더 용량
 		<img src="data:image/png;base64,${gra}" style="height:50%; width:80%;" />
+		<br />
 	</c:if>
 	<c:if test="${space != null && space !=''}">
 		전체 사용량

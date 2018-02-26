@@ -1148,6 +1148,7 @@ public class FileBean2 {
 		model.addAttribute("folder", 0); // 상위폴더로 이동하기 위해
 		List font = sqlSession.selectList("bengineer.font", owner);
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
+ 	    model.addAttribute("space", filebean.viewSpace(owner, sqlSession));
 		return "beFiles/beList";
 	}
  	@RequestMapping("searchForm.do")

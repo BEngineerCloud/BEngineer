@@ -141,7 +141,7 @@ function open(x, y){
 		"left": (x + 5),
 		"position": "absolute"
 	});
-	$("#button1_1").show("slow");
+	$("#button1_1").show("fast");
 }
 function reopen(){
 	$("#button1_1").css("width", "200").show("fast");

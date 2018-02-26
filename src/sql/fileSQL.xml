@@ -266,4 +266,7 @@
 	<update id="setallsize" parameterType="fileDTO">
 		update BEfilelist set filesize = (select sum(filesize) from BEfilelist where filetype != 'dir' and important != 1 and owner = #{owner}) where num = #{num}
 	</update>
+	<update id="updatefilename" parameterType="memberDTO">
+		update BEfilelist set filename = #{nickname} where owner = #{id} and folder_ref = 0
+	</update>
 </mapper>
