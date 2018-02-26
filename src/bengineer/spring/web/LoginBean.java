@@ -24,8 +24,12 @@ public class LoginBean {
 		
 		//받아온 메일 아이디로 멤버가 존재하는 지 체크
 		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email);
+		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember", email);
+		String view = "beFiles/alert";
 
-		if(check==1) { //일치하는 멤버가 존재할 시
+		if(impose==1) {
+			view="redirect:/imposeMember.do";
+		}else if(check==1) { //일치하는 멤버가 존재할 시
 			String pw = sqlSession.selectOne("bengineer.beSelectpw",email); //비밀번호를 받아옴.
 			if(pw.equals(dto.getPw())) { //받아온 비밀번호와 멤버의 비밀번호가 일치할 시
 				dto = sqlSession.selectOne("bengineer.beSelectmember2",email); //멤버DTO를 받아옴.
@@ -48,7 +52,7 @@ public class LoginBean {
 			model.addAttribute("location", "history.go(-1)");
 		}
 		
-		return "beFiles/alert";
+		return view;
 	}
 	
 	@RequestMapping("beRequestprofile.do") //네이버아이디로그인 시 네이버에서 받아온 회원정보를 전달

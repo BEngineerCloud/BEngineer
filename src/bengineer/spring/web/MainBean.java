@@ -63,7 +63,7 @@ public class MainBean extends Thread{
 		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember", email);
 		String view= "redirect:/beMain.do"; //기본은 beMain.do로 이동
 		if(impose==1) {
-			view="redirect:/beMember/imposeMember.do";
+			view="redirect:/imposeMember.do";
 		}else {
 			if(check!=1) { //일치하는 멤버가 없을 시
 				sqlSession.insert("bengineer.beInsertmember", dto); //네이버회원 정보를 insert
@@ -94,7 +94,9 @@ public class MainBean extends Thread{
 	}
 	
 	@RequestMapping("imposeMember.do") // 메인페이지
-	public String imposeMember() {return "beMember/imposeMember";}
+	public String imposeMember() {
+		return "beMember/imposeMember";
+	}
 	
 	@RequestMapping("beLogout.do") //로그아웃 페이지 이동
 	public String beLogout(HttpSession session) {
