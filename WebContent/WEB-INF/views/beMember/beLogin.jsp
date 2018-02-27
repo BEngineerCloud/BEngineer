@@ -128,7 +128,7 @@
 						<input type="password" name="pw" id="pw" style="border-color:black; width:28%; height:20%"  value="비밀번호"><br/>
 					
 						<div style="width:28%; float:left; margin-left:36%; text-align:left;">
-							<input type=checkbox id="emailSave" name="emailSave" value="T" style="border:none;"/><font size="2">메일아이디 기억하기</font>
+							<input type=checkbox id="emailSave" name="emailSave" value="T" style="border:none;"/><font size="2">아이디 기억하기</font>
 							<font size="2" style="margin-left: 5%"><a href="/BEngineer/beMember/beSearchpw.do" style="text-decoration:none">비밀번호 찾기/</a></font>
 							<font size="2" ><a href="/BEngineer/beMember/beJoinmember.do" style="text-decoration:none">회원가입</a></font>
 						</div>

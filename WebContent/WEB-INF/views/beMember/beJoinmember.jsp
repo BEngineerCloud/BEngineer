@@ -90,7 +90,7 @@
 						required:"메일아이디 입력하세요."
 					},
 					pw:{
-						required:"비밀번호를 입력하세요."
+						required:"영문자,숫자,특수문자 조합으로 8~20자리 사이로 입력해주세요."
 					},
 					confirmPw:{
 						required:"",
