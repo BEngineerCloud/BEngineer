@@ -459,7 +459,10 @@ public class FileBean {
 			}else if(chmod == 3) {
 				space *= 30L;
 			}
-			long usingspace = sqlSession.selectOne("bengineer.getusingspace", id);
+			Long usingspace = sqlSession.selectOne("bengineer.getusingspace", id);
+			if(usingspace == null) {
+				usingspace = 0L;
+			}
 			// 기본폴더에 올릴 수 없는 파일일 때
 			if(fileaddress.startsWith(owner + "/image/") && !contentType.equals("image")) {
 				typech = false;
@@ -885,44 +888,46 @@ public class FileBean {
 	public String shareFile(HttpSession session, Model model, int ref, String enddate, int rw) throws Exception {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로가게 함
 		}
 		String owner = (String)session.getAttribute("id");
-		FileDTO dto = sqlSession.selectOne("bengineer.getaddr", ref);
+		FileDTO dto = sqlSession.selectOne("bengineer.getaddr", ref); // 파일정보 받아오기
 		if(!owner.equals(dto.getOwner())) { // 본인의 파일이 아닐 시
-			return setGoBack(model, "본인의 파일만 공유할 수 있습니다.");
+			return setGoBack(model, "본인의 파일만 공유할 수 있습니다."); // 메시지를 띄우고 페이지를 뒤로가게 함
 		}
 		KeyDTO kdto = new KeyDTO();
 		kdto.setFilenum(ref);
 		kdto.setEnddate(Timestamp.valueOf(enddate + " 23:59:59")); // 입력된 날짜까지 유효하도록 시간 설정
 		kdto.setRw(rw);
-		String keycheck = (String)sqlSession.selectOne("bengineer.keycheck", kdto);
-		if(keycheck == null) {
-			kdto.setShare_key(makecode(20));
-			sqlSession.insert("bengineer.insertkey", kdto);
+		String keycheck = (String)sqlSession.selectOne("bengineer.keycheck", kdto); // 동일 조건의 공유 키가 있는지 확인
+		if(keycheck == null) { // 동일 조건의 공유키가 없을 때
+			kdto.setShare_key(makecode(20)); // 공유 키 생성
+			sqlSession.insert("bengineer.insertkey", kdto); // 키 등록
 			keycheck = kdto.getShare_key();
 		}
 		InetAddress local = InetAddress.getLocalHost();
-		return setGoBack(model, "공유 URL : " + local.getHostAddress() + "/BEngineer/beFiles/getSharedFile.do?share_key=" + keycheck);
+		//메시지를 띄우고 페이지를 뒤로가게 함
+		String result = setGoBack(model, "공유 URL : " + local.getHostAddress() + "/BEngineer/beFiles/getSharedFile.do?share_key=" + keycheck);
+		return result;
 	}
 	@RequestMapping("getSharedFile.do") // 공유파일 받기 페이지
 	public String getSharedFile(HttpSession session, Model model, String share_key) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로가게 함
 		}
 		String id = (String)session.getAttribute("id");
 		KeyDTO kdto = (KeyDTO)sqlSession.selectOne("bengineer.open", share_key); // 입력된 공유키와 일치하는 정보 가져오기
 		int filenum = kdto.getFilenum();
 		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
 		if(id.equals(dto.getOwner())) { // 본인의 파일일 때
-			return setGoBack(model, "본인의 파일입니다.");
+			return setGoBack(model, "본인의 파일입니다."); // 메시지를 띄우고 페이지를 뒤로가게 함
 		}
 		if(kdto != null) { // 입력된 공유 키에 일치하는 정보가 있을 때
 			ShareDTO sdto = new ShareDTO();
 			sdto.setId(id);
 			sdto.setShare_key(share_key);
-			sqlSession.insert("bengineer.getsharedfile", sdto);
+			sqlSession.insert("bengineer.getsharedfile", sdto); // 공유정보 등록
 			return setGoBack(model, "공유되었습니다.");
 		}else { // 입력된 공유키와 일치하는 정보가 없을 때
 			return setGoBack(model, "유효하지 않은 키입니다.");
@@ -2219,7 +2224,10 @@ public class FileBean {
 		}else if(chmod == 3) {
 			space *= 30L;
 		}
-		long usingspace = sqlSession.selectOne("bengineer.getusingspace", id);
+		Long usingspace = sqlSession.selectOne("bengineer.getusingspace", id);
+		if(usingspace == null) {
+			usingspace = 0L;
+		}
 		if(space > usingspace) {result = true;}
 		return result;
 	}

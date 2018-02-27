@@ -207,7 +207,13 @@
 				</div>
 			</div>
 			
-			<div align="center" style="height:15%; width:100%; float:left; background-color:#5f7f89;"></div>
+			<div align="center" style="height:15%; width:100%; float:left; background-color:#5f7f89;">
+				<center>
+					<a href="/BEngineer/inquiry/inList.do?id=${sessionScope.id}" style="text-decoration:none">문의내역</a>
+        			<a href="/BEngineer/beMember/beboard.do?id=${sessionScope.id}" style="text-decoration:none">공지사항</a>
+        			<a href="/BEngineer/beMember/upgrade.do?id=${sessionScope.id}" style="text-decoration:none">유료전환</a>
+     			</center>
+     		</div>
 		</form>
 	</body>
 </html>

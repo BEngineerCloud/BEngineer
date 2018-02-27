@@ -16,6 +16,7 @@ public class DocumenttypeFilter {
 			filterings.add(".pptx");
 			filterings.add(".pdf");
 			filterings.add(".xps");
+			filterings.add(".hwp");
 		}
 	}
 	public void addFilterings(String filtering) {filterings.add(filtering);}

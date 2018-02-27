@@ -177,7 +177,7 @@ public class MainBean extends Thread{
 			r.eval("Fhit <- " + Fhit);
 			r.eval("table <- as.table(Fhit)"); // 파일 클릭 수 벡터를 표로 변환
 			r.eval("names(table) <- Fname"); // 변환한 표의 컬럼에 파일이름 입력
-			r.eval("my_cloud <- wordcloud2(table, size = 1.1, color = 'random-light')"); // 워드클라우드 생성
+			r.eval("my_cloud <- wordcloud2(table, size = 100 / max(Fhit), color = 'random-light')"); // 워드클라우드 생성
 			r.eval("Sys.sleep(0.5)"); // 생성에 시간이 걸릴것을 고려하여 잠깐 대기
 			r.eval("my_path <- renderTags(my_cloud)");
 			retStr = r.eval("my_path$html").asString();
