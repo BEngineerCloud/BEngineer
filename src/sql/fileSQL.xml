@@ -269,4 +269,14 @@
 	<update id="updatefilename" parameterType="memberDTO">
 		update BEfilelist set filename = #{nickname} where owner = #{id} and folder_ref = 0
 	</update>
+	
+	<!-- 파일목록삭제 -->
+	<delete id="deleteFiles" parameterType="string">
+		delete from BEfilelist where owner = #{id}
+	</delete>
+	
+	<!-- 파일백업삭제 -->
+	<delete id="deleteBackupFiles" parameterType="string">
+		delete from BEbackuplist where owner = #{id}
+	</delete>
 </mapper>

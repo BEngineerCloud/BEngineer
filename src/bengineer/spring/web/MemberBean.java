@@ -1,5 +1,7 @@
 package bengineer.spring.web;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
@@ -11,6 +13,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -150,7 +153,20 @@ public class MemberBean {
 	
 	@RequestMapping(value="beDeletemember.do") 
 	public String beDeletemember(Model model, HttpSession session, String email) {
+		String id = (String)session.getAttribute("id");
 		sqlSession.delete("bengineer.beDeletemember",email); //회원탈퇴
+		sqlSession.delete("bengineer.deleteFiles",id); //회원 파일목록 삭제
+		sqlSession.delete("bengineer.deleteBackupFiles",id); //회원 백업파일목록 삭제
+		
+		//실제 파일이 저장되있는 경로에서 실제 파일 삭제
+		File file= new File("D://PM/BEngineer/"+id);
+		if(file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 		session.invalidate(); //세션지우기
 		
