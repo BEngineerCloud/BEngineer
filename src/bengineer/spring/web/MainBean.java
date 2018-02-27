@@ -146,12 +146,12 @@ public class MainBean extends Thread{
 	private String returnWC2(String id) {
 		RConnection r = null;
 		String retStr = "";
-		List filelist = sqlSession.selectList("bengineer.getfilesforhits", id);
+		List filelist = sqlSession.selectList("bengineer.getfilesforhits", id); // 내 파일, 공유 파일 중 클릭수가 10이상인 파일 목록 가져오기  클릭 수 내림차순  
 		if(filelist.size() == 0) {
 			return "자주 찾는 파일이 없습니다.";
 		}
-		String Fname = "c(";
-		String Fhit = "c(";
+		String Fname = "c("; // 파일 이름
+		String Fhit = "c("; // 파일 클릭 수
 		for(int i = 0; i < filelist.size(); i++) {
 			FileDTO dto = (FileDTO)filelist.get(i);
 			int hit = dto.getHitcount();
@@ -175,14 +175,13 @@ public class MainBean extends Thread{
 			r.eval("library(htmltools)");
 			r.eval("Fname <- " + Fname);
 			r.eval("Fhit <- " + Fhit);
-			r.eval("table <- as.table(Fhit)");
-			r.eval("names(table) <- Fname");
-			r.eval("my_cloud <- wordcloud2(table, size = 1.1, color = 'random-light')");
-			r.eval("Sys.sleep(0.7)");
+			r.eval("table <- as.table(Fhit)"); // 파일 클릭 수 벡터를 표로 변환
+			r.eval("names(table) <- Fname"); // 변환한 표의 컬럼에 파일이름 입력
+			r.eval("my_cloud <- wordcloud2(table, size = 1.1, color = 'random-light')"); // 워드클라우드 생성
+			r.eval("Sys.sleep(0.5)"); // 생성에 시간이 걸릴것을 고려하여 잠깐 대기
 			r.eval("my_path <- renderTags(my_cloud)");
 			retStr = r.eval("my_path$html").asString();
 		} catch (Exception e) {
-			System.out.println(e);
 			e.printStackTrace();
 		} finally {
 			r.close();

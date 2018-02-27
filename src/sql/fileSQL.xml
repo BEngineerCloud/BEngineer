@@ -12,7 +12,7 @@
 	</select>
 	<select id="getfilesforhits" resultType="fileDTO" parameterType="string">
 		<![CDATA[
-			select * from BEfilelist where important < 1 and orgname != #{owner} and hitcount > 1 and (owner = #{owner} or num in (select filenum from BEkeylist where share_key in (select share_key from BEsharelist where id = #{owner}))) order by hitcount desc
+			select * from BEfilelist where important < 1 and orgname != #{owner} and hitcount > 10 and (owner = #{owner} or num in (select filenum from BEkeylist where share_key in (select share_key from BEsharelist where id = #{owner}))) order by hitcount desc
 		]]>
 	</select>
 	<select id="gettrashes" resultType="fileDTO" parameterType="int">
