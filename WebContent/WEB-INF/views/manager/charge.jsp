@@ -4,10 +4,11 @@
 <style type="text/css">
 #back {position:relative;}
 #in2 {position:absolute;
-top:34px;
+top:40px;
 left:220px;
 }
 #in3 {position:absolute;
+top:5px;
 left:370px;
 }  
 </style>
