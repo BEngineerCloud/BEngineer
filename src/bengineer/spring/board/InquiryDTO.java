@@ -3,13 +3,13 @@ package bengineer.spring.board;
 import java.sql.Timestamp;
 
 public class InquiryDTO {
-	private int num;
-	private String title;
-	private String content;
-	private String id;
-	private String reply;
-	private Timestamp reg_date;
-	private String filename;
+	private int num;	// 문의 글번호
+	private String title;	// 제목
+	private String content;	// 내용
+	private String id;		// 작성자
+	private String reply;	// 답변
+	private Timestamp reg_date; //작성일
+	private String filename;	// 첨부파일
 	public int getNum() {
 		return num;
 	}
@@ -52,5 +52,4 @@ public class InquiryDTO {
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
-	
 }

@@ -40,7 +40,7 @@ public class ManagerBean {
 	public String loginPro(ManagerDTO dto,HttpSession session) {
 		Integer check = (Integer)sqlSession.selectOne("loginCheck",dto);
 		String view = "redirect:/manager/login.do";
-		if(check==1) {
+		if(check==1) {		// 로그인 체크, id,pw 일치시 1 반환
 			session.setAttribute("Id", dto.getId());
 			view="redirect:/manager/mMain.do";
 		}
@@ -50,7 +50,6 @@ public class ManagerBean {
 	@RequestMapping("logout.do")
 	public String logout(HttpSession session) { 
 		session.invalidate();
-		//return "manager/logout";
 		return "redirect:/manager/login.do"; 
 	}
 	
@@ -304,11 +303,11 @@ public class ManagerBean {
 		model.addAttribute("location", "\"/BEngineer/manager/mMain.do\"");
 		return "beFiles/alert";
 	}
-	
+	//서버 사용량 확인
 	@RequestMapping("charge.do")
 	public String charge(Model model) { 
-		List list = sqlSession.selectList("manager.server");
-		int all = sqlSession.selectOne("manager.all");
+		List list = sqlSession.selectList("manager.server");	// 개인별 총 사용량
+		int all = sqlSession.selectOne("manager.all");			// 전체 사용량
 		model.addAttribute("list",list);
 		model.addAttribute("all",all);
 		RConnection r = null;
@@ -316,7 +315,7 @@ public class ManagerBean {
 			r = new RConnection();
 			r.eval("png('rr.png')");
 			String Fsize ="c(";
-			for(int i=list.size()-1; i>=0;i--) {
+			for(int i=list.size()-1; i>=0;i--) {		// 내림차순
 				FileDTO file1 = (FileDTO)list.get(i);
 				if(i==0) {
 					Fsize+=file1.getFilesize()+")";
@@ -325,8 +324,8 @@ public class ManagerBean {
 				}
 			}
 			r.eval("Fsize<-"+Fsize);
-			r.eval("par(bg = 'transparent')");
-			r.eval("barplot(Fsize,col=rainbow(7),horiz=T)");
+			r.eval("par(bg = 'transparent')");		// 배경 투명색
+			r.eval("barplot(Fsize,col=rainbow(7),horiz=T)");	// 7가지색,가로막대
 			r.eval("dev.off()");
 			REXP image = r.eval("r<-readBin('rr.png', 'raw', 50*50)");
 			model.addAttribute("rr",Base64.getEncoder().encodeToString(image.asBytes()));

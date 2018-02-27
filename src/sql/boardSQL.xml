@@ -34,17 +34,15 @@
 		insert into BEinquiry(num,title,content,id)
 		values(sequence_BEinquiry.nextval,#{title},#{content},#{id})
 	</insert>
-	
+	<!-- 파일 작성시 첨부파일 있을경우 최근 작성글(현재글)에 파일 첨부 -->
 	<update id="inquiry2" parameterType="string">
 		update BEinquiry set filename=#{filename} where num=(select max(num) from beinquiry)
 	</update>
-	
 	<!-- 문의 목록 -->
 	<select id="inList" resultType="bengineer.spring.board.InquiryDTO" parameterType="string">
 		select * from BEinquiry
 		where id=#{id} order by num desc
 	</select>
-	
 	<!-- 답변보기 -->
 	<select id="reply" resultType="bengineer.spring.board.InquiryDTO" parameterType="int">
 		select * from BEinquiry

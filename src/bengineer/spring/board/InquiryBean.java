@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 public class InquiryBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
-	// member 문의내역
+	// 문의내역(사용자)
 	@RequestMapping("inList.do")
 	public String list(Model model,HttpSession session,MemberDTO dto) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트 
@@ -40,7 +40,7 @@ public class InquiryBean {
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "/inquiry/inList";
 	}
-	// member 문의하기
+	// 문의하기 폼
 	@RequestMapping("inForm.do")
 	public String writeForm(HttpSession session,InquiryDTO dto, Model model) { 
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
@@ -50,7 +50,7 @@ public class InquiryBean {
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "/inquiry/inForm";
 	}
-	// member 문의완료
+	// 문의완료
 	@RequestMapping(value="inPro.do",method=RequestMethod.POST)
 	public String inPro(InquiryDTO dto,HttpSession session,Model model,String Id,MultipartHttpServletRequest request)throws Exception { 
 		model.addAttribute("Id",dto.getId());
@@ -69,7 +69,7 @@ public class InquiryBean {
 		}
 		return "forward:/inquiry/inList.do";
 	}
-	// member 내문의목록보기
+	// 내 문의목록보기
 	@RequestMapping("inRead.do")
 	public String inRead(int num,InquiryDTO dto, HttpSession session, Model model ) { 
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
@@ -80,21 +80,21 @@ public class InquiryBean {
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
 		return "/inquiry/inRead";
 	}
-	//manager 전체문의목록
+	// 전체문의목록(관리자)
 	@RequestMapping("allInquiry.do")
 	public String allInquiry(Model model) {
 		List allList = sqlSession.selectList("manager.List");
 		model.addAttribute("allList",allList);
 		return "/inquiry/allInquiry";
 	}
-	//manager 답변작성
+	// 답변작성(관리자)
 	@RequestMapping("replyForm.do")
 	public String replyForm(InquiryDTO dto,int num,Model model) {
 		InquiryDTO re = (InquiryDTO)sqlSession.selectOne("manager.read",num);
 		model.addAttribute("re",re);
 		return "/inquiry/replyForm";
 	}
-	//manager 답변
+	// 답변완료(관리자)
 	@RequestMapping("reply.do")
 	public String reply(InquiryDTO dto,int num) {
 		sqlSession.update("manager.reply",dto);

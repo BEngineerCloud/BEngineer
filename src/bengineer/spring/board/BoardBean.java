@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class BoardBean {
 	@Autowired
 	private SqlSessionTemplate sqlSession = null;
-	// 목록
+	// 전체 공지사항 목록(관리자)
 	@RequestMapping("list.do")
 	public String list(Model model,HttpSession session,ManagerDTO dto) { 
 		List list = sqlSession.selectList("board.List");
@@ -32,7 +32,7 @@ public class BoardBean {
 		return "/board/list";
 		
 	}
-	// 공지사항 작성폼
+	// 공지사항 작성폼(관리자)
 	@RequestMapping("writeForm.do")
 	public String writeForm(HttpSession session,ManagerDTO dto) { 
 		session.setAttribute("id", dto.getId());
@@ -47,25 +47,24 @@ public class BoardBean {
 		sqlSession.insert("board.write",dto);
 		return "forward:/board/list.do";
 	}
-	// 읽고
+	// 읽고 수정
 	@RequestMapping("updateForm.do")
 	public String updateForm(Model model,HttpSession session,int num) { 
 		BoardDTO con = (BoardDTO)sqlSession.selectOne("board.read",num);	
 		model.addAttribute("con",con);
 		return "/board/updateForm";
 	}
-	// 수정
+	// 수정 완료
 	@RequestMapping("update.do")
 	public String update(BoardDTO dto,Model model,int num) {
 		sqlSession.update("board.updateBoard",dto);
 		model.addAttribute("con",num);
 		return "redirect:/board/list.do"; 
 	}
-	// 삭제
+	// 공지사항 삭제
 	@RequestMapping("delete.do")
 	public String delete(BoardDTO dto,int num){ 
 		sqlSession.delete("board.deleteBoard",dto);
 		return "redirect:/board/list.do";
 	}
-
 }
