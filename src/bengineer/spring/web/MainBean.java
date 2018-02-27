@@ -94,7 +94,9 @@ public class MainBean extends Thread{
 	}
 	
 	@RequestMapping("imposeMember.do") // 메인페이지
-	public String imposeMember() {
+	public String imposeMember(Model model,String email) {
+		String member = sqlSession.selectOne("manager.imposeCause", email);
+		model.addAttribute("cause",member);
 		return "beMember/imposeMember";
 	}
 	

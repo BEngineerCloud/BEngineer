@@ -34,6 +34,9 @@
 	<delete id="imposeCancle" parameterType="bengineer.spring.manager.ImposeDTO">
 		delete from beimpose where email=#{email}
 	</delete>
+	 <select id="imposeCause" resultType="bengineer.spring.manager.ImposeDTO"  parameterType="string">
+		select * from beimpose where email=#{email}
+	</select>
   	<!-- 전체 문의목록 -->
   	<select id="List" resultType="bengineer.spring.board.InquiryDTO">
 		select * from beinquiry order by num desc

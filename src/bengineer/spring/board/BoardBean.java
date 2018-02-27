@@ -28,23 +28,24 @@ public class BoardBean {
 	public String list(Model model,HttpSession session,ManagerDTO dto) { 
 		List list = sqlSession.selectList("board.List");
 		model.addAttribute("list",list);
-		session.setAttribute("Id", dto.getId());
+		session.setAttribute("id", dto.getId());
 		return "/board/list";
 		
 	}
 	// 공지사항 작성폼
 	@RequestMapping("writeForm.do")
 	public String writeForm(HttpSession session,ManagerDTO dto) { 
-		session.setAttribute("Id", dto.getId());
+		session.setAttribute("id", dto.getId());
 		return "/board/writeForm"; 
 	}
 	// 작성완료
 	@RequestMapping("writePro.do")
-	public String writePro(BoardDTO dto,HttpSession session,Model model) { 
+	public String writePro(BoardDTO dto,ManagerDTO dto2,HttpSession session,Model model) { 
 		String manager = (String)session.getAttribute("Id");
 		model.addAttribute("manager",manager);
+		session.setAttribute("id", dto2.getId());
 		sqlSession.insert("board.write",dto);
-		return "redirect:/board/list.do";
+		return "forward:/board/list.do";
 	}
 	// 읽고
 	@RequestMapping("updateForm.do")
