@@ -20,7 +20,62 @@ top:5px;
 		</c:forEach>
 		''
 	);
+	$(function(){
+		
+		//imageview의 레이아웃, 정해진 크기를 벗어난 그림이면 자동으로 스크롤을 만들어준다.
+		$("body").append("<div id='glayLayer' ></div><div id='overLayer' style='overflow-y:auto;'></div>");
+		
+		//imageview 밖의 화면을 클릭하면 이미지화면 끄기
+		$("#glayLayer").click(function(){
+			$(this).hide()
+			$("#overLayer").hide();
+		});
+		
+		//imageview 버튼을 클릭했을 때 정해진 크기에 맞게 보여주기
+		$("#image").click(function(){
+			$("#glayLayer").show();
+			$("#overLayer").show().html("<img src=\"/BEngineer/inquiryImg/${re.filename }\" style=\"width:100%; \" />");
+			return false;
+		});
+	});
 </script>
+	<!-- 이미지를 클릭해서 보여줄 스타일 -->
+	<style type="text/css">
+		html,body{
+			margin:0;
+			padding:0;
+			height:100%;
+		}
+		
+		div#glayLayer{
+			display:none;
+			position:fixed;
+			left:0;
+			top:0;
+			height:100%;
+			width:100%;
+			background:black;
+			filter:alpha(opacity=60);
+			opacity: 0.60;
+		}
+		
+		* html div#glayLayer{
+			position:absolute;
+		}
+		
+		#overLayer{
+			display:none;
+			position: absolute;
+			top:10%;
+			left:20%;
+			max-height:80%;
+			width:60%
+		}
+		
+		* html #overLayer{
+			position: absolute;
+		}
+	</style>
 <body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0">
 <div id="logo" style="height:10%; width:15%; float:left;"> 
 	<img src="/BEngineer/image/beCloudLogo.png" id="beLogo" style="width: 100%; height:100%; cursor:pointer"/>
@@ -74,7 +129,7 @@ top:5px;
 	    <td width="330">${re.content}</td></tr>
 	    
 	  <tr><td width="90">파일</td>
-	    <td width="330"><img src="/BEngineer/inquiryImg/${re.filename }" width="50" height="50"/></td></tr>
+	    <td width="330"><img src="/BEngineer/inquiryImg/${re.filename }" width="250" height="250" id="image" style="cursor:pointer;"/></td></tr>
 	  
 	  <tr><td width="90">답변</td>
 	    <td width="330">${re.reply}</td></tr>

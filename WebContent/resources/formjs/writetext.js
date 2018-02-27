@@ -72,7 +72,7 @@ function setRewriteText(num){
 }
 function hideWriteText(){
 	document.getElementById("writetextdiv").style.display = "none";
-	document.getElementById("files").style.height = "80%";
+	document.getElementById("files").style.height = "70%";
 }
 function reWriteText(name, orgname, content){
 	var form = document.getElementById("writetextform");

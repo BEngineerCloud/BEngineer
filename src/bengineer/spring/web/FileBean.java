@@ -957,9 +957,7 @@ public class FileBean {
 				TrashHolder trashcan = (TrashHolder)subfiles.remove(subfiles.size() - 1); // 마지막에 추가된 파일 압축을 위한 파일정보 저장용 클래스 빼오기
 				List check = sqlSession.selectList("bengineer.checkall1", subfiles);
 				if(check != null && check.size() != 0) {
-					model.addAttribute("alert", "기본폴더는 지울 수 없습니다.");
-					model.addAttribute("location", "history.go(-1)");
-					return "beFiles/alert";
+					return setGoBack(model, "기본폴더 혹은 즐겨찾기 파일/폴더는 지울 수 없습니다.");
 				}
 				check = sqlSession.selectList("bengineer.checkall2", subfiles);
 				if(check != null && check.size() != 0) {
