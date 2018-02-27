@@ -885,20 +885,16 @@ public class FileBean {
 	public String shareFile(HttpSession session, Model model, int ref, String enddate, int rw) throws Exception {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 비워주세요");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
 		}
 		String owner = (String)session.getAttribute("id");
 		FileDTO dto = sqlSession.selectOne("bengineer.getaddr", ref);
 		if(!owner.equals(dto.getOwner())) { // 본인의 파일이 아닐 시
-			model.addAttribute("alert", "본인의 파일만 공유할 수 있습니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "본인의 파일만 공유할 수 있습니다.");
 		}
 		KeyDTO kdto = new KeyDTO();
 		kdto.setFilenum(ref);
-		kdto.setEnddate(Timestamp.valueOf(enddate + " 23:59:59"));
+		kdto.setEnddate(Timestamp.valueOf(enddate + " 23:59:59")); // 입력된 날짜까지 유효하도록 시간 설정
 		kdto.setRw(rw);
 		String keycheck = (String)sqlSession.selectOne("bengineer.keycheck", kdto);
 		if(keycheck == null) {
@@ -907,39 +903,29 @@ public class FileBean {
 			keycheck = kdto.getShare_key();
 		}
 		InetAddress local = InetAddress.getLocalHost();
-		model.addAttribute("alert", "공유 URL : " + local.getHostAddress() + "/BEngineer/beFiles/getSharedFile.do?share_key=" + keycheck);
-		model.addAttribute("location", "history.go(-1)");
-		return "beFiles/alert";
+		return setGoBack(model, "공유 URL : " + local.getHostAddress() + "/BEngineer/beFiles/getSharedFile.do?share_key=" + keycheck);
 	}
 	@RequestMapping("getSharedFile.do") // 공유파일 받기 페이지
 	public String getSharedFile(HttpSession session, Model model, String share_key) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
 		}
 		String id = (String)session.getAttribute("id");
 		KeyDTO kdto = (KeyDTO)sqlSession.selectOne("bengineer.open", share_key); // 입력된 공유키와 일치하는 정보 가져오기
 		int filenum = kdto.getFilenum();
 		FileDTO dto = (FileDTO)sqlSession.selectOne("bengineer.getaddr", filenum);
 		if(id.equals(dto.getOwner())) { // 본인의 파일일 때
-			model.addAttribute("alert", "니 파일입니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "본인의 파일입니다.");
 		}
 		if(kdto != null) { // 입력된 공유 키에 일치하는 정보가 있을 때
 			ShareDTO sdto = new ShareDTO();
 			sdto.setId(id);
 			sdto.setShare_key(share_key);
 			sqlSession.insert("bengineer.getsharedfile", sdto);
-			model.addAttribute("alert", "공유되었습니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "공유되었습니다.");
 		}else { // 입력된 공유키와 일치하는 정보가 없을 때
-			model.addAttribute("alert", "유효하지 않은 키입니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "유효하지 않은 키입니다.");
 		}
 	}
 	@RequestMapping("throwToTrashcan.do") // 파일 휴지통으로 보내기 페이지
@@ -1572,9 +1558,7 @@ public class FileBean {
 	public String backup(HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
 		}
 		String id = (String)session.getAttribute("id");
 		String path = "d:/PM/BEngineer/" + id + "/"; // 백업할 기본 폴더 위치
@@ -1587,17 +1571,13 @@ public class FileBean {
 		zipFiles(path, zipname, filelist); // 파일 압축하기
 		sqlSession.delete("bengineer.clearbackup", id); // DB의 기존 백업정보 삭제
 		sqlSession.insert("bengineer.backup", id); // 백업정보 등록
-		model.addAttribute("alert", "백업을 완료했습니다.");
-		model.addAttribute("location", "history.go(-1)");
-		return "beFiles/alert";
+		return setGoBack(model, "백업을 완료했습니다.");
 	}
 	@RequestMapping("beRollBack.do") // 백업된 상태로 복원하기 확인 페이지
 	public String rollback(HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
 		}
 		String id = (String)session.getAttribute("id");
 		Date backupdate = (Date)sqlSession.selectOne("bengineer.getbackupdate", id); // 백업일자
@@ -1609,103 +1589,59 @@ public class FileBean {
 	public String submitrollback(HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로 보냅
 		}
 		String id = (String)session.getAttribute("id");
 		String backupaddress = "d:/PM/BEngineer/beBackUpFiles/" + id + ".zip";
 		File backupfile = new File(backupaddress); // 백업된 파일
 		if(!backupfile.exists()) { // 백업된 파일이 없을 때
-			model.addAttribute("alert", "백업정보가 없습니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "백업정보가 없습니다."); // 메시지를 띄우고 페이지를 뒤로 보냅
 		}
 		String orgaddress = "d:/PM/BEngineer/" + id; // 사용자 폴더
 		File backupfolder = new File(orgaddress + "backup"); // 백업된 파일의 압축을 풀 폴더
-		if(backupfolder.exists()) {
-			try {
-				FileUtils.deleteDirectory(backupfolder);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		deleteDir(backupfolder); // 대상 디렉토리가 존재할 경우 삭제하는 메서드
 		backupfolder.mkdirs();
 		backupfolder = null;
 		File orgfolder = new File(orgaddress);
 		File tempfolder = new File(orgaddress + "temp"); // 현재 파일들을 임시로 보관할 폴더
-		if(tempfolder.exists()) {
-			try {
-				FileUtils.deleteDirectory(tempfolder);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		if(!unzipFiles(orgaddress + "backup", backupaddress)) { // 백업파일 압축 해제
-			model.addAttribute("alert", "복원을 하는 동안 오류가 발생했습니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+		deleteDir(tempfolder); // 대상 디렉토리가 존재할 경우 삭제하는 메서드
+		if(!unzipFiles(orgaddress + "backup", backupaddress)) { // 백업파일 압축 해제 실패 시
+			return setGoBack(model, "백업파일의 압축을 푸는 데에 실패했습니다."); // 메시지를 띄우고 페이지를 뒤로 보냅
 		}
 		backupfolder = new File(orgaddress + "backup");
 		if(!orgfolder.renameTo(tempfolder)) { // 현재의 사용자 폴더를 입시폴더로 변경하는 과정에서 오류 발생시
-			if(backupfolder.exists()) { // 백업폴더 삭제
-				try {
-					FileUtils.deleteDirectory(backupfolder);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(tempfolder.exists()) { // 임시폴더 삭제
-				try {
-					FileUtils.deleteDirectory(tempfolder);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			model.addAttribute("alert", "복원을 하는 동안 오류가 발생했습니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			deleteDir(backupfolder); // 대상 디렉토리가 존재할 경우 삭제하는 메서드, 백업폴더 삭제
+			deleteDir(tempfolder); // 대상 디렉토리가 존재할 경우 삭제하는 메서드, 임시폴더 삭제
+			return setGoBack(model, "현재 폴더를 변경하는데에 실패하였습니다."); // 메시지를 띄우고 페이지를 뒤로 보냅
 		}
 		if(!backupfolder.renameTo(orgfolder)) { // 압축해제를 한 폴더를 사용자 폴더로 변결하는 과정에서 오류 발생시
 			tempfolder.renameTo(orgfolder); // 임시폴더를 다시 사용자 폴더로 변경
-			if(backupfolder.exists()) { // 백업폴더 삭제
-				try {
-					FileUtils.deleteDirectory(backupfolder);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			if(tempfolder.exists()) { // 임시폴더 삭제
-				try {
-					FileUtils.deleteDirectory(tempfolder);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			model.addAttribute("alert", "복원을 하는 동안 오류가 발생했습니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			deleteDir(backupfolder); // 대상 디렉토리가 존재할 경우 삭제하는 메서드, 백업폴더 삭제
+			deleteDir(tempfolder); // 대상 디렉토리가 존재할 경우 삭제하는 메서드, 임시폴더 삭제
+			return setGoBack(model, "백업된 폴더를 등록하는데에 실패하였습니다."); // 메시지를 띄우고 페이지를 뒤로 보냅
 		}
-		if(backupfolder.exists()) { // 백업폴더 삭제
-			try {
-				FileUtils.deleteDirectory(backupfolder);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		if(tempfolder.exists()) { // 임시폴더 삭제
-			try {
-				FileUtils.deleteDirectory(tempfolder);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		deleteDir(backupfolder); // 대상 디렉토리가 존재할 경우 삭제하는 메서드, 백업폴더 삭제
+		deleteDir(tempfolder); // 대상 디렉토리가 존재할 경우 삭제하는 메서드, 임시폴더 삭제
 		sqlSession.delete("bengineer.clearorg", id); // DB의 현재 파일정보 삭제
 		sqlSession.insert("bengineer.rollback", id); // 백업된 파일들의 정보 등록
 		sqlSession.delete("bengineer.deletealltrash", id); // DB의 휴지통 파일정보 삭제
 		sqlSession.insert("bengineer.insertalltrash", id); // 백업된 파일 중 휴지통의 파일정보 등록
 		model.addAttribute("alert", "복원을 완료했습니다.");
 		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0\"");
+		return "beFiles/alert";
+	}
+	private void deleteDir(File dir) {
+		if(dir.exists()) {
+			try {
+				FileUtils.deleteDirectory(dir);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	private String setGoBack(Model model, String alert) {
+		model.addAttribute("alert", alert);
+		model.addAttribute("location", "history.go(-1)");
 		return "beFiles/alert";
 	}
 	public String makecode(int num) { // 랜덤코드 작성 메서드
@@ -2001,8 +1937,8 @@ public class FileBean {
 		trash.delete();
 		return result;
 	}
-	private boolean unzipFiles(String path, String zipName) { // 단일 파일 압축 해제용 메서드 zipName은 압축파일 경로, path는 압축을 풀 경로
-		boolean result = false;
+	private boolean unzipFiles(String path, String zipName) { // 파일 압축 해제용 메서드 zipName은 압축파일 경로, path는 압축을 풀 경로
+		boolean result = false; // return할 결과 압축 해제 성공시 true
 		int size = 1024;
 		byte[] buf = new byte[size];
 		FileInputStream fis = null;
@@ -2015,27 +1951,27 @@ public class FileBean {
 		try {
 			fis = new FileInputStream(zipName);
 			bis = new BufferedInputStream(fis);
-			zis = new ZipArchiveInputStream(bis);
-			for(zipEntry = zis.getNextZipEntry(); zipEntry != null; zipEntry = zis.getNextZipEntry()) {
+			zis = new ZipArchiveInputStream(bis); // 압축파일 인풋 스트림
+			for(zipEntry = zis.getNextZipEntry(); zipEntry != null; zipEntry = zis.getNextZipEntry()) { // 다음 Entry가 없을 때까지 진행
 				String name = zipEntry.getName(); // 압축파일 내부 경로
-				if(zipEntry.isDirectory()) {
+				if(zipEntry.isDirectory()) { // 내부 경로가 폴더일 때
 					File check = new File(path + "/" + name);
-					if(!check.exists()) {
+					if(!check.exists()) { // 해당 경로에 없을 시 생성
 						check.mkdirs();
 					}
 					continue;
 				}
 				int index = name.lastIndexOf("/");
 				if(index != -1) {
-					String parent = name.substring(0, index); // 압축파일 내부 폴더
+					String parent = name.substring(0, index); // 파일의 상위폴더
 					File folder = new File(path + "/" + parent);
-					if(!folder.exists()) {
+					if(!folder.exists()) { // 폴더가 없을 시 생성
 						folder.mkdirs();
 					}
 				}
-				fos = new FileOutputStream(path + "/" + name);
-				bos = new BufferedOutputStream(fos);
-				for(int j = 0; j != -1; j = zis.read(buf, 0, size)) {
+				fos = new FileOutputStream(path + "/" + name); // 파일의 아웃풋 스트림
+				bos = new BufferedOutputStream(fos); // 버퍼
+				for(int j = 0; j != -1; j = zis.read(buf, 0, size)) { // 압축 풀기
 					bos.write(buf, 0, j);
 				}
 				bos.close();
@@ -2044,12 +1980,10 @@ public class FileBean {
 			zis.close();
 			bis.close();
 			fis.close();
-			result = true;
+			result = true; // 압축 해제 완료
 		}catch(Exception e){
-			File trash = new File(path);
-			if(trash.exists()) {
-				trash.delete();
-			}
+			File trash = new File(path); // 도중에 오류가 났을 시 도중까지 압축 풀린 폴더 삭제
+			deleteDir(trash);
 			e.printStackTrace();
 		}finally {
 			if(bos != null) {try{bos.close();}catch(IOException i) {}}
