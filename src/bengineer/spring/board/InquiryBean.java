@@ -56,12 +56,14 @@ public class InquiryBean {
 		model.addAttribute("Id",dto.getId());
 		sqlSession.insert("board.inquiry",dto);
 		try {
-		MultipartFile uploadFile = request.getFile("upload");
-		String fileName = uploadFile.getOriginalFilename();
-		String filename = fileName;
-		sqlSession.update("board.inquiry2",filename);
-		File saveFile = new File("d:/PM/app/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/BEngineer/inquiryImg/"+fileName);
-		uploadFile.transferTo(saveFile);
+			MultipartFile uploadFile = request.getFile("upload");
+			String fileName = uploadFile.getOriginalFilename();
+			String filename = fileName;
+			sqlSession.update("board.inquiry2",filename);
+			File saveFile = new File("d:/PM/app/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/BEngineer/inquiryImg/"+fileName);
+			if(!uploadFile.isEmpty()) {
+				uploadFile.transferTo(saveFile);
+			}
 		}catch(Exception e) {
 			e.printStackTrace();
 		}

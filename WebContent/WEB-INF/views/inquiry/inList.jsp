@@ -77,7 +77,7 @@ top:5px;
 	<c:forEach var="inList" items="${inList}">
 	<tr> 
 	<td width="200" align="center"><a href="/BEngineer/inquiry/inRead.do?num=${inList.num}">${inList.title}</a></td> 
-	<td width="50" align="center">${inList.id}</td> 
+	<td width="50" align="center">${sessionScope.nickname}</td> 
 	<td width="120" align="center"><fmt:formatDate value="${inList.reg_date}" pattern="MM-dd HH:mm"/></td><br/>
 	<c:choose>
 	    <c:when test="${empty inList.reply}">

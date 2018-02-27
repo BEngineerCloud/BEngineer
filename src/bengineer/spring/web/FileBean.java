@@ -166,26 +166,27 @@ public class FileBean {
 		if(list.size()!=0) {
 			try {
 				r = new RConnection();
-				//r.eval("library(base64enc)");
+				r.eval("library(base64enc)");
 				r.eval("png('rjava.png')");
 			
 				String Fsize ="c(";
-				//String Fname ="c(";
+				String Fname ="c(";
 				for(int i=0; i<list.size();i++) {
 					FileDTO file1 = (FileDTO)list.get(i);
 					if(i==list.size()-1) {
 						Fsize+=file1.getFilesize()+")";
-						//Fname += "'" + file1.getFilename() + "')";
+						Fname += "'" + file1.getFilename() + "')";
 					}else {
 						Fsize+=file1.getFilesize()+",";
-						//Fname += "'" + file1.getFilename() + "', ";
+						Fname += "'" + file1.getFilename() + "', ";
 					}
 				}
 				r.eval("Fsize<-"+Fsize);
 				//System.out.println(Fsize);
-				//r.eval("Fname <- " + Fname);
+				r.eval("Fname <- " + Fname);
 				r.eval("barplot(Fsize, horiz = TRUE, axes = FALSE, col=rainbow(20))");
-				//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");names.arg = Fname, cex.names = 2, 
+				//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");names.arg = Fname, cex.names = 2,
+				r.eval("for(i in 1:length(Fname)){text(max(Fsize) / 2, 1.2 * (length(Fname) - i + 1) - 0.5, Fname[i], cex = 25 / length(Fname), font = 2)}");
 				r.eval("dev.off()");
 				REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
 				/*

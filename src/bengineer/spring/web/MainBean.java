@@ -63,7 +63,7 @@ public class MainBean extends Thread{
 		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember", email);
 		String view= "redirect:/beMain.do"; //기본은 beMain.do로 이동
 		if(impose==1) {
-			view="redirect:/imposeMember.do";
+			view="redirect:/imposeMember.do?email=" + email;
 		}else {
 			if(check!=1) { //일치하는 멤버가 없을 시
 				sqlSession.insert("bengineer.beInsertmember", dto); //네이버회원 정보를 insert
@@ -94,9 +94,10 @@ public class MainBean extends Thread{
 	}
 	
 	@RequestMapping("imposeMember.do") // 메인페이지
-	public String imposeMember(Model model,String email) {
-		String member = sqlSession.selectOne("manager.imposeCause", email);
-		model.addAttribute("cause",member);
+	public String imposeMember(Model model, String email) {
+		ImposeDTO member = sqlSession.selectOne("manager.imposeCause", email);
+		model.addAttribute("cause", member.getCause());
+		model.addAttribute("date", member.getEndDay());
 		return "beMember/imposeMember";
 	}
 	
@@ -179,7 +180,7 @@ public class MainBean extends Thread{
 			r.eval("Fhit <- " + Fhit);
 			r.eval("table <- as.table(Fhit)"); // 파일 클릭 수 벡터를 표로 변환
 			r.eval("names(table) <- Fname"); // 변환한 표의 컬럼에 파일이름 입력
-			r.eval("my_cloud <- wordcloud2(table, size = 100 / max(Fhit), color = 'random-light')"); // 워드클라우드 생성
+			r.eval("my_cloud <- wordcloud2(table, size = 0.8, color = 'random-light')"); // 워드클라우드 생성
 			r.eval("Sys.sleep(0.5)"); // 생성에 시간이 걸릴것을 고려하여 잠깐 대기
 			r.eval("my_path <- renderTags(my_cloud)");
 			retStr = r.eval("my_path$html").asString();

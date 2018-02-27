@@ -128,9 +128,10 @@ top:5px;
 	  <tr><td width="90" style="text-align:top;">내 용</td>
 	    <td width="330">${re.content}</td></tr>
 	    
+	  <c:if test="${re.filename != null }">
 	  <tr><td width="90">파일</td>
 	    <td width="330"><img src="/BEngineer/inquiryImg/${re.filename }" width="250" height="250" id="image" style="cursor:pointer;"/></td></tr>
-	  
+	  </c:if>
 	  <tr><td width="90">답변</td>
 	    <td width="330">${re.reply}</td></tr>
 	</table>

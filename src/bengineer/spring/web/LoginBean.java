@@ -28,7 +28,7 @@ public class LoginBean {
 		String view = "beFiles/alert";
 
 		if(impose==1) {
-			view="redirect:/imposeMember.do";
+			view="redirect:/imposeMember.do?email=" + email;
 		}else if(check==1) { //일치하는 멤버가 존재할 시
 			String pw = sqlSession.selectOne("bengineer.beSelectpw",email); //비밀번호를 받아옴.
 			if(pw.equals(dto.getPw())) { //받아온 비밀번호와 멤버의 비밀번호가 일치할 시
