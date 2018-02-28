@@ -47,7 +47,7 @@ public class FileBean2 {
 		FileBean filebean = new FileBean(); //FileBean 객체 생성
 		
 		if(!filebean.checkSpace(session, sqlSession)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -63,6 +63,8 @@ public class FileBean2 {
 		File[] list = path.listFiles(); //사용자폴더 안에 모든 파일/폴더 받아오기
 		FileDTO dto = new FileDTO();
 		dto.setOwner(owner);
+		dto.setOrgname(owner);
+		int folder_ref = (int)sqlSession.selectOne("bengineer.getparentnum", dto);
 		
 		if(list.length > 0){ //파일들이 존재할 경우
 		    for(int i=0; i < list.length; i++){
@@ -80,10 +82,8 @@ public class FileBean2 {
 		    			
 		    			//이동한 파일의 folder_ref 수정
 		    			dto.setNum(moveParent);
+		    			dto.setFolder_ref(folder_ref);
 		    			sqlSession.update("bengineer.autoarrange",dto);
-		    			
-		    			dto.setFilesize(filesize);
-		    			sqlSession.update("bengineer.updatesize",dto);
 		    		}
 		    		else
 		    			break;
@@ -126,7 +126,7 @@ public class FileBean2 {
 		FileBean filebean = new FileBean(); //FileBean 객체 생성
 		filebean.setSqlSession(sqlSession);
 		if(!filebean.checkSpace(session, sqlSession)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -233,7 +233,7 @@ public class FileBean2 {
 		FileBean filebean = new FileBean(); //FileBean 객체 생성
 		filebean.setSqlSession(sqlSession);
 		if(!filebean.checkSpace(session, sqlSession)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -468,7 +468,7 @@ public class FileBean2 {
 		FileBean filebean = new FileBean(); //FileBean 객체 생성
 		filebean.setSqlSession(sqlSession);
 		if(!filebean.checkSpace(session, sqlSession)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -608,7 +608,7 @@ public class FileBean2 {
 		FileBean filebean = new FileBean(); //FileBean 객체 생성
 		filebean.setSqlSession(sqlSession);
 		if(!filebean.checkSpace(session, sqlSession)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1014,7 +1014,7 @@ public class FileBean2 {
 		FileBean filebean = new FileBean(); //FileBean 객체 생성
 		filebean.setSqlSession(sqlSession);
 		if(!filebean.checkSpace(session, sqlSession)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1131,7 +1131,7 @@ public class FileBean2 {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";}
 		FileBean filebean = new FileBean();
 		if(!filebean.checkSpace(session, sqlSession)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1156,7 +1156,7 @@ public class FileBean2 {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";}
 		FileBean filebean = new FileBean();
 		if(!filebean.checkSpace(session, sqlSession)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}

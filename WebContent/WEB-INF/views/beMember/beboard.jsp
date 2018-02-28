@@ -75,7 +75,7 @@ top:5px;
 	</tr>
 	<c:forEach var="board" items="${list}">
 	<tr>
-	<td width="50" align="center">${board.num}</td> 
+	<td width="50" align="center">${board.num - 1}</td> 
 	<td width="200"><a href="/BEngineer/beMember/beread.do?num=${board.num}">${board.title}</a></td> 
 	<!-- <td>${board.content}</td>  -->
 	<td width="50">${board.id}</td> 

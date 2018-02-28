@@ -36,5 +36,6 @@ function showChangeOwner(){
 	if(form != null){
 		form.nickname.type = "text";
 		form.submitchangeowner.value = "파일 보내기";
+		form.submitchangeowner.type = "submit";
 	}
 }

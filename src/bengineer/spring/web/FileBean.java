@@ -186,7 +186,7 @@ public class FileBean {
 				r.eval("Fname <- " + Fname);
 				r.eval("barplot(Fsize, horiz = TRUE, axes = FALSE, col=rainbow(20))");
 				//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");names.arg = Fname, cex.names = 2,
-				r.eval("for(i in 1:length(Fname)){text(max(Fsize) / 2, 1.2 * (length(Fname) - i + 1) - 0.5, Fname[i], cex = 25 / length(Fname), font = 2)}");
+				r.eval("for(i in 1:length(Fname)){text(max(Fsize) / 2, 1.2 * (length(Fname) - i + 1) - 0.5, Fname[i], cex = min(c(25 / length(Fname), 4)), font = 2)}");
 				r.eval("dev.off()");
 				REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
 				/*
@@ -415,7 +415,7 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 		if(!checkSpace(session)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -542,7 +542,7 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 		if(!checkSpace(session)) { // 샤용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -600,7 +600,7 @@ public class FileBean {
 		if(!checkSpace(session)) { // 사용가능 용량 체크
 			ModelAndView mav = new ModelAndView();
 			mav.setViewName("beFiles/alert");
-			mav.addObject("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			mav.addObject("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			mav.addObject("location", "history.go(-1)");
 			return mav;
 		}
@@ -819,7 +819,7 @@ public class FileBean {
 		}
 		// 사용가능 용량 확인
 		if(!checkSpace(session)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -863,7 +863,7 @@ public class FileBean {
 		}
 		// 사용가능 용량 확인
 		if(!checkSpace(session)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -889,7 +889,7 @@ public class FileBean {
 	public String shareFile(HttpSession session, Model model, int ref, String enddate, int rw) throws Exception {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로가게 함
+			return setGoBack(model, "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로가게 함
 		}
 		String owner = (String)session.getAttribute("id");
 		FileDTO dto = sqlSession.selectOne("bengineer.getaddr", ref); // 파일정보 받아오기
@@ -915,7 +915,7 @@ public class FileBean {
 	public String getSharedFile(HttpSession session, Model model, String share_key) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로가게 함
+			return setGoBack(model, "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로가게 함
 		}
 		String id = (String)session.getAttribute("id");
 		KeyDTO kdto = (KeyDTO)sqlSession.selectOne("bengineer.open", share_key); // 입력된 공유키와 일치하는 정보 가져오기
@@ -1061,7 +1061,7 @@ public class FileBean {
 	public String repairFile(HttpSession session, Model model, String file_ref, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1278,7 +1278,7 @@ public class FileBean {
 	@RequestMapping("lookSharedPeople.do") // 공유중인 사람 확인용 페이지
 	public String lookSharedPeople(HttpSession session, Model model, int file) {
 		if(!checkSpace(session)) {
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1316,7 +1316,7 @@ public class FileBean {
 	public String writeText(HttpSession session, Model model, int folder, String filename, String orgname, String content) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1389,7 +1389,7 @@ public class FileBean {
 			return "beFiles/alert";
 		}
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1456,7 +1456,7 @@ public class FileBean {
 	public String unshare(HttpSession session, Model model, int file_ref, String nickname, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1500,7 +1500,7 @@ public class FileBean {
 	public String changeowner(HttpSession session, Model model, int file_ref, String nickname, int folder) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			model.addAttribute("alert", "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			model.addAttribute("alert", "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 			model.addAttribute("location", "history.go(-1)");
 			return "beFiles/alert";
 		}
@@ -1513,19 +1513,13 @@ public class FileBean {
 		String owner = dto.getOwner();
 		String id = (String)session.getAttribute("id");
 		if(!owner.equals(id)){ // 내 파일이 아닐 때
-			model.addAttribute("alert", "본인의 파일만 넘겨줄 수 있습니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "본인의 파일만 넘겨줄 수 있습니다.");
 		}
 		String newowner = sqlSession.selectOne("bengineer.getid", nickname); // 대상 회원의 정보 가져오기
 		if(newowner == null) {
-			model.addAttribute("alert", "존재하지 않는 회원입니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "존재하지 않는 회원입니다.");
 		}else if(newowner.equals(owner)){
-			model.addAttribute("alert", "너입니다.");
-			model.addAttribute("location", "history.go(-1)");
-			return "beFiles/alert";
+			return setGoBack(model, "너입니다.");
 		}
 		List address_ref = getAddr(file_ref);
 		String orgaddress = "d:/PM/BEngineer/";
@@ -1537,6 +1531,19 @@ public class FileBean {
 			}
 		}
 		String newaddress = "d:/PM/BEngineer/" + newowner + "/" + dto.getOrgname(); // 옮길 위치
+		File newfile = new File(newaddress);
+		if(!newfile.exists()) {
+			return setGoBack(model, "상대가 이미 같은 이름의 파일을 가지고 있습니다.");
+		}
+		File newfolder = new File("d:/PM/BEngineer/" + newowner);
+		if(!newfolder.exists()) {
+			newfolder.mkdirs();
+			dto.setOwner(newowner);
+			dto.setOrgname(newowner);
+			dto.setFilename(nickname);
+			dto.setFolder_ref(0);
+			sqlSession.insert("bengineer.makebasedir", dto);
+		}
 		FileBean2 fb2 = new FileBean2();
 		if(fb2.nioFilemove(orgaddress, newaddress)) {
 			dto.setOwner(newowner);
@@ -1553,8 +1560,7 @@ public class FileBean {
 			model.addAttribute("alert", "파일을 " + nickname + "에게 넘겨주었습니다.");
 			model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + folder + "\"");
 		}else {
-			model.addAttribute("alert", "파일을  넘겨주는 데에 실패했습니다.");
-			model.addAttribute("location", "history.go(-1)");
+			return setGoBack(model, "파일을  넘겨주는 데에 실패했습니다.");
 		}
 		return "beFiles/alert";
 	}
@@ -1562,7 +1568,7 @@ public class FileBean {
 	public String backup(HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			return setGoBack(model, "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 		}
 		String id = (String)session.getAttribute("id");
 		String path = "d:/PM/BEngineer/" + id + "/"; // 백업할 기본 폴더 위치
@@ -1581,7 +1587,7 @@ public class FileBean {
 	public String rollback(HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요");
+			return setGoBack(model, "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요");
 		}
 		String id = (String)session.getAttribute("id");
 		Date backupdate = (Date)sqlSession.selectOne("bengineer.getbackupdate", id); // 백업일자
@@ -1593,7 +1599,7 @@ public class FileBean {
 	public String submitrollback(HttpSession session, Model model) {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 체크
 		if(!checkSpace(session)) { // 사용가능 용량 확인
-			return setGoBack(model, "사용할 수 있는 용량을 초과했습니다. 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로 보냅
+			return setGoBack(model, "사용할 수 있는 용량을 초과했거나 로그인 정보가 없습니다. 용량을 초과한 경우 용량을 확보해주세요"); // 메시지를 띄우고 페이지를 뒤로 보냅
 		}
 		String id = (String)session.getAttribute("id");
 		String backupaddress = "d:/PM/BEngineer/beBackUpFiles/" + id + ".zip";
@@ -2215,6 +2221,9 @@ public class FileBean {
 	public boolean checkSpace(HttpSession session, SqlSessionTemplate sqlSession) { // 용량 확인용 메서드, 사용가능한 용량이 남아있을 때 true
 		boolean result = false;
 		String id = (String)session.getAttribute("id");
+		if(id == null) {
+			return false;
+		}
 		Integer chmod = (Integer)sqlSession.selectOne("bengineer.checkchmod", id);
 		if(chmod == null) {
 			chmod = 2;

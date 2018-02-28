@@ -243,7 +243,7 @@
 			</select>
 		</div>
 		<div>
-			<input type="hidden" id="unsharetext" style="top:2px; background-color:transparent; border:0px; text-color:black; width:140px; height:25px;" value="해제할 사람의 닉네임 : " disabled/>
+			<input type="hidden" id="unsharetext" style="top:2px; background-color:#ffffff; border:0px; text-color:black; width:140px; height:25px;" value="해제할 사람의 닉네임 : " disabled/>
 		</div>
 		<div>
 			<form id="unshareform" action="/BEngineer/beFiles/unshare.do" method="get"> 

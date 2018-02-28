@@ -27,6 +27,7 @@ $(function(){
 				hinder(); // 다른 폼 닫기
 				initFiles();
 				select.hidden = false;
+				showUnshare();
 				reopen();
 				return false;
 			}
@@ -86,6 +87,22 @@ function setUnshare(num){
 	if(form != null){
 		form.file_ref.value = num;
 		form.submitunshare.type = "submit";
+	}
+}
+function showUnshare(){
+	var form = document.getElementById("unshareform");
+	var select = document.getElementById("unshareselect");
+	if(form != null){
+		form.submitunshare.type = "submit";
+		if(select != null){
+			if(select.value == 1){
+				document.getElementById("unsharetext").type = "hidden";
+				form.nickname.type = "hidden";
+			}else{
+				document.getElementById("unsharetext").type = "text";
+				form.nickname.type = "text";
+			}
+		}
 	}
 }
 function showShare(num){

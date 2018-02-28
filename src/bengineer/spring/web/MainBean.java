@@ -88,7 +88,7 @@ public class MainBean extends Thread{
 			}
 			session.setAttribute("id", dto.getId()); //id 세션설정
 			session.setAttribute("nickname", dto.getNickname()); //닉네임 세션 설정
-			session.setMaxInactiveInterval(60); //세션유효시간 60초
+			session.setMaxInactiveInterval(300); //세션유효시간 60초
 		}
 		return view;
 	}

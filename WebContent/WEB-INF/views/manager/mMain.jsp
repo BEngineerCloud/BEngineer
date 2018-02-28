@@ -28,10 +28,10 @@
 			var div = document.getElementById("namefilter");
 			if(div.style.display == "none"){
 				div.style.display = "block";
-				$(this).val("파일명 필터 닫기");
+				$(this).val("파일명 차단필터 닫기");
 			}else{
 				div.style.display = "none";
-				$(this).val("파일명 필터 확인하기");
+				$(this).val("파일명 차단필터 확인하기");
 			}
 		});
 	});
@@ -110,16 +110,16 @@
 </div>
 
        <form id="addnamefilterform" class="filterform" action="/BEngineer/manager/addNameFilter.do">
-       	<tr><td>파일명 필터 추가하기 :</td> 
+       	<tr><td>파일명 차단필터 추가하기 :</td> 
        	<td><input type="text" name="filtering" /></td>
        	<td><input type="submit" value="필터 추가하기" style="width:100px; background-color:#1DDB16;"/></td></tr>
        </form>
        <form id="removenamefilterform" class="filterform" action="/BEngineer/manager/removeNameFilter.do">
-       	<tr><td>파일명 필터 해제하기 :</td> 
+       	<tr><td>파일명 차단필터 해제하기 :</td> 
        	<td><input type="text" name="filtering" /></td>
        	<td><input type="submit" value="필터 해제하기" style="width:100px; background-color:#1DDB16;"/></td></tr>
        </form>
-	<input type="button" value="파일명 필터 확인하기" id="checknamefilter" style="width:210px; height:30px; color:#000000; background-color:#FFE400;"/>
+	<input type="button" value="파일명 차단필터 확인하기" id="checknamefilter" style="width:210px; height:30px; color:#000000; background-color:#FFE400;"/>
 	<div id="namefilter" style="display:none;">
 		<c:forEach var="a" items="${namefilterings }">
 			${a }<br />

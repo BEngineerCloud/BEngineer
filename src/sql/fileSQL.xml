@@ -143,7 +143,7 @@
 		select num from BEfilelist where owner = #{owner} and important = -1 and orgname = #{orgname}
 	</select>
 	<update id="autoarrange" parameterType="fileDTO">
-		update BEfilelist set folder_ref = #{num} where owner = #{owner} and orgname = #{orgname}
+		update BEfilelist set folder_ref = #{num} where owner = #{owner} and orgname = #{orgname} and important != 1 and folder_ref = #{folder_ref}
 	</update>
 	<update id="changeref" parameterType="fileDTO">
 		update BEfilelist set folder_ref = #{folder_ref} where num = #{num}
