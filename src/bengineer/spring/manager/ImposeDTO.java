@@ -3,11 +3,11 @@ package bengineer.spring.manager;
 import java.sql.Timestamp;
 
 public class ImposeDTO {
-	private String email;
-	private	String cause;
-	private	int term;
-	private	Timestamp startDay;
-	private	Timestamp endDay;
+	private String email;	// 이메일
+	private	String cause;	// 제제 사유
+	private	int term;		// 제제 일수
+	private	Timestamp startDay; // 제제 시작일
+	private	Timestamp endDay;	// 제제 종료일
 	
 	public String getEmail() {return email;}
 	public void setEmail(String email) {this.email = email;}

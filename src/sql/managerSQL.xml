@@ -51,11 +51,11 @@
   	</update>
   	<!-- 서버구동현황 -->
 	<select id="server" resultType="fileDTO">
-		select sum(filesize)/1000 as filesize,owner from befilelist group by owner order by filesize desc
+		select sum(filesize)/1024 as filesize,owner from befilelist group by owner order by filesize desc
 	</select>
 	<!-- 모든유저사용량 -->
 	<select id="all" resultType="int">
-		select sum(filesize)/1000/1000 from befilelist
+		select sum(filesize)/1024/1024 from befilelist	<!-- MByte -->
 	</select>
 
 </mapper>

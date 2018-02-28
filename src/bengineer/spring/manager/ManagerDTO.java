@@ -1,9 +1,9 @@
 package bengineer.spring.manager;
 
 public class ManagerDTO {
-	private String id;
-	private String pw;
-	private String contents;
+	private String id;	// 아이디
+	private String pw;	// 비밀번호
+	private String contents;	// 권한내용
 	
 	public String getId() {
 		return id;

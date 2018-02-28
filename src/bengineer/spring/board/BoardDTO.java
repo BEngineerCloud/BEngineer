@@ -1,15 +1,14 @@
 package bengineer.spring.board;
 
 import java.sql.Timestamp;
-// ��������
+
 public class BoardDTO {
-	private int num;		// �۹�ȣ
-	private String title;	// ����
-	private String content;	// ����
-	private String id; 		// �ۼ���
-	private String reply; 		// �ۼ���
-	//private int hit; 		// ��ȸ��
-	private Timestamp reg_date; // �ۼ���
+	private int num;		// 글번호
+	private String title;	// 제목
+	private String content;	// 문의내용
+	private String id; 		// 아이디
+	private String reply; 		// 답변
+	private Timestamp reg_date; // 작성일
 	
 	public int getNum() {
 		return num;
@@ -35,14 +34,6 @@ public class BoardDTO {
 	public void setId(String id) {
 		this.id = id;
 	}
-	/*
-	public int getHit() {
-		return hit;
-	}
-	public void setHit(int hit) {
-		this.hit = hit;
-	}
-	*/
 	public Timestamp getReg_date(){
 		return reg_date;
 	}
@@ -55,6 +46,4 @@ public class BoardDTO {
 	public void setReply(String reply) {
 		this.reply = reply;
 	}
-
-
 }
