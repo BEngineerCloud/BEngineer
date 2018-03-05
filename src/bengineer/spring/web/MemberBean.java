@@ -96,7 +96,7 @@ public class MemberBean {
 	
 	@RequestMapping(value="beCheckemail.do") //이메일 인증 페이지로 이동
 	public String beCheckmailid(Model model, String email, HttpSession session ) {
-		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email); //해당하는 이메일과 일치하는 멤버가 있는지 확인
+		String check = (String)sqlSession.selectOne("bengineer.beCheckmailid",email); //해당하는 이메일과 일치하는 멤버가 있는지 확인
 		
 		//'authocode'세션이 존재하면 삭제
 		if(session.getAttribute("authcode")!=null) { 
@@ -109,7 +109,11 @@ public class MemberBean {
 		}
 		
 		//이메일에 해당하는 멤버가 존재하는지 여부와 메일주소 정보 넘겨주기
-		model.addAttribute("check",check);
+		if(check == null) {
+			model.addAttribute("check",0);
+		}else {
+			model.addAttribute("check",1);
+		}
 		model.addAttribute("mailid",email);
 		
 		return "beMember/beCheckemail";
