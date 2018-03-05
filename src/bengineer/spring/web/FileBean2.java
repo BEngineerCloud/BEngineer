@@ -218,7 +218,7 @@ public class FileBean2 {
 				model.addAttribute("alert", "이미 같은 이름의 파일/폴더가 존재합니다.");
 			}	
 		}
-		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder="+folder_ref + "\"");
 		
 		//세션을 사용하고나면 다음 파일 작업을 위해 세션을 삭제한다.
 		session.removeAttribute("ref");
@@ -275,7 +275,7 @@ public class FileBean2 {
 			if(newFolder.equals("image")||newFolder.equals("music")||newFolder.equals("video")||newFolder.equals("document")||newFolder.equals("etc")) {
 				if(!newFolder.equals(result)) {
 					model.addAttribute("alert", "해당폴더에 복사할수 없는 폴더의 형식입니다.");
-					model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+					model.addAttribute("location", "history.go(-1)");
 					session.removeAttribute("ref");
 					session.removeAttribute("file_flag");
 					return "beFiles/alert";
@@ -288,7 +288,7 @@ public class FileBean2 {
 			//복사될 폴더가 기본이미지폴더이거나 복사를 할 수 없는 형식이 포함되있을 경우 문구를 띄우고 세션을 제거한 후 beMyList로 이동한다.
 			if(newFolder.equals("image")||!is_Check) { 
 				model.addAttribute("alert", "해당폴더에 복사할수 없는 폴더의 형식입니다.");
-				model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+				model.addAttribute("location", "history.go(-1)");
 				session.removeAttribute("ref");
 				session.removeAttribute("file_flag");
 				return "beFiles/alert";
@@ -453,7 +453,7 @@ public class FileBean2 {
 				}	
 			}
 		}
-		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder="+ folder_ref + "\"");
 		
 		//세션을 사용하고나면 다음 파일 작업을 위해 세션을 삭제한다.
 		session.removeAttribute("ref");
@@ -594,7 +594,7 @@ public class FileBean2 {
 			}	
 		}
 		
-		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder="+ file_fref + "\"");
 		
 		//세션을 사용하고나면 다음 파일 작업을 위해 세션을 삭제한다.
 		session.removeAttribute("ref");
@@ -655,7 +655,7 @@ public class FileBean2 {
 			String neworgname = dto2.getOrgname();
 			
 			if(file.isFile()) { // 복사하려는 파일/폴더가 파일인 경우
-				FileDTO dto3 = (FileDTO)originalAddr.get(0);
+				FileDTO dto3 = (FileDTO)originalAddr2.get(0);
 				String orgname3 = dto3.getOrgname();
 				String filetype = orgname3.substring(orgname3.lastIndexOf("."));
 				String result = filebean.checkFile(filetype);
@@ -664,7 +664,7 @@ public class FileBean2 {
 				if(neworgname.equals("image")||neworgname.equals("music")||neworgname.equals("video")||neworgname.equals("document")||neworgname.equals("etc")) {
 					if(!neworgname.equals(result)) { 
 						model.addAttribute("alert", "해당폴더에 복사할수 없는 폴더의 형식입니다.");
-						model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+						model.addAttribute("location", "history.go(-1)");
 						session.removeAttribute("ref");
 						session.removeAttribute("file_flag");
 						return "beFiles/alert";
@@ -676,7 +676,7 @@ public class FileBean2 {
 				//복사될 폴더가 기본이미지폴더이거나 복사를 할 수 없는 형식이 포함되있을 경우 문구를 띄우고 세션을 제거한 후 beMyList로 이동한다.
 				if(neworgname.equals("image")||!is_Check) {
 					model.addAttribute("alert", "해당폴더에 복사할수 없는 폴더의 형식입니다.");
-					model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+					model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=" + file_fref + "\"");
 					session.removeAttribute("ref");
 					session.removeAttribute("file_flag");
 					return "beFiles/alert";
@@ -1000,7 +1000,7 @@ public class FileBean2 {
 			model.addAttribute("alert", "파일 복사가 완료되었습니다..");
 		}	
 		
-		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder=0"+ "\"");
+		model.addAttribute("location", "\"/BEngineer/beFiles/beMyList.do?folder="+ file_fref + "\"");
 		
 		//세션을 사용하고나면 다음 파일 작업을 위해 세션을 삭제한다.
 		session.removeAttribute("ref");
@@ -1123,7 +1123,16 @@ public class FileBean2 {
 	public String exhot(int num,Model model) {
 		String a = "history.go(-1)";
 		model.addAttribute("location",a);
-		sqlSession.update("bengineer.exhot",num);
+		FileBean filebean = new FileBean();
+		filebean.setSqlSession(sqlSession);
+		List address = filebean.getAddr(num);
+		FileDTO dto = (FileDTO)address.get(0);
+		boolean check = dto.getOrgname().equals("music") || dto.getOrgname().equals("document") || dto.getOrgname().equals("image") || dto.getOrgname().equals("etc") || dto.getOrgname().equals("video");
+		if(address.size() == 2 && check) {
+			sqlSession.update("bengineer.exhot2",num);
+		}else {
+			sqlSession.update("bengineer.exhot",num);
+		}
 		return "beFiles/location";
 	}
 	@RequestMapping("hotlist.do")
@@ -1237,10 +1246,12 @@ public class FileBean2 {
 			if(is_Move)
 				moveP.put("orgname","etc");
 		}
-		if(is_Move)
-			return  (Integer)sqlSession.selectOne("bengineer.getparentnum",moveP);
-		else
+		if(is_Move) {
+			Integer result = (Integer)sqlSession.selectOne("bengineer.getparentnum",moveP);
+			return  result;
+		}else {
 			return 0;
+		}
 	}
 	
  	//파일 이동

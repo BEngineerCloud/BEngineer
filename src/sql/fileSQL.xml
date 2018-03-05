@@ -140,7 +140,9 @@
 		select * from BEfilelist where folder_ref = #{folder_ref} and important = 1 order by filetype desc, filename asc
 	</select>
 	<select id="getparentnum" parameterType="hashmap" resultType="int">
-		select num from BEfilelist where owner = #{owner} and important = -1 and orgname = #{orgname}
+		<![CDATA[
+			select num from BEfilelist where owner = #{owner} and important <= -1 and orgname = #{orgname}
+		]]>
 	</select>
 	<update id="autoarrange" parameterType="fileDTO">
 		update BEfilelist set folder_ref = #{num} where owner = #{owner} and orgname = #{orgname} and important != 1 and folder_ref = #{folder_ref}
@@ -180,7 +182,7 @@
 		update BEfilelist set filesize = filesize + #{filesize} where num = #{num}
 	</update>
 	<select id="size" parameterType="int" resultType="fileDTO"> <!-- 그래프 -->
-		select * from befilelist where folder_ref=#{folder_ref}
+		select * from befilelist where folder_ref=#{folder_ref} and important != 1
 	</select>
 	<update id="hot" parameterType="int"> <!-- 중요파일로 -->
 		update BEfilelist set important = -2 where num = #{num}
@@ -189,6 +191,9 @@
 		select * from befilelist where owner=#{owner} and important=-2
 	</select>
 	<update id="exhot" parameterType="int"> <!-- 중요파일에서 제외 -->
+		update BEfilelist set important = 0 where num = #{num}
+	</update>
+	<update id="exhot2" parameterType="int"> <!-- 중요파일에서 제외 -->
 		update BEfilelist set important = -1 where num = #{num}
 	</update>
 	

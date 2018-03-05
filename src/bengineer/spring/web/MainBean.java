@@ -59,14 +59,15 @@ public class MainBean extends Thread{
 		String email = dto.getEmail();
 		
 		//받아온 메일 아이디로 멤버가 존재하는 지 체크
-		Integer check = (Integer)sqlSession.selectOne("bengineer.beCheckmailid",email);
+		String check = (String)sqlSession.selectOne("bengineer.beCheckmailid",email);
 		Integer impose = (Integer)sqlSession.selectOne("bengineer.imposeMember", email);
 		String view= "redirect:/beMain.do"; //기본은 beMain.do로 이동
 		if(impose==1) {
 			view="redirect:/imposeMember.do?email=" + email;
 		}else {
-			if(check!=1) { //일치하는 멤버가 없을 시
+			if(check == null) { //일치하는 멤버가 없을 시
 				sqlSession.insert("bengineer.beInsertmember", dto); //네이버회원 정보를 insert
+				session.setAttribute("nickname", dto.getNickname()); //닉네임 세션 설정
 			}else {
 				String id = sqlSession.selectOne("bengineer.beSelectid",email); //해당하는 회원id를 받아옴.
 				
@@ -85,10 +86,10 @@ public class MainBean extends Thread{
 					}
 					sqlSession.update("bengineer.beUpdatemember2",dto); //네이버회원 ID로 정보 변경
 				}
+				session.setAttribute("nickname", check); //닉네임 세션 설정
 			}
 			session.setAttribute("id", dto.getId()); //id 세션설정
-			session.setAttribute("nickname", dto.getNickname()); //닉네임 세션 설정
-			session.setMaxInactiveInterval(300); //세션유효시간 60초
+			session.setMaxInactiveInterval(60); //세션유효시간 60초
 		}
 		return view;
 	}

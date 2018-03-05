@@ -57,8 +57,8 @@
 	</select>
 	
 	<!-- 메일아이디를 이용해 멤버가 존재하는지 체크 -->
-	<select id="beCheckmailid" resultType="int" parameterType="string">
-		select count(*) from bemember where email=#{email}
+	<select id="beCheckmailid" resultType="string" parameterType="string">
+		select nickname from bemember where email=#{email}
 	</select>
 	
 	<select id="getnickname" parameterType="string" resultType="string">

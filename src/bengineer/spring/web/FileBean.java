@@ -186,7 +186,7 @@ public class FileBean {
 				r.eval("Fname <- " + Fname);
 				r.eval("barplot(Fsize, horiz = TRUE, axes = FALSE, col=rainbow(20))");
 				//r.eval("barplot(Fsize,names='크기',col=rainbow(20))");names.arg = Fname, cex.names = 2,
-				r.eval("for(i in 1:length(Fname)){text(max(Fsize) / 2, 1.2 * (length(Fname) - i + 1) - 0.5, Fname[i], cex = min(c(25 / length(Fname), 4)), font = 2)}");
+				r.eval("for(i in 1:length(Fname)){text(max(Fsize) / 2, 1.2 * i - 0.5, Fname[i], cex = min(c(25 / length(Fname), 4)), font = 2)}");
 				r.eval("dev.off()");
 				REXP image = r.eval("r<-readBin('rjava.png', 'raw', 100*100)");
 				/*
@@ -1532,7 +1532,7 @@ public class FileBean {
 		}
 		String newaddress = "d:/PM/BEngineer/" + newowner + "/" + dto.getOrgname(); // 옮길 위치
 		File newfile = new File(newaddress);
-		if(!newfile.exists()) {
+		if(newfile.exists()) {
 			return setGoBack(model, "상대가 이미 같은 이름의 파일을 가지고 있습니다.");
 		}
 		File newfolder = new File("d:/PM/BEngineer/" + newowner);
