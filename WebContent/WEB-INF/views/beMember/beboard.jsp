@@ -76,16 +76,15 @@ top:5px;
 	<c:forEach var="board" items="${list}">
 	<tr>
 	<td width="50" align="center">${board.num - 1}</td> 
-	<td width="200"><a href="/BEngineer/beMember/beread.do?num=${board.num}">${board.title}</a></td> 
-	<!-- <td>${board.content}</td>  -->
-	<td width="50">${board.id}</td> 
+	<td width="300"><a href="/BEngineer/beMember/beread.do?num=${board.num}">${board.title}</a></td> 
+	<td width="50">관리자</td> 
 	<td><fmt:formatDate value="${board.reg_date}" pattern="MM-dd HH:mm"/></td><br/>
 	</tr>
 	</c:forEach>   
 	</table>
 </div>
 <div id="etc">
-		<center>
+	<center>
 		<a href="/BEngineer/inquiry/inList.do?id=${sessionScope.id}" style="text-decoration:none">문의내역</a>
         <a href="/BEngineer/beMember/beboard.do?id=${sessionScope.id}" style="text-decoration:none">공지사항</a>
         <a href="/BEngineer/beMember/upgrade.do?id=${sessionScope.id}" style="text-decoration:none">유료전환</a>

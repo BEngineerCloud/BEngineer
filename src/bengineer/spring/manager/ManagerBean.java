@@ -50,9 +50,8 @@ public class ManagerBean {
 	@RequestMapping("logout.do")
 	public String logout(HttpSession session) { 
 		session.invalidate();
-		return "redirect:/manager/login.do"; 
+		return "manager/login"; 
 	}
-	
 	// 메인창
 	@RequestMapping("mMain.do")
 	public String mMain(ManagerDTO dto,HttpSession session,String Id,ManagerDTO m, Model model) {
