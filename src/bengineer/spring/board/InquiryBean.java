@@ -65,7 +65,7 @@ public class InquiryBean {
 		}catch(Exception e) {
 			e.printStackTrace();
 		}
-		return "forward:/inquiry/inList.do";
+		return "redirect:/inquiry/inList.do";
 	}
 	// 내 문의목록보기
 	@RequestMapping("inRead.do")
