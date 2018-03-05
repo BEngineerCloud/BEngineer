@@ -34,7 +34,6 @@ public class InquiryBean {
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트 
 		List list = sqlSession.selectList("board.inList",dto.getId());
 		model.addAttribute("inList",list);
-		session.setAttribute("Id", dto.getId());
 		String id = (String)session.getAttribute("id");
 		List font = sqlSession.selectList("bengineer.font", id);
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들
@@ -44,7 +43,6 @@ public class InquiryBean {
 	@RequestMapping("inForm.do")
 	public String writeForm(HttpSession session,InquiryDTO dto, Model model) { 
 		if(MainBean.loginCheck(session)) {return "redirect:/beMember/beLogin.do";} // 로그인 세션 없을 시 리디렉트
-		session.setAttribute("Id", dto.getId());
 		String id = (String)session.getAttribute("id");
 		List font = sqlSession.selectList("bengineer.font", id);
  		model.addAttribute("font",font);	// 검색에 필요한 파일목록들

@@ -37,7 +37,7 @@ left:380px;
 </table>
 </div>
 <div id="in3">
-<img src="data:image/png;base64,${rr}" style="height:54%; width:80%;"/>
+<img src="data:image/png;base64,${rr}" style="margin-top:${65 - list.size() * 3.8}; height:${list.size() * 3.8}%; width:80%;"/>
 </div>
 </div>
 </body>

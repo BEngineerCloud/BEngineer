@@ -23,7 +23,7 @@ left:180px;
 		<textarea name="content" rows="13" cols="34"></textarea><br/></td></tr>
 	  
 	  <tr><td  width="90">작성자</td>
-		<td>${Id}<input type="hidden" value="${Id}" name="id"><br/></td> </tr>
+		<td>manager<input type="hidden" value="manager" name="id"><br/></td> </tr>
 	  </table>
 	 </div>
 	 
